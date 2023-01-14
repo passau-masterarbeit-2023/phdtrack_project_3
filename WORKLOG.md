@@ -12,10 +12,9 @@ Started to look at raw data using Okteta, which is a hex viewer to view the data
 
 Questions ?
 
-How to use create_dataset(), and create_splits...
-
-where are the -key.log (-> try to generate them to test)
-
+* [X] How to use create_dataset(), and create_splits...
+* [X] where are the -key.log (-> try to generate them to test)
+* [ ] Why is the no `basic` in `TYPES = ["client-side", "dropbear", "OpenSSH", "port-forwarding", "scp", "normal-shell"]` (constants.py), whereas there are folders called `basic` from Zenodo datasets. Same for \`client` ?
 
 ### Thu 12th 2023
 
