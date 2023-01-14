@@ -17,3 +17,8 @@ A repo following the advancement of PhDTrack Project.
 ## datasets
 
 [Zenodo dataset](https://zenodo.org/record/6537904): Data are dowloaded from [Zenodo](https://zenodo.org/record/6537904) inside the folder `../phdtrack_data` .
+
+
+## Notes 
+
+PCAP file ? https://wiki.wireshark.org/Development/LibpcapFileFormat

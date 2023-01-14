@@ -4,10 +4,18 @@
 
 Started to look at raw data using Okteta, which is a hex viewer to view the data. Install on Fedora with `sudo yum install okteta`. I have tried to see if I could locate the keys manually using Okteta without success.
 
-* [ ] How to find the keys in Okteta?
-* [ ] How to search the HEAP_START? I can't find it in Okteta?
+* [X] How to find the keys in Okteta? Okteta broken, use VIM and `:` then `%!xxd` to search for patterns and bytes.
+* [X] How to search the HEAP_START? I can't find it in Okteta?
 * [ ] How to create a dataset from the given data files?
 * [ ] Where are the `-key.log` files necessary for training? Do we need to adapt the code to works with the provided `.json` files instead?
+* [ ] Follow the pointers in mem and create a DOT graph with a Python script. Use .json solutions as starting point.
+
+Questions ?
+
+How to use create_dataset(), and create_splits...
+
+where are the -key.log (-> try to generate them to test)
+
 
 ### Thu 12th 2023
 
