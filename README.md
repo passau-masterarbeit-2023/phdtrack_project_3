@@ -47,3 +47,7 @@ Searching for **15A10** in vim: `/15a10`: Open vim with `vim 302-1644391327-heap
 > WARNING: `xxd` addresses are presented as addresses of the first byte of a given line ! So addresses are incremented from one line to another by leaps of 16. This is coherent with the storing of addresses in memory (json file addresses).
 
 ![search in vim for address A](img/vim/2023-01-15_09-04-16.png)
+
+#### search for pointers
+
+Using vim regex, run `:%!xxd`, then `:%s/\s\+//g`, then search for pointers with: `:/[0-9a-f]\{12}0\{4}`.
