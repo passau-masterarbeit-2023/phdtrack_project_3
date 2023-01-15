@@ -42,4 +42,8 @@ computation: addr in file = 55a6d236ba10 - 55a6d2356000 = **15A10**
 
 Searching for **15A10** in vim: `/15a10`: Open vim with `vim 302-1644391327-heap.raw`, parse the raw bytes with `xxd` usinf vim command `:%!xxd`, and the search for pattern with `/pattern`, here `/15a10`.
 
+> tips: to ease the search for patterns in vim, remove the whitespaces created by `xxd` with the vim command: `:%s/\s\+//g`
+
+> WARNING: `xxd` addresses are presented as addresses of the first byte of a given line ! So addresses are incremented from one line to another by leaps of 16. This is coherent with the storing of addresses in memory (json file addresses).
+
 ![search in vim for address A](img/vim/2023-01-15_09-04-16.png)
