@@ -1,5 +1,23 @@
 # Worklog
 
+### Tue 17th 2023
+
+Finally corrected the pointer extraction script. Pointers are coded using LITTLE-ENDIAN ordering.
+
+* [ ] Graphs generated are too big. Need to remove 1, or 2 nodes graphs. Refactoring needed.
+
+### Mon 16th 2023
+
+Trained a high recall SVC classifier using cross validation and grid search.
+
+### Sun 15th 2023
+
+Started to build a script to get pointers from raw heap dump files.
+
+### Sat 14th 2023
+
+Working on obtaining Keys from raw heap dump files. Trained new classifiers from dataset.
+
 ### Fri 13th 2023
 
 Started to look at raw data using Okteta, which is a hex viewer to view the data. Install on Fedora with `sudo yum install okteta`. I have tried to see if I could locate the keys manually using Okteta without success.
