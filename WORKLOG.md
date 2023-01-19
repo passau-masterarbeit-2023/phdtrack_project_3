@@ -1,10 +1,18 @@
 # Worklog
 
+### Thu 19th 2023
+
+We worked on displaying the graph of pointers. We removed unique-vertice graphs. We tried to check what the pointed data.
+
+* [ ] Refactor functions out of Notebook
+* [ ] Fix graphviz strange " error
+* [ ] Fix utf-8 incorrect formatting.
+
 ### Tue 17th 2023
 
 Finally corrected the pointer extraction script. Pointers are coded using LITTLE-ENDIAN ordering.
 
-* [ ] Graphs generated are too big. Need to remove 1, or 2 nodes graphs. Refactoring needed.
+* [X] Graphs generated are too big. Need to remove 1, or 2 nodes graphs. Refactoring needed.
 
 ### Mon 16th 2023
 
