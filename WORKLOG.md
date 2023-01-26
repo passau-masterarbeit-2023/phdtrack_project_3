@@ -1,6 +1,78 @@
 # Worklog
 
-### Thu 19th 2023
+
+look at malloc headers (in little endian format) to determine the lenght (number of block)
+
+graph -> generate representation
+
+### Thu 26th Jan 2023
+
+Started to think about the new representation of memory data structures into a graph representation.
+
+Read SSHkey_vm_introspection, and looking at [OpenSSH-Portable](https://github.com/openssh/openssh-portable). Here are our notes:
+
+[packet.h](https://github.com/openssh/openssh-portable/blob/master/packet.h) contains `struct ssh`:
+
+* 14 pointers
+* 4 int
+
+[packet.c](https://github.com/openssh/openssh-portable/blob/master/packet.c) contains `struct session_state`:
+
+* 13 pointers
+* 17 int
+* 4 `u_int`
+* 1 `u_int64_t`
+* 1 `u_int32_t`
+* 1 `time_t`
+* 1 `u_char`
+* 1 `size_t `
+
+> There is a pointer from `ssh` to `session_state`
+
+[kex.h](https://github.com/openssh/openssh-portable/blob/master/kex.h) contains `struct newkeys`:
+
+```c
+struct newkeys {
+	struct sshenc	enc;
+	struct sshmac	mac;
+	struct sshcomp  comp;
+};
+
+```
+
+sshenc:
+
+* 4 pointers
+* 1 `int`
+* 3 `u_int`
+
+sshmac inside [mac.h](https://github.com/openssh/openssh-portable/blob/master/mac.h):
+
+* 4 pointers
+* 3 `int`
+* 2 `u_int`
+
+sshcomp:
+
+* 1 pointer
+* 1 `u_int`
+* 1 `int`
+
+We suppose the top level struct contains the sum of all bytes of its sub-structures.
+
+
+
+We also spent some time to investigate who are currently maintaining and extending this project. It is 4 google engineer since 1999 : [Damien Miller](https://www.linkedin.com/in/djmdjm/), [Darren Tucker](https://www.linkedin.com/in/dtucker/), [Markus Friedl](https://www.linkedin.com/in/markus-friedl-6709861/), [Niels Provos](https://www.linkedin.com/in/nielsprovos/)
+
+
+### Wed 25th Jan 2023
+
+Started to look at the advanced graph generation. Lot's of work to do:
+
+* [ ] Complete pointer to pointer data structure linking, using `malloc` data store before pointed value.
+* [ ] Transition from DOT graph generation to NetworkX.
+
+### Thu 19th Jan 2023
 
 We worked on displaying the graph of pointers. We removed unique-vertice graphs. We tried to check what the pointed data.
 
@@ -8,25 +80,25 @@ We worked on displaying the graph of pointers. We removed unique-vertice graphs.
 * [ ] Fix graphviz strange " error
 * [ ] Fix utf-8 incorrect formatting.
 
-### Tue 17th 2023
+### Tue 17th Jan 2023
 
 Finally corrected the pointer extraction script. Pointers are coded using LITTLE-ENDIAN ordering.
 
 * [X] Graphs generated are too big. Need to remove 1, or 2 nodes graphs. Refactoring needed.
 
-### Mon 16th 2023
+### Mon 16th Jan 2023
 
 Trained a high recall SVC classifier using cross validation and grid search.
 
-### Sun 15th 2023
+### Sun 15th Jan 2023
 
 Started to build a script to get pointers from raw heap dump files.
 
-### Sat 14th 2023
+### Sat 14th Jan 2023
 
 Working on obtaining Keys from raw heap dump files. Trained new classifiers from dataset.
 
-### Fri 13th 2023
+### Fri 13th Jan 2023
 
 Started to look at raw data using Okteta, which is a hex viewer to view the data. Install on Fedora with `sudo yum install okteta`. I have tried to see if I could locate the keys manually using Okteta without success.
 
@@ -42,12 +114,12 @@ Questions ?
 * [X] where are the -key.log (-> try to generate them to test)
 * [ ] Why is the no `basic` in `TYPES = ["client-side", "dropbear", "OpenSSH", "port-forwarding", "scp", "normal-shell"]` (constants.py), whereas there are folders called `basic` from Zenodo datasets. Same for \`client` ?
 
-### Thu 12th 2023
+### Thu 12th Jan 2023
 
 Finished baseline of heavy refactoring. Original code working in both DEPLOY and non DEPLOY mode.
 
 * [ ] Use and modify `train_classifier` to work with different classifiers. Continue to work on the testzone.
 
-### Wed 11th 2023
+### Wed 11th Jan 2023
 
 Restarted to work on PhDTrack project. Reread documents and research materials. Continuing to work on code refactoring.
