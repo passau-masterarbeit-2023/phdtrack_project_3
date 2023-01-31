@@ -104,6 +104,7 @@ class GraphGenerator:
     """
 
     params: ProgramParams
+    heap_dump_data: HeapDumpData # WARN: allocated in generate_graph()
 
     def __init__(self, params: ProgramParams):
         self.params = params
@@ -122,27 +123,22 @@ class GraphGenerator:
         pointers_to_values: dict[int, int] = {}
 
         # get the heap dump data
-        heap_dump_data = HeapDumpData(
+        self.heap_dump_data = HeapDumpData(
             heap_dump_raw_file_path=heap_dump_raw_file_path,
             block_size=pointer_byte_size,
             params=self.params,
         )
-        
 
         # go through all the potential pointers in the heap dump
         counter = 0
-        for i, potential_ptr in enumerate(heap_dump_data.blocks):
-            potential_ptr_int = int.from_bytes(potential_ptr, byteorder=self.params.ENDIANNESS, signed=False)
-            if (
-                potential_ptr_int <= heap_dump_data.max_addr and 
-                potential_ptr_int > 0 and 
-                potential_ptr_int % 16 == 0 and
-                potential_ptr_int >= heap_dump_data.min_addr
-            ):
-                print("found potential_ptr_int: %d, hex potential_ptr_int: %s" % (potential_ptr_int, hex(potential_ptr_int)))
+        for i, potential_ptr in enumerate(self.heap_dump_data.blocks):
+
+            potential_ptr_int  = self.__is_pointer(potential_ptr)
+            if potential_ptr_int is not None:
+
 
             # check is the potential pointer is in range of the heap
-            if potential_ptr_int >= min_addr and potential_ptr_int <= max_addr:
+            
                 current_ptr_addr = index_to_addr(i, min_addr, self.params.POINTER_BYTE_SIZE)
 
                 # add potential pointer to dict
@@ -170,4 +166,36 @@ class GraphGenerator:
             print("No potential pointers found in heap dump file: %s" % heap_dump_raw_file_path)
 
 
+
+
+    def __is_pointer(self, data: bytes | int):
+        """
+        Check if an address is a pointer. 
+        If it is, return the pointed address.
+        """
+        potential_ptr_int: int
+        if isinstance(data, int):
+            potential_ptr_int = data
+        else:
+            potential_ptr_int = int.from_bytes(
+                data, byteorder=self.params.ENDIANNESS, signed=False
+            )
+
+        # check if the potential pointer is in range of the heap
+        is_ptr = (
+            potential_ptr_int >= self.heap_dump_data.min_addr and 
+            potential_ptr_int <= self.heap_dump_data.max_addr
+        )
+        if is_ptr:
+            return potential_ptr_int
+        else:
+            return None
+    
+
+    def __is_memalloc_header(self, data: bytes):
+        """
+        Check if an address is a memory allocation header.
+        If it is, return the memalloc_header value.
+        """
+        
     

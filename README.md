@@ -58,6 +58,12 @@ Using vim regex, run `:%!xxd`, then `:%s/\s\+//g`, then search for pointers with
 
 Data structures starts with the number of bytes allocated (in heap).
 
+Search for memalloc headers `:/[0-9a-f]\{4}0\{12}`.
+
+![search for data structure](./img/vim/discovering_data_structure.png)
+
+Here you can see a 4x16 char blocks which represents a data structure of 32 bytes ((4x16)x4)/8. The value `2100000000000000` is the malloc header in little endian format which represents 33. It is probably the number of bytes to leap through to avoid this data strucure.
+
 ```
 
 ```
