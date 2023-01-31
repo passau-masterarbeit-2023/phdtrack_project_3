@@ -53,3 +53,11 @@ Searching for **15A10** in vim: `/15a10`: Open vim with `vim 302-1644391327-heap
 Using vim regex, run `:%!xxd`, then `:%s/\s\+//g`, then search for pointers with: `:/[0-9a-f]\{12}0\{4}`.
 
 > WARN: The pointers in the raw heap dump files are coded using LITTLE-ENDIANNESS. They are coded as 8 byte-aligned memory blocks.
+
+#### Search for datastructures
+
+Data structures starts with the number of bytes allocated (in heap).
+
+```
+
+```
