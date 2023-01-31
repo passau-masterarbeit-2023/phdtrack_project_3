@@ -1,9 +1,23 @@
 # Worklog
 
-
 look at malloc headers (in little endian format) to determine the lenght (number of block)
 
 graph -> generate representation
+
+Tue 31th Jan 2023
+
+* [ ] Finish to refactor the python module
+* [ ] Use NetworkX to generate and [display graphs](https://networkx.org/documentation/stable/reference/drawing.html#module-networkx.drawing.nx_agraph)
+* [ ] Create functions to identify data-structures and lonely pointers (see pictures)
+
+Data representation to implement: The idea is to try to follow all possible datastructures. 
+
+![img 1](./img/worklog/IMG_9370.jpg)
+
+![img 2](./img/worklog/IMG_9371.jpg)
+
+The firtst node of a structure is a blank node. It represents the first byte block after the malloc header. It can be a piece of data or a pointer. Other pointers inside the data structures are linked to this blank node via *data structure link.*
+
 
 ### Thu 26th Jan 2023
 
@@ -60,10 +74,7 @@ sshcomp:
 
 We suppose the top level struct contains the sum of all bytes of its sub-structures.
 
-
-
 We also spent some time to investigate who are currently maintaining and extending this project. It is 4 google engineer since 1999 : [Damien Miller](https://www.linkedin.com/in/djmdjm/), [Darren Tucker](https://www.linkedin.com/in/dtucker/), [Markus Friedl](https://www.linkedin.com/in/markus-friedl-6709861/), [Niels Provos](https://www.linkedin.com/in/nielsprovos/)
-
 
 ### Wed 25th Jan 2023
 
