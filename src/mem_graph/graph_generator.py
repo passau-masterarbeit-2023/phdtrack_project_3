@@ -1,10 +1,12 @@
 from dataclasses import dataclass
+from mem_graph.graph_structures import *
+
 from params import ProgramParams
 from mem_utils import addr_to_index, index_to_addr
 
 import json
 import os
-
+import networkx as nx
 
 class HeapDumpData:
     """
@@ -36,7 +38,19 @@ class HeapDumpData:
             heap_dump_raw_file_path.replace("-heap.raw", ".json")
         )
 
+    def addr_to_index_wrapper(self, addr: int) -> int:
+        """
+        Wrapper for addr_to_index.
+        """
+        return addr_to_index(addr, self.min_addr, self.block_size)
     
+    def index_to_addr_wrapper(self, index: int) -> int:
+        """
+        Wrapper for index_to_addr.
+        """
+        return index_to_addr(index, self.min_addr, self.block_size)
+    
+
     def __generate_blocks_from_heap_dump(
         self, 
         heap_dump_raw_file_path: str,
@@ -92,7 +106,7 @@ class HeapDumpData:
             print("max_addr: %s, hex max_addr: %s" % (hex(min_addr), hex(max_addr)))
 
         return min_addr, max_addr
-
+    
 
 
 
@@ -120,7 +134,7 @@ class GraphGenerator:
         Generate a graph from a raw heap dump file.
         """
 
-        pointers_to_values: dict[int, int] = {}
+        graph = nx.DiGraph()
 
         # get the heap dump data
         self.heap_dump_data = HeapDumpData(
@@ -128,42 +142,29 @@ class GraphGenerator:
             block_size=pointer_byte_size,
             params=self.params,
         )
+        
+        def pass_null_blocks(index: int):
+            """
+            Pass null blocks.
+            """
+            while self.heap_dump_data.blocks[index] == b'\x00' * pointer_byte_size:
+                index += 1
+            return index
+        
+        # generate data structures and iterate over them
+        block_index = 0
+        while block_index < len(self.heap_dump_data.blocks):
+            # pass null blocks
+            block_index = pass_null_blocks(block_index)
 
-        # go through all the potential pointers in the heap dump
-        counter = 0
-        for i, potential_ptr in enumerate(self.heap_dump_data.blocks):
+            # get the data structure
+            data_structure_block_size = self.__parse_datastructure(block_index, graph)
 
-            potential_ptr_int  = self.__is_pointer(potential_ptr)
-            if potential_ptr_int is not None:
+            # update the block index by leaping over the data structure
+            block_index += data_structure_block_size + 1
 
 
-            # check is the potential pointer is in range of the heap
-            
-                current_ptr_addr = index_to_addr(i, min_addr, self.params.POINTER_BYTE_SIZE)
-
-                # add potential pointer to dict
-                pointers_to_values[current_ptr_addr] = potential_ptr_int
-                
-                counter += 1
-
-        if counter > 0:
-            pointers_to_values = remove_unique_vertice_graphs(pointers_to_values)
-            end_pointers_to_data = get_end_graph_data_str(pointers_to_values, blocks, min_addr) # data values at end of pointer graphs
-
-            # open .gv file
-            save_file_path = os.path.join(
-                self.params.TEST_DATA_DIR, 
-                str(os.path.basename(heap_dump_raw_file_path)).replace('.raw', '.gv')
-            )
-
-            # save the graph to file
-            write_graphs_to_file(save_file_path, pointers_to_values, end_pointers_to_data)
-
-            print("Writing graph to file: %s done." % self.params.TEST_DATA_DIR + self.params.TEST_GRAPH_DATA_FILENAME)
-            print("Nb of found potential pointers: %d" % counter)
-            print("Nb of non-unique-vertice-graph vertices : %d" % len(pointers_to_values))
-        else:
-            print("No potential pointers found in heap dump file: %s" % heap_dump_raw_file_path)
+        
 
 
 
@@ -192,10 +193,64 @@ class GraphGenerator:
             return None
     
 
-    def __is_memalloc_header(self, data: bytes):
+    def __get_memalloc_header(self, data: bytes):
         """
-        Check if an address is a memory allocation header.
-        If it is, return the memalloc_header value.
+        get the malloc header (number of byte allocated + 1)
         """
+        memalloc_header_int = int.from_bytes(
+            data, byteorder="little", signed=False
+        )
+        return memalloc_header_int
+
+
+
+    def __parse_datastructure(self, startBlockIndex : int, graph : nx.DiGraph):
+        """
+        Parse the data structure from a given block and populate the graph.
+        WARN: We don't follow the pointers in the data structure. This is done in a second step.
+        :return: the number of blocks in the data structure
+        """
+
+        # get the size of the data structure from malloc header
+        # NOTE: the size given by malloc header is the size of the data structure + 1
+        datastructure_size = self.__get_memalloc_header(self.heap_dump_data.blocks[startBlockIndex]) - 1
+
+        # check if nb_blocks_in_datastructure is an integer
+        nb_blocks_in_datastructure = datastructure_size / self.heap_dump_data.block_size
+        if nb_blocks_in_datastructure % 1 != 0:
+            raise ValueError("The data structure size is not a multiple of the block size")
         
-    
+        datastructure_node = DataStructureNode(
+            self.heap_dump_data.index_to_addr_wrapper(startBlockIndex), 
+            datastructure_size
+        )
+        graph.add_node(datastructure_node)
+
+        for block_index in range(startBlockIndex + 1, startBlockIndex + nb_blocks_in_datastructure):
+            node : Node
+            # check if the block is a pointer
+            potential_ptr = self.__is_pointer(self.heap_dump_data.blocks[block_index])
+            if potential_ptr is not None:
+                node = PointerNode(
+                    self.heap_dump_data.index_to_addr_wrapper(block_index),
+                    potential_ptr
+                )
+            else: # this is a data block
+                node = ValueNode(
+                    self.heap_dump_data.index_to_addr_wrapper(block_index),
+                    self.heap_dump_data.blocks[block_index]
+                )
+            graph.add_node(node)
+            # add edge to the graph
+            graph.add_edge(
+                datastructure_node, 
+                node,
+                object=Edge.DATA_STRUCTURE
+            )
+        
+        return nb_blocks_in_datastructure
+
+            
+            
+
+        

@@ -4,20 +4,28 @@ look at malloc headers (in little endian format) to determine the lenght (number
 
 graph -> generate representation
 
-Tue 31th Jan 2023
+### Mon 13th Fev 2023
+
+We restarted to work on the project. We are currently implementing the data structure detection and recreation loop. 
+
+We DO NOT CURRENTLY works on the edges outside of datastructures (we don't follow the pointers yet).
+
+* [ ] Test current code.
+* [ ] Need to do step 2: follow the pointers
+
+### Tue 31th Jan 2023
 
 * [ ] Finish to refactor the python module
 * [ ] Use NetworkX to generate and [display graphs](https://networkx.org/documentation/stable/reference/drawing.html#module-networkx.drawing.nx_agraph)
 * [ ] Create functions to identify data-structures and lonely pointers (see pictures)
 
-Data representation to implement: The idea is to try to follow all possible datastructures. 
+Data representation to implement: The idea is to try to follow all possible datastructures.
 
 ![img 1](./img/worklog/IMG_9370.jpg)
 
 ![img 2](./img/worklog/IMG_9371.jpg)
 
 The firtst node of a structure is a blank node. It represents the first byte block after the malloc header. It can be a piece of data or a pointer. Other pointers inside the data structures are linked to this blank node via *data structure link.*
-
 
 ### Thu 26th Jan 2023
 

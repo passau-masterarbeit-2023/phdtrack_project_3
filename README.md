@@ -18,6 +18,10 @@ A repo following the advancement of PhDTrack Project.
 
 [Zenodo dataset](https://zenodo.org/record/6537904): Data are dowloaded from [Zenodo](https://zenodo.org/record/6537904) inside the folder `../phdtrack_data` .
 
+## Env
+
+`conda env export --no-builds > environment.yml` : export conda env to yml file.
+
 ## Notes
 
 PCAP file ? https://wiki.wireshark.org/Development/LibpcapFileFormat
@@ -64,6 +68,21 @@ Search for memalloc headers `:/[0-9a-f]\{4}0\{12}`.
 
 Here you can see a 4x16 char blocks which represents a data structure of 32 bytes ((4x16)x4)/8. The value `2100000000000000` is the malloc header in little endian format which represents 33. It is probably the number of bytes to leap through to avoid this data strucure.
 
-```
+#### Organisation of memory in heap dump files
+
+##### start of file
+
+As we can see, raw heap dump files all starts with a null block (blocks are of size 8 bytes (16 chars "0" using `vim`)). Then we call always see a malloc header of size `5102` (little-endian, equivalent to 593). This is probably the master data structure being allocated. 
+
+##### max memalloc size
+
+Long story short, there is probably no max size. More info [here](https://stackoverflow.com/a/57687432/10798114). On my PC, we got:
+
+```shell
+(base) onyr@aezyr:~$ sudo cat /proc/sys/vm/overcommit_memory 
+[sudo] password for onyr: 
+0
 
 ```
+
+Meaning there is no limit to memalloc.
