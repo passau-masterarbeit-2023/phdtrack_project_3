@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from graph_structures import *
 
 from params import ProgramParams
-from mem_utils import addr_to_index, index_to_addr
+from mem_utils import *
 
 import json
 import os
@@ -143,6 +143,38 @@ class GraphGenerator:
             params=self.params,
         )
         
+        self.__data_structure_step(pointer_byte_size, graph)
+        self.__pointer_step(graph)
+
+        return graph
+    
+
+    def __is_pointer_wrapper(self, data: bytes | int):
+        """
+        Wrapper for is_pointer.
+        """
+        return is_pointer(data, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.ENDIANNESS)
+    
+    def __get_node_from_bytes_wrapper(self, data: bytes, addr: int):
+        """
+        Wrapper for get_node_from_bytes.
+        """
+        return get_node_from_bytes(data, addr, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.ENDIANNESS)
+
+
+    def __get_node_from_bytes_wrapper_index(self, data: bytes, block_index: int):
+        """
+        Wrapper for get_node_from_bytes.
+        """
+        addr = self.heap_dump_data.index_to_addr_wrapper(block_index)
+        return self.__get_node_from_bytes_wrapper(data, addr)
+    
+
+    def __data_structure_step(self, pointer_byte_size: int, graph: nx.DiGraph):
+        """
+        Parse all data structures step. Don't follow pointers yet.
+        """
+
         def pass_null_blocks(index: int):
             """
             Pass null blocks.
@@ -164,39 +196,61 @@ class GraphGenerator:
             data_structure_block_size = self.__parse_datastructure(block_index, graph)
 
             # update the block index by leaping over the data structure
-            block_index += data_structure_block_size + 1
+            block_index += data_structure_block_size + 1 
 
-
-        return graph
-
-        
-
-
-
-
-    def __is_pointer(self, data: bytes | int):
+    def __pointer_step(self, graph: nx.DiGraph):
         """
-        Check if an address is a pointer. 
-        If it is, return the pointed address.
+        Parse all pointers step.
         """
-        potential_ptr_int: int
-        if isinstance(data, int):
-            potential_ptr_int = data
-        else:
-            potential_ptr_int = int.from_bytes(
-                data, byteorder=self.params.ENDIANNESS, signed=False
-            )
+        # create a dictionary of address to node
+        addr_to_node: dict[int, Node] = {}
+        for node in graph:
+            addr_to_node[node.addr] = node
 
-        # check if the potential pointer is in range of the heap
-        is_ptr = (
-            potential_ptr_int >= self.heap_dump_data.min_addr and 
-            potential_ptr_int <= self.heap_dump_data.max_addr
-        )
-        if is_ptr:
-            return potential_ptr_int
-        else:
-            return None
-    
+        def parse_pointer(node: PointerNode):
+            """
+            Parse a pointer node.
+            """
+            # check if the pointer points to a node in the graph
+            current_pointer_node: Node = node
+            while isinstance(current_pointer_node, PointerNode):
+                if node.points_to not in addr_to_node:
+                    
+                    # create a new node
+                    pointed_node = self.__get_node_from_bytes_wrapper(
+                        self.heap_dump_data.blocks[self.heap_dump_data.addr_to_index_wrapper(node.addr)],
+                        node.points_to
+                    )
+
+                    # add the node to the graph
+                    graph.add_node(pointed_node)
+
+                    # add the node to the dictionary
+                    addr_to_node[node.points_to] = pointed_node
+
+                    # add the edge
+                    graph.add_edge(node, pointed_node)
+
+                    # next iteration
+                    current_pointer_node = pointed_node
+                else:
+                    # get the node from the dictionary, and add the edge
+                    pointed_node = addr_to_node[node.points_to]
+                    graph.add_edge(node, pointed_node)
+
+                    # no more iterations
+                    break
+
+        # get all pointer nodes
+        all_pointer_nodes: list[PointerNode] = []
+        for node in graph:
+            if isinstance(node, PointerNode):
+                all_pointer_nodes.append(node)
+
+        for node in all_pointer_nodes:
+            parse_pointer(node)
+            print("pointer node:", node)
+
 
     def __get_memalloc_header(self, data: bytes):
         """
@@ -256,19 +310,7 @@ class GraphGenerator:
         graph.add_node(datastructure_node)
 
         for block_index in range(startBlockIndex + 1, startBlockIndex + nb_blocks_in_datastructure):
-            node : Node
-            # check if the block is a pointer
-            potential_ptr = self.__is_pointer(self.heap_dump_data.blocks[block_index])
-            if potential_ptr is not None:
-                node = PointerNode(
-                    self.heap_dump_data.index_to_addr_wrapper(block_index),
-                    potential_ptr
-                )
-            else: # this is a data block
-                node = ValueNode(
-                    self.heap_dump_data.index_to_addr_wrapper(block_index),
-                    self.heap_dump_data.blocks[block_index]
-                )
+            node = self.__get_node_from_bytes_wrapper_index(self.heap_dump_data.blocks[block_index], block_index)
             graph.add_node(node)
             # add edge to the graph
             graph.add_edge(

@@ -6,12 +6,16 @@ graph -> generate representation
 
 ### Mon 13th Fev 2023
 
-We restarted to work on the project. We are currently implementing the data structure detection and recreation loop. 
+We restarted to work on the project. We are currently implementing the data structure detection and recreation loop.
 
 We DO NOT CURRENTLY works on the edges outside of datastructures (we don't follow the pointers yet).
 
-* [ ] Test current code.
-* [ ] Need to do step 2: follow the pointers
+* [X] Test current code.
+* [X] Need to do step 2: follow the pointers
+
+We then debugged and worked on the step two: following the pointers identified inside the data structures. If the pointers points to already discovered nodes inside data structures, we plot them, otherwise, we create new nodes and follow them if they are pointers.
+
+* [ ] Need to further test step 2
 
 ### Tue 31th Jan 2023
 
