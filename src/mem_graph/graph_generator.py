@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from mem_graph.graph_structures import *
+from graph_structures import *
 
 from params import ProgramParams
 from mem_utils import addr_to_index, index_to_addr
@@ -147,7 +147,10 @@ class GraphGenerator:
             """
             Pass null blocks.
             """
-            while self.heap_dump_data.blocks[index] == b'\x00' * pointer_byte_size:
+            while (
+                index < len(self.heap_dump_data.blocks) and # check if index is in bounds
+                self.heap_dump_data.blocks[index] == b'\x00' * pointer_byte_size
+            ):
                 index += 1
             return index
         
@@ -163,6 +166,8 @@ class GraphGenerator:
             # update the block index by leaping over the data structure
             block_index += data_structure_block_size + 1
 
+
+        return graph
 
         
 
@@ -208,17 +213,41 @@ class GraphGenerator:
         """
         Parse the data structure from a given block and populate the graph.
         WARN: We don't follow the pointers in the data structure. This is done in a second step.
-        :return: the number of blocks in the data structure
+        :return: The number of blocks in the data structure.
+        If the data structure is not valid, return 0, since there no data structure to leap over.
         """
+        # precondition: the block at startBlockIndex is not the last block of the heap dump or after
+        if startBlockIndex >= len(self.heap_dump_data.blocks) - 1:
+            return 0 # this is not a data structure, no need to leap over it
 
         # get the size of the data structure from malloc header
         # NOTE: the size given by malloc header is the size of the data structure + 1
         datastructure_size = self.__get_memalloc_header(self.heap_dump_data.blocks[startBlockIndex]) - 1
 
         # check if nb_blocks_in_datastructure is an integer
-        nb_blocks_in_datastructure = datastructure_size / self.heap_dump_data.block_size
-        if nb_blocks_in_datastructure % 1 != 0:
-            raise ValueError("The data structure size is not a multiple of the block size")
+        tmp_nb_blocks_in_datastructure = datastructure_size / self.heap_dump_data.block_size
+        if tmp_nb_blocks_in_datastructure % 1 != 0:
+            if self.params.DEBUG:
+                print("tmp_nb_blocks_in_datastructure:", tmp_nb_blocks_in_datastructure)
+                print("The data structure size is not a multiple of the block size, at block index: %d" % startBlockIndex)
+            return 0 # this is not a data structure, no need to leap over it
+
+        # get the number of blocks in the data structure as an integer
+        nb_blocks_in_datastructure = int(tmp_nb_blocks_in_datastructure)
+
+        # check if the data structure is complete, i.e. if the data structure is still unclosed after at the end of the heap dump
+        if startBlockIndex + nb_blocks_in_datastructure >= len(self.heap_dump_data.blocks):
+            if self.params.DEBUG:
+                print("The data structure is not complete, at block index: %d" % startBlockIndex)
+            return 0
+    
+        # check that the data structure is not empty, i.e. that it contains at least one block
+        # It cannot also be composed of only one block, since the first block is the malloc header,
+        # and a data structure cannot be only the malloc header.
+        if nb_blocks_in_datastructure < 2:
+            if self.params.DEBUG:
+                print("The data structure is too small (%d blocks), at block index: %d" % (nb_blocks_in_datastructure, startBlockIndex))
+            return 0
         
         datastructure_node = DataStructureNode(
             self.heap_dump_data.index_to_addr_wrapper(startBlockIndex), 

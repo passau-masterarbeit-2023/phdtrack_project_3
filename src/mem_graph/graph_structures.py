@@ -17,13 +17,22 @@ class Node:
 class DataStructureNode(Node):
     byte_size : int
 
+    def __str__(self):
+        return f"DTN({hex(self.addr)})"
+
 @dataclass(frozen=True)
 class ValueNode(Node):
     value: bytes
 
+    def __str__(self):
+        return f"VN({hex(self.addr)})"
+
 @dataclass(frozen=True)
 class PointerNode(Node):
     points_to: int
+
+    def __str__(self):
+        return f"PN({hex(self.addr)})"
 
 # edges (connections)
 class Edge(Enum):
