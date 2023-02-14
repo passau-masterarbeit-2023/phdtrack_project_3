@@ -1,7 +1,8 @@
+import subprocess
 import graphviz
 from graph_data import GraphData
 from params import ProgramParams
-from graph_analysis import GraphAnalyser
+from graph_analyser import GraphAnalyser
 
 import networkx as nx
 
@@ -16,7 +17,7 @@ def main():
         params.POINTER_BYTE_SIZE
     )
     graph_analyser = GraphAnalyser(graph_data)
-    graph_analyser.annotate_graph_with_json()
+    graph_analyser.annotate_graph()
 
     # generate graphviz file
     outfile_path = params.TEST_DATA_DIR + "/" + params.TEST_GRAPH_DATA_FILENAME
@@ -41,8 +42,12 @@ def main():
     #     s = graphviz.Source(dot_graph_data)
     #     s.render(outfile=graph_png_file_path, format='png', view=True)
 
-
-
+    # run sfdp command on graphviz file to generate graph image
+    subprocess.Popen(
+        ["sfdp", "-Gsize=67!", "-Goverlap=prism", "-Tpng", outfile_path, "-o", outfile_path.replace('.gv', '-sfdp.png')],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
 
 
 

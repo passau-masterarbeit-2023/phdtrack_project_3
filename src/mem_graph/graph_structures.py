@@ -26,6 +26,7 @@ class DataStructureNode(Node):
     def __str__(self):
         return f"DTN({hex(self.addr)})"
 
+
 @frozen
 class ValueNode(Node):
     value: bytes
@@ -33,6 +34,13 @@ class ValueNode(Node):
 
     def __str__(self):
         return f"VN({hex(self.addr)})"
+
+@frozen
+class SessionStateNode(ValueNode):
+    color: str = attrib("red")
+
+    def __str__(self):
+        return f"SSN({hex(self.addr)})"
 
 @frozen
 class PointerNode(Node):

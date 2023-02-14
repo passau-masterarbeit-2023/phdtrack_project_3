@@ -95,10 +95,9 @@ class HeapDumpData:
         WARN: Need to have the JSON file loaded first.
         """
         assert self.json_data is not None
-        heap_start_addr = bytes.fromhex(self.json_data["HEAP_START"])
 
         # get the min and max address of the heap
-        min_addr = int.from_bytes(heap_start_addr, byteorder='big', signed=False) # HEAP_START
+        min_addr = hex_str_to_addr(self.json_data["HEAP_START"])
         max_addr = min_addr + len(self.blocks) * self.block_size
 
         if self.params.DEBUG:

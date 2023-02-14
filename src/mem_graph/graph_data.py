@@ -64,7 +64,7 @@ class GraphData:
         """
         Wrapper for add_node. Add a node with its color to the graph.
         """
-        if isinstance(node, KeyNode):
+        if isinstance(node, (KeyNode, SessionStateNode)) :
             self.graph.add_node(node, style="filled", color=node.color)
         else:
             self.graph.add_node(node, color=node.color)

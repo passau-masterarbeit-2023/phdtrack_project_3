@@ -3,6 +3,7 @@
 from graph_data import GraphData
 from graph_structures import *
 from heap_dump_data import HeapDumpData
+from mem_utils import *
 from params import *
 
 import networkx as nx
@@ -55,28 +56,28 @@ class GraphAnalyser:
         return addr_key_pairs
     
 
-    def __get_all_addr_to_value_nodes(self):
+    def __get_all_addr_to_nodes(self, node_type: type[Node]):
         """
-        Get all the ValueNodes in the graph.
+        Get all the Nodes (of given type) in the graph.
         """
-        value_nodes: dict[int, ValueNode] = {}
+        value_nodes: dict[int, node_type] = {}
         node: Node
         for node in self.graph:
-            if isinstance(node, ValueNode):
+            if isinstance(node, node_type):
                 value_nodes[node.addr] = node
         return value_nodes
     
 
-    def annotate_graph_with_json(self):
+    def __annotate_graph_with_key_data(self):
         """
-        Use JSON data to annotate the graph.
+        Use JSON data to annotate the graph concerning the keys.
         """
         addr_key_pairs = self.__generate_key_data_from_json()
 
         # create a dictionary of address to node
-        addr_to_value_node = self.__get_all_addr_to_value_nodes()
+        addr_to_value_node = self.__get_all_addr_to_nodes(ValueNode)
         
-        # annotate the graph
+        # annotate the graph with the key data
         for key_addr, key_data in addr_key_pairs.items():
             if key_addr in addr_to_value_node.keys():
                 value_nodes_of_key: list[ValueNode] = []
@@ -119,3 +120,51 @@ class GraphAnalyser:
             else:
                 if self.params.DEBUG:
                     print("WARNING: Key address (%s) not found in graph!" % hex(key_addr))
+
+    def __annotate_graph_with_session_state(self):
+        """
+        Annotate the graph with session state.
+        """
+        # create a dictionary of address to node
+        addr_to_value_node = self.__get_all_addr_to_nodes(Node)
+
+        # get the session state address from the JSON file
+        session_state_addr = hex_str_to_addr(self.heap_dump_data.json_data["SESSION_STATE_ADDR"])
+        print("SESSION_STATE_ADDR:", self.heap_dump_data.json_data["SESSION_STATE_ADDR"])
+
+        # get the DataStructureNode that contains the session state
+        session_state_node: ValueNode
+        try:
+            session_state_node = addr_to_value_node[session_state_addr]
+        except KeyError:
+            print("WARNING: Session state address (%s) not found in graph!" % hex(session_state_addr))
+            print("session_state_addr:", hex(session_state_addr))
+            return
+
+        # get the ancestors and successors of the session state node
+        ancestors: list[Node] = list(self.graph.predecessors(session_state_node))
+        following_nodes: list[Node] = list(self.graph.successors(session_state_node))
+
+        # remove the session state node from the graph
+        self.graph.remove_node(session_state_node)
+
+        # add the SessionStateNode to the graph
+        session_state_node = SessionStateNode(
+            addr=session_state_addr,
+            value=session_state_node.value
+        )
+        self.graph_data.add_node_wrapper(session_state_node)
+
+        # add edges from the ancestors and successors to the SessionStateNode
+        for ancestor in ancestors:
+            self.graph_data.add_edge_wrapper(ancestor, session_state_node)
+        for following_node in following_nodes:
+            self.graph_data.add_edge_wrapper(session_state_node, following_node)
+
+
+    def annotate_graph(self):
+        """
+        Annotate the graph with data from the JSON file.
+        """
+        self.__annotate_graph_with_key_data()
+        self.__annotate_graph_with_session_state()

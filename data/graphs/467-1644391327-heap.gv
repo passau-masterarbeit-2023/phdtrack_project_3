@@ -3021,6 +3021,9 @@ strict digraph "" {
 	"KN_F(0x56505a2be240)"	[color=green,
 		style=filled];
 	"DTN(0x56505a2bad38)" -> "KN_F(0x56505a2be240)"	[label=dts];
+	"SSN(0x56505a2be940)"	[color=red,
+		style=filled];
+	"DTN(0x56505a2bad38)" -> "SSN(0x56505a2be940)"	[label=dts];
 	"PN(0x56505a2bb230)" -> "PN(0x56505a2bb2b0)"	[label=ptr];
 	"PN(0x56505a2bb238)" -> "PN(0x56505a2bb2d0)"	[label=ptr];
 	"PN(0x56505a2bb240)" -> "PN(0x56505a2bb2f0)"	[label=ptr];
@@ -3058,6 +3061,7 @@ strict digraph "" {
 	"PN(0x56505a2bd3f8)" -> "PN(0x56505a2b0068)"	[label=ptr];
 	"PN(0x56505a2ba890)"	[color=orange];
 	"PN(0x56505a2bd5f0)" -> "PN(0x56505a2ba890)"	[label=ptr];
+	"PN(0x56505a2bd630)" -> "SSN(0x56505a2be940)"	[label=ptr];
 	"PN(0x56505a2bd638)" -> "PN(0x56505a2c57c0)"	[label=ptr];
 	"PN(0x56505a2bde98)" -> "PN(0x56505a2bf0e0)"	[label=ptr];
 	"PN(0x56505a2d9750)"	[color=orange];

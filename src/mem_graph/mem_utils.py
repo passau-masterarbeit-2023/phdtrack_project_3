@@ -15,6 +15,13 @@ def index_to_addr(index: int, min_addr: int, block_size: int) -> int:
     addr: int = index * block_size + min_addr
     return addr
 
+def hex_str_to_addr(hex_str: str) -> int:
+    """
+    Convert a hex string to an address.
+    """
+    byte_addr = bytes.fromhex(hex_str)
+    return int.from_bytes(byte_addr, byteorder='big', signed=False)
+
 
 def is_pointer(data: bytes | int, min_addr: int, max_addr: int, endianness: str):
         """
