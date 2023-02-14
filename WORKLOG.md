@@ -21,7 +21,7 @@ New types:
 * [ ] get key structures from JSON
 * [ ] get encoding string data and make custom representation
 * [ ] match all data with generated graph
-* [ ] make beautiful colored graph, refactor graph edge annotations
+* [X] make beautiful colored graph, refactor graph edge annotations
 
 
 

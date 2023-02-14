@@ -18,6 +18,10 @@ A repo following the advancement of PhDTrack Project.
 
 [Zenodo dataset](https://zenodo.org/record/6537904): Data are dowloaded from [Zenodo](https://zenodo.org/record/6537904) inside the folder `../phdtrack_data` .
 
+## Libs
+
+[attrs](https://www.attrs.org/en/stable/index.html): lib for good Python OOP.
+
 ## Env
 
 `conda env export --no-builds > environment.yml` : export conda env to yml file.
@@ -72,7 +76,7 @@ Here you can see a 4x16 char blocks which represents a data structure of 32 byte
 
 ##### start of file
 
-As we can see, raw heap dump files all starts with a null block (blocks are of size 8 bytes (16 chars "0" using `vim`)). Then we call always see a malloc header of size `5102` (little-endian, equivalent to 593). This is probably the master data structure being allocated. 
+As we can see, raw heap dump files all starts with a null block (blocks are of size 8 bytes (16 chars "0" using `vim`)). Then we call always see a malloc header of size `5102` (little-endian, equivalent to 593). This is probably the master data structure being allocated.
 
 ##### max memalloc size
 

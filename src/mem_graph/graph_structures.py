@@ -1,11 +1,15 @@
 
 from dataclasses import dataclass
+from attr import frozen, attrib
 from enum import Enum
 
+from abc import ABC
+
 # nodes (vertices)
-@dataclass(frozen=True)
-class Node:
+@frozen
+class Node(ABC):
     addr: int
+    color: str
 
     def __hash__(self):
         return hash(self.addr)
@@ -13,23 +17,26 @@ class Node:
     def __eq__(self, other):
         return self.addr == other.addr
 
-@dataclass(frozen=True)
+@frozen
 class DataStructureNode(Node):
     byte_size : int
+    color: str = attrib("blue")
 
     def __str__(self):
         return f"DTN({hex(self.addr)})"
 
-@dataclass(frozen=True)
+@frozen
 class ValueNode(Node):
     value: bytes
+    color: str = attrib("grey")
 
     def __str__(self):
         return f"VN({hex(self.addr)})"
 
-@dataclass(frozen=True)
+@frozen
 class PointerNode(Node):
     points_to: int
+    color: str = attrib("orange")
 
     def __str__(self):
         return f"PN({hex(self.addr)})"

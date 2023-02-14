@@ -119,6 +119,7 @@ class GraphGenerator:
 
     params: ProgramParams
     heap_dump_data: HeapDumpData # WARN: allocated in generate_graph()
+    graph: nx.DiGraph
 
     def __init__(self, params: ProgramParams):
         self.params = params
@@ -134,7 +135,7 @@ class GraphGenerator:
         Generate a graph from a raw heap dump file.
         """
 
-        graph = nx.DiGraph()
+        self.graph = nx.DiGraph()
 
         # get the heap dump data
         self.heap_dump_data = HeapDumpData(
@@ -143,11 +144,12 @@ class GraphGenerator:
             params=self.params,
         )
         
-        self.__data_structure_step(pointer_byte_size, graph)
-        self.__pointer_step(graph)
+        self.__data_structure_step(pointer_byte_size)
+        self.__pointer_step()
 
-        return graph
+        return self.graph
     
+    ########## WRAPPER FUNCTIONS ##########
 
     def __is_pointer_wrapper(self, data: bytes | int):
         """
@@ -168,9 +170,35 @@ class GraphGenerator:
         """
         addr = self.heap_dump_data.index_to_addr_wrapper(block_index)
         return self.__get_node_from_bytes_wrapper(data, addr)
-    
 
-    def __data_structure_step(self, pointer_byte_size: int, graph: nx.DiGraph):
+    def __add_node_wrapper(self, node: Node):
+        """
+        Wrapper for add_node. Add a node with its color to the graph.
+        """
+        self.graph.add_node(node, color=node.color)
+    
+    def __add_edge_wrapper(self, node_start: Node, node_end: Node):
+        """
+        Wrapper for add_edge. Add an edge to the graph.
+        """
+        # get the type of the edge
+        edge_type: Edge
+        if isinstance(node_start, PointerNode):
+            edge_type = Edge.POINTER
+        elif isinstance(node_start, DataStructureNode):
+            edge_type = Edge.DATA_STRUCTURE
+        else:
+            raise ValueError("Unknown node type: %s" % node_start)
+
+        self.graph.add_edge(
+            node_start, 
+            node_end,
+            label=edge_type
+        )
+
+    ########## LOGIC ##########
+    
+    def __data_structure_step(self, pointer_byte_size: int):
         """
         Parse all data structures step. Don't follow pointers yet.
         """
@@ -193,18 +221,19 @@ class GraphGenerator:
             block_index = pass_null_blocks(block_index)
 
             # get the data structure
-            data_structure_block_size = self.__parse_datastructure(block_index, graph)
+            data_structure_block_size = self.__parse_datastructure(block_index)
 
             # update the block index by leaping over the data structure
             block_index += data_structure_block_size + 1 
 
-    def __pointer_step(self, graph: nx.DiGraph):
+    def __pointer_step(self):
         """
         Parse all pointers step.
         """
         # create a dictionary of address to node
         addr_to_node: dict[int, Node] = {}
-        for node in graph:
+        node: Node
+        for node in self.graph:
             addr_to_node[node.addr] = node
 
         def parse_pointer(node: PointerNode):
@@ -223,27 +252,27 @@ class GraphGenerator:
                     )
 
                     # add the node to the graph
-                    graph.add_node(pointed_node)
+                    self.__add_node_wrapper(pointed_node)
 
                     # add the node to the dictionary
                     addr_to_node[node.points_to] = pointed_node
 
                     # add the edge
-                    graph.add_edge(node, pointed_node, label=Edge.POINTER)
+                    self.__add_edge_wrapper(node, pointed_node)
 
                     # next iteration
                     current_pointer_node = pointed_node
                 else:
                     # get the node from the dictionary, and add the edge
                     pointed_node = addr_to_node[node.points_to]
-                    graph.add_edge(node, pointed_node, label=Edge.POINTER) 
+                    self.__add_edge_wrapper(node, pointed_node) 
 
                     # no more iterations
                     break
 
         # get all pointer nodes
         all_pointer_nodes: list[PointerNode] = []
-        for node in graph:
+        for node in self.graph:
             if isinstance(node, PointerNode):
                 all_pointer_nodes.append(node)
 
@@ -263,7 +292,7 @@ class GraphGenerator:
 
 
 
-    def __parse_datastructure(self, startBlockIndex : int, graph : nx.DiGraph):
+    def __parse_datastructure(self, startBlockIndex : int):
         """
         Parse the data structure from a given block and populate the graph.
         WARN: We don't follow the pointers in the data structure. This is done in a second step.
@@ -307,17 +336,12 @@ class GraphGenerator:
             self.heap_dump_data.index_to_addr_wrapper(startBlockIndex), 
             datastructure_size
         )
-        graph.add_node(datastructure_node)
+        self.__add_node_wrapper(datastructure_node)
 
         for block_index in range(startBlockIndex + 1, startBlockIndex + nb_blocks_in_datastructure):
             node = self.__get_node_from_bytes_wrapper_index(self.heap_dump_data.blocks[block_index], block_index)
-            graph.add_node(node)
-            # add edge to the graph
-            graph.add_edge(
-                datastructure_node, 
-                node,
-                label=Edge.DATA_STRUCTURE
-            )
+            self.__add_node_wrapper(node)
+            self.__add_edge_wrapper(datastructure_node, node)
         
         return nb_blocks_in_datastructure
 
