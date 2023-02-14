@@ -9,7 +9,7 @@ graph -> generate representation
 We started to try to visualize our first results concerning the data structure generation. To do so, we tried different softwares (see potential DOT visualizers [here](https://stackoverflow.com/questions/3433655/free-visual-editor-for-graph-dot-files) and [here](https://linuxhint.com/kgrapheditor-linux/)), but most of them are broken. We then generated directly a visualization using the following command line:
 
 ```shell
-sfdp -Gsize=67! -Goverlap=prism -Tpng 467-1644391327-heap.gv > root.png
+sfdp -Gsize=67! -Goverlap=prism -Tpng 467-1644391327-heap.gv > 467-1644391327-heap-sfdp.png
 ```
 
 This uses directly Graphviz, more info [in the doc](https://graphviz.org/Gallery/undirected/root.html), other types of visualizations [here](https://graphviz.org/gallery/).

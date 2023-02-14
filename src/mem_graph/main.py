@@ -1,6 +1,7 @@
 import graphviz
-from graph_generator import GraphGenerator
+from graph_data import GraphData
 from params import ProgramParams
+from graph_analysis import GraphAnalyser
 
 import networkx as nx
 
@@ -9,15 +10,17 @@ def main():
 
     params = ProgramParams(debug=True)
 
-    graphgen = GraphGenerator(params)
-    graph = graphgen.generate_graph(
+    graph_data = GraphData(
+        params,
         params.TEST_HEAP_DUMP_RAW_FILE_PATH,
         params.POINTER_BYTE_SIZE
     )
+    graph_analyser = GraphAnalyser(graph_data)
+    graph_analyser.annotate_graph_with_json()
 
     # generate graphviz file
     outfile_path = params.TEST_DATA_DIR + "/" + params.TEST_GRAPH_DATA_FILENAME
-    nx.nx_agraph.write_dot(graph, outfile_path)
+    nx.nx_agraph.write_dot(graph_data.graph, outfile_path)
 
     # filter out ValueNodes
     lines: list[str] = []

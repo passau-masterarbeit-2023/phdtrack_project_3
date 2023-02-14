@@ -5,6 +5,7 @@ from enum import Enum
 
 from abc import ABC
 
+
 # nodes (vertices)
 @frozen
 class Node(ABC):
@@ -40,6 +41,31 @@ class PointerNode(Node):
 
     def __str__(self):
         return f"PN({hex(self.addr)})"
+
+
+
+# key stuff
+# read the JSON file and get all pair of addresses and keys
+@frozen
+class KeyData:
+    """
+    Wrapper class for key data.
+    """
+    name: str
+    key: bytes
+    addr: bytes
+    len: int
+    real_len: int
+
+
+@frozen
+class KeyNode(Node):
+    key: bytes # found in heap dump
+    key_data: KeyData # found in JSON file
+    color: str = attrib("green")
+
+    def __str__(self):
+        return f"KN({hex(self.addr)})"
 
 # edges (connections)
 class Edge(Enum):
