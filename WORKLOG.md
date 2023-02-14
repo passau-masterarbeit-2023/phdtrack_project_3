@@ -17,16 +17,17 @@ This uses directly Graphviz, more info [in the doc](https://graphviz.org/Gallery
 New types:
 
 * [ ] Link json data to our rebuild datastructures:
-* [ ] get JSON key addresses and lenghts
-* [ ] get key structures from JSON
+* [X] get JSON key addresses and lenghts
+* [X] get key structures from JSON
 * [ ] get encoding string data and make custom representation
 * [ ] match all data with generated graph
 * [X] make beautiful colored graph, refactor graph edge annotations
-
-
-
-
 * [ ] link C code structures to our rebuilt data structures
+
+ML thinking: Now that we have our annoted graph, we need to feed it to a ML model. We could for instance find a vector representation for each node of the graph, annotate it, then feed that to the model, and see the results.
+
+The problem is that we have an imbalaced dataset with very few positive values. We need to filter out useless structs to limit the number of nodes.
+
 
 ### Mon 13th Feb 2023
 

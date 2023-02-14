@@ -65,7 +65,7 @@ class KeyNode(Node):
     color: str = attrib("green")
 
     def __str__(self):
-        return f"KN({hex(self.addr)})"
+        return f"KN_{self.key_data.name[-1]}({hex(self.addr)})"
 
 # edges (connections)
 class Edge(Enum):

@@ -28,9 +28,9 @@ class GraphAnalyser:
         self.params = self.graph_data.params
     
 
-    def annotate_graph_with_json(self):
+    def __generate_key_data_from_json(self):
         """
-        Use JSON data to annotate the graph.
+        Generate a dictionary of key data from the JSON file.
         """
         json_data = self.heap_dump_data.json_data # alias
         addr_key_pairs: dict[int, KeyData] = {} # key addr (int in base 16 - hex) -> key data (KeyData)
@@ -51,29 +51,50 @@ class GraphAnalyser:
         # print nb of keys
         if self.params.DEBUG:
             print("Nb of keys in JSON: %d" % len(addr_key_pairs))
+        
+        return addr_key_pairs
+    
 
-        # create a dictionary of address to node
-        addr_to_node_value: dict[int, ValueNode] = {}
+    def __get_all_addr_to_value_nodes(self):
+        """
+        Get all the ValueNodes in the graph.
+        """
+        value_nodes: dict[int, ValueNode] = {}
         node: Node
         for node in self.graph:
             if isinstance(node, ValueNode):
-                addr_to_node_value[node.addr] = node
+                value_nodes[node.addr] = node
+        return value_nodes
+    
+
+    def annotate_graph_with_json(self):
+        """
+        Use JSON data to annotate the graph.
+        """
+        addr_key_pairs = self.__generate_key_data_from_json()
+
+        # create a dictionary of address to node
+        addr_to_value_node = self.__get_all_addr_to_value_nodes()
         
         # annotate the graph
         for key_addr, key_data in addr_key_pairs.items():
-            if key_addr in addr_to_node_value.keys():
+            if key_addr in addr_to_value_node.keys():
                 value_nodes_of_key: list[ValueNode] = []
 
                 # get all the ValueNodes that are part of the key
                 for i in range(key_data.len // self.heap_dump_data.block_size):
                     addr = key_addr + i * self.heap_dump_data.block_size
                     value_nodes_of_key.append(
-                        addr_to_node_value[addr]
+                        addr_to_value_node[addr]
                     )
                 
                 # concat the data of the ValueNodes
                 key: bytes = b"".join([value_node.value for value_node in value_nodes_of_key])
 
+                # watchdog: check if the key matches the key in the JSON
+                if key != key_data.key:
+                    print("WARNING: Key[%s] (%s) does not match key in JSON (%s)!" % (key_data.name, key.hex(), key_data.key.hex()))
+                
                 # create the KeyNode
                 key_node = KeyNode(
                     addr=key_addr,
