@@ -229,14 +229,14 @@ class GraphGenerator:
                     addr_to_node[node.points_to] = pointed_node
 
                     # add the edge
-                    graph.add_edge(node, pointed_node)
+                    graph.add_edge(node, pointed_node, object=Edge.POINTER)
 
                     # next iteration
                     current_pointer_node = pointed_node
                 else:
                     # get the node from the dictionary, and add the edge
                     pointed_node = addr_to_node[node.points_to]
-                    graph.add_edge(node, pointed_node)
+                    graph.add_edge(node, pointed_node, object=Edge.POINTER) 
 
                     # no more iterations
                     break

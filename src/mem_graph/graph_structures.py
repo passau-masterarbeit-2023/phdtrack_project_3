@@ -39,4 +39,10 @@ class Edge(Enum):
     DATA_STRUCTURE = 0
     POINTER = 1
 
+    def __str__(self):
+        if self == Edge.DATA_STRUCTURE:
+            return "dts"
+        elif self == Edge.POINTER:
+            return "ptr"
+
 

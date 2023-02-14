@@ -4,7 +4,18 @@ look at malloc headers (in little endian format) to determine the lenght (number
 
 graph -> generate representation
 
-### Mon 13th Fev 2023
+### Tue 14th Feb 2023
+
+We started to try to visualize our first results concerning the data structure generation. To do so, we tried different softwares (see potential DOT visualizers [here](https://stackoverflow.com/questions/3433655/free-visual-editor-for-graph-dot-files) and [here](https://linuxhint.com/kgrapheditor-linux/)), but most of them are broken. We then generated directly a visualization using the following command line:
+
+```shell
+sfdp -Gsize=67! -Goverlap=prism -Tpng 467-1644391327-heap.gv > root.png
+```
+
+This uses directly Graphviz, more info [in the doc](https://graphviz.org/Gallery/undirected/root.html), other types of visualizations [here](https://graphviz.org/gallery/).
+
+
+### Mon 13th Feb 2023
 
 We restarted to work on the project. We are currently implementing the data structure detection and recreation loop.
 

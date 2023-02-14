@@ -12,7 +12,7 @@ class ProgramParams:
     POINTER_BYTE_SIZE = 8 # 64-bit, ex: C0 03 7B 09 2A 56 00 00
 
     TEST_JSON_TEST_FILE_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/302-1644391327.json"
-    TEST_HEAP_DUMP_RAW_FILE_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/302-1644391327-heap.raw"
+    TEST_HEAP_DUMP_RAW_FILE_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data/Training/Training/scp/V_7_8_P1/16/362-1644391327-heap.raw"
     TEST_DATA_DIR = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/graphs"
     #TEST_GRAPH_DATA_FILENAME = "graph_302-1644391327.gv"
     TEST_GRAPH_DATA_FILENAME = "467-1644391327-heap.gv"

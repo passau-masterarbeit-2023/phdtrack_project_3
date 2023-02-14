@@ -23,20 +23,20 @@ def main():
     lines: list[str] = []
     with open(outfile_path, 'r') as f:
         lines = f.readlines()
-        lines = [line for line in lines if "ValueNode" not in line]
+        lines = [line for line in lines if "VN" not in line]
 
     # get only the first 100 lines, with first and last lines
-    lines = lines[:101] + lines[-1:]
+    #lines = lines[:101] + lines[-1:]
 
     with open(outfile_path, 'w') as f:
         f.writelines(lines)
 
     # generate graph image
-    with open(outfile_path, 'r') as f:
-        dot_graph_data = f.read()
-        graph_png_file_path = outfile_path.replace('.gv', '.png')
-        s = graphviz.Source(dot_graph_data)
-        s.render(outfile=graph_png_file_path, format='png', view=True)
+    # with open(outfile_path, 'r') as f:
+    #     dot_graph_data = f.read()
+    #     graph_png_file_path = outfile_path.replace('.gv', '.png')
+    #     s = graphviz.Source(dot_graph_data)
+    #     s.render(outfile=graph_png_file_path, format='png', view=True)
 
 
 
