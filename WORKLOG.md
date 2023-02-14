@@ -14,6 +14,19 @@ sfdp -Gsize=67! -Goverlap=prism -Tpng 467-1644391327-heap.gv > root.png
 
 This uses directly Graphviz, more info [in the doc](https://graphviz.org/Gallery/undirected/root.html), other types of visualizations [here](https://graphviz.org/gallery/).
 
+New types:
+
+* [ ] Link json data to our rebuild datastructures:
+* [ ] get JSON key addresses and lenghts
+* [ ] get key structures from JSON
+* [ ] get encoding string data and make custom representation
+* [ ] match all data with generated graph
+* [ ] make beautiful colored graph, refactor graph edge annotations
+
+
+
+
+* [ ] link C code structures to our rebuilt data structures
 
 ### Mon 13th Feb 2023
 
