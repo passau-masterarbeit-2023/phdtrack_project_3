@@ -88,7 +88,7 @@ class KeyData:
 
 
 @frozen
-class KeyNode(Node, Filled):
+class KeyNode(ValueNode, Filled):
     """
     Composed of data from several ValueNodes.
     It contains the key data from both the heap dump and the JSON file.

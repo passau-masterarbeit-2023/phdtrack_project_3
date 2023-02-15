@@ -89,26 +89,17 @@ class GraphAnalyser:
                 
                 # create the KeyNode
                 key_node = KeyNode(
+                    value=value_nodes_of_key[0].value,
                     addr=key_addr,
                     key=key,
                     key_data=key_data
                 )
 
-                # before removing the ValueNodes, get the ancestors of the ValueNodes
-                # NOTE: We use only first one of value_nodes_of_key, since we just want the first block of the key
-                # because the other blocks are just continuations of the first block
-                ancestors: list[Node] = list(self.graph.predecessors(value_nodes_of_key[0])) 
-
-                # remove the ValueNodes from the graph
-                for value_node in value_nodes_of_key:
-                    self.graph.remove_node(value_node)
-                
-                # add the KeyNode to the graph
-                self.graph_data.add_node_wrapper(key_node)
-
-                # add edges from the ancestors to the KeyNode
-                for ancestor in ancestors:
-                    self.graph_data.add_edge_wrapper(ancestor, key_node)
+                # replace the first ValueNode in the graph, keep the rest
+                self.graph_data.replace_node_by_new_one(
+                    value_nodes_of_key[0], 
+                    key_node
+                )
 
             else:
                 if self.params.DEBUG:
@@ -178,7 +169,7 @@ class GraphAnalyser:
 
         # get the connected subgraph
         node_connected_component = nx.node_connected_component(undirected_graph, node)
-        
+
         # remove all nodes that are not in the connected subgraph
         all_nodes: list[Node] = [node for node in self.graph] # keep a fixed set of nodes
         for node in all_nodes:
