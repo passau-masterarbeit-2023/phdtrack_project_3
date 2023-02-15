@@ -20,6 +20,9 @@ class GraphAnalyser:
     heap_dump_data: HeapDumpData
     params: ProgramParams
 
+    # important nodes
+    ssh_struct_node: Node
+
     def __init__(self, graph_data: GraphData):
         self.graph_data = graph_data
 
@@ -140,7 +143,7 @@ class GraphAnalyser:
             annotated_pointer
         )
     
-
+        return annotated_pointer
 
 
     def annotate_graph(self):
@@ -148,11 +151,36 @@ class GraphAnalyser:
         Annotate the graph with data from the JSON file.
         """
         self.__annotate_graph_with_key_data()
-        self.__annotate_graph_with_json_ptr(
+        self.ssh_struct_node = self.__annotate_graph_with_json_ptr(
             self.heap_dump_data.json_data["SSH_STRUCT_ADDR"],
             SSHStructNode
         )
+
         self.__annotate_graph_with_json_ptr(
             self.heap_dump_data.json_data["SESSION_STATE_ADDR"],
             SessionStateNode
         )
+
+    def clean_graph(self):
+        """
+        Clean the graph.
+        """
+        if self.ssh_struct_node is not None:
+            self.__clean_graph_of_useless_subgraphs(self.ssh_struct_node)
+    
+
+    def __clean_graph_of_useless_subgraphs(self, node: Node):
+        """
+        Clean the graph. Keep only the connected subgraph which contains the specified node.
+        """
+        # create undirected copy of the graph
+        undirected_graph = self.graph.to_undirected()
+
+        # get the connected subgraph
+        node_connected_component = nx.node_connected_component(undirected_graph, node)
+        
+        # remove all nodes that are not in the connected subgraph
+        all_nodes: list[Node] = [node for node in self.graph] # keep a fixed set of nodes
+        for node in all_nodes:
+            if node not in node_connected_component:
+                self.graph.remove_node(node)

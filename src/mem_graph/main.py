@@ -18,6 +18,7 @@ def main():
     )
     graph_analyser = GraphAnalyser(graph_data)
     graph_analyser.annotate_graph()
+    graph_analyser.clean_graph()
 
     # generate graphviz file
     outfile_path = params.TEST_DATA_DIR + "/" + params.TEST_GRAPH_DATA_FILENAME

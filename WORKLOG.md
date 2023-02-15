@@ -12,9 +12,9 @@ The data structures addresses given in the JSON file are neither the malloc head
 
 * [X] Refactor the PointerNode and ValueNode classes.
 * [X] Correct graph representation
-* [ ] Correct JSON data annotation
-
-
+* [X] Correct JSON data annotation
+* [ ] Start working on ML detection of keys
+* [ ] find how to vectorize graph or node
 
 
 
