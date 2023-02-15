@@ -104,7 +104,9 @@ class GraphAnalyser:
                 )
 
                 # before removing the ValueNodes, get the ancestors of the ValueNodes
-                ancestors: list[Node] = list(self.graph.predecessors(value_nodes_of_key[0]))
+                # NOTE: We use only first one of value_nodes_of_key, since we just want the first block of the key
+                # because the other blocks are just continuations of the first block
+                ancestors: list[Node] = list(self.graph.predecessors(value_nodes_of_key[0])) 
 
                 # remove the ValueNodes from the graph
                 for value_node in value_nodes_of_key:
@@ -133,33 +135,23 @@ class GraphAnalyser:
         print("SESSION_STATE_ADDR:", self.heap_dump_data.json_data["SESSION_STATE_ADDR"])
 
         # get the DataStructureNode that contains the session state
-        session_state_node: ValueNode
+        value_node_for_session_state: ValueNode
         try:
-            session_state_node = addr_to_value_node[session_state_addr]
+            value_node_for_session_state = addr_to_value_node[session_state_addr]
         except KeyError:
             print("WARNING: Session state address (%s) not found in graph!" % hex(session_state_addr))
             print("session_state_addr:", hex(session_state_addr))
             return
 
-        # get the ancestors and successors of the session state node
-        ancestors: list[Node] = list(self.graph.predecessors(session_state_node))
-        following_nodes: list[Node] = list(self.graph.successors(session_state_node))
-
-        # remove the session state node from the graph
-        self.graph.remove_node(session_state_node)
-
-        # add the SessionStateNode to the graph
+        # replace the SessionStateNode in the graph
         session_state_node = SessionStateNode(
             addr=session_state_addr,
-            value=session_state_node.value
+            value=value_node_for_session_state.value
         )
-        self.graph_data.add_node_wrapper(session_state_node)
-
-        # add edges from the ancestors and successors to the SessionStateNode
-        for ancestor in ancestors:
-            self.graph_data.add_edge_wrapper(ancestor, session_state_node)
-        for following_node in following_nodes:
-            self.graph_data.add_edge_wrapper(session_state_node, following_node)
+        self.graph_data.replace_node_by_new_one(
+            value_node_for_session_state, 
+            session_state_node
+        )
 
 
     def annotate_graph(self):

@@ -4,6 +4,13 @@ look at malloc headers (in little endian format) to determine the lenght (number
 
 graph -> generate representation
 
+### Wed 15th Feb 2023
+
+We discovered a problem with pointers pointing to data structures, since they do not really points to the data structure malloc header (DataStructureNode), but instead, to the first block after it. This means our current representation is wrong and do not make possible to really understand links between data structures.
+
+* [ ] Correct graph representation
+
+
 ### Tue 14th Feb 2023
 
 We started to try to visualize our first results concerning the data structure generation. To do so, we tried different softwares (see potential DOT visualizers [here](https://stackoverflow.com/questions/3433655/free-visual-editor-for-graph-dot-files) and [here](https://linuxhint.com/kgrapheditor-linux/)), but most of them are broken. We then generated directly a visualization using the following command line:
@@ -27,7 +34,6 @@ New types:
 ML thinking: Now that we have our annoted graph, we need to feed it to a ML model. We could for instance find a vector representation for each node of the graph, annotate it, then feed that to the model, and see the results.
 
 The problem is that we have an imbalaced dataset with very few positive values. We need to filter out useless structs to limit the number of nodes.
-
 
 ### Mon 13th Feb 2023
 

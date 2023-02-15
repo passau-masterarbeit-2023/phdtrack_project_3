@@ -87,7 +87,28 @@ class GraphData:
             node_end,
             label=edge_type
         )
+    
+    def replace_node_by_new_one(self, old_node: Node, new_node: Node):
+        """
+        Replace a node in the graph.
+        """
+        # get the ancestors and successors of the session state node
+        ancestors: list[Node] = list(self.graph.predecessors(old_node))
+        following_nodes: list[Node] = list(self.graph.successors(old_node))
 
+        # remove the node from the graph
+        self.graph.remove_node(old_node)
+
+        # add the new node to the graph
+        self.add_node_wrapper(new_node)
+
+        # add edges from the ancestors and successors to the SessionStateNode
+        for ancestor in ancestors:
+            self.add_edge_wrapper(ancestor, new_node)
+        for following_node in following_nodes:
+            self.add_edge_wrapper(new_node, following_node)
+
+    
     ########## LOGIC ##########
     
     def __data_structure_step(self, pointer_byte_size: int):

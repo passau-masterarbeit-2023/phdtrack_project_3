@@ -90,3 +90,13 @@ Long story short, there is probably no max size. More info [here](https://stacko
 ```
 
 Meaning there is no limit to memalloc.
+
+### Our graph representation
+
+We have choosen to represent data structures using a root node called DataStructureNode. This node is just for representation, and its address it the address of the memalloc, which is not reachable by the C pointers.
+
+So, a pointer that points to a data structure actually points to the block immediatly after the DataStructureNode. This can be any type of node exclusing DataStructureNode since a data structure is composed of at least one non memalloc header block.
+
+This means that our corrected representation represent pointers that points to the first node after the DataStructureNode as actually pointing to the DataStructureNode instead. We do not loose information this way, as any pointer that would point to a DataStructureNode would be known to actually points to the node immediatly after.
+
+> WARN: The addresses of data structures in the JSON, for instance SSH_STRUCT_ADDR, actually points to the real first block of the data structure, and not to the address of the malloc header of it, meaning we alway have to substract a block to any address of a data structure to find the root  DataStructureNode.
