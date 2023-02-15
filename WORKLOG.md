@@ -16,6 +16,25 @@ The data structures addresses given in the JSON file are neither the malloc head
 * [ ] Start working on ML detection of keys
 * [ ] find how to vectorize graph or node
 
+##### About Node Embedding and Feature Engineering
+
+[Introduction to Node Embedding](https://memgraph.com/blog/introduction-to-node-embedding) ⭐️
+
+[Graph Embeddings: How nodes get mapped to vectors](https://towardsdatascience.com/graph-embeddings-how-nodes-get-mapped-to-vectors-2e12549457ed)
+
+[Graph Embeddings — The Summary](https://towardsdatascience.com/graph-embeddings-the-summary-cc6075aba007)
+
+[neo4j graph embeddings](https://neo4j.com/docs/graph-data-science/current/machine-learning/node-embeddings/)
+
+[scikit-network](https://scikit-network.readthedocs.io/en/latest/index.html)
+
+Because we are working on a custom graph, representing a precise data structure, we think that rely on **Random Walk based** or **Deep Learning based** will not preserve enough the specificities of the graph we have. So the best idea now is to do some Feature Engineering to generate our own node vector representation that we can easily label. Because what we want to predict is just the address of the key, and because the keys are of different possible lenght, we will only keep the address of the first block.
+
+* [ ] Refactor KeyNode, so that when we keep it for visualization step, but we need not to remove the other ValueNodes, the non-first key data ValueNodes. We want our ML model to find only the KeyNode, i.e. the address of the first block of the keys.
+
+Features idea, for ValueNodes only
+
+* number of input ancestor node, by type, of a given depth. The depth is an hyper-param. Considering the relative small size of the structure, a small int, like 5 or 10 should be enough. This representation take in consideration the very directive structure of the graph.
 
 
 ### Tue 14th Feb 2023
