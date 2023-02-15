@@ -1,5 +1,3 @@
-
-from dataclasses import dataclass
 from attr import frozen, attrib
 from enum import Enum
 
@@ -19,9 +17,18 @@ class Node(ABC):
         return self.addr == other.addr
 
 @frozen
+class Filled(ABC):
+    """
+    Filled node.
+    """
+    pass
+
+
+@frozen
 class DataStructureNode(Node):
     byte_size : int
     color: str = attrib("blue")
+    style: str = attrib("")
 
     def __str__(self):
         return f"DTN({hex(self.addr)})"
@@ -29,6 +36,10 @@ class DataStructureNode(Node):
 
 @frozen
 class ValueNode(Node):
+    """
+    A value node is a node that contains a value
+    which is not currently identified.
+    """
     value: bytes
     color: str = attrib("grey")
 
@@ -36,20 +47,30 @@ class ValueNode(Node):
         return f"VN({hex(self.addr)})"
 
 @frozen
-class SessionStateNode(ValueNode):
-    color: str = attrib("red")
-
-    def __str__(self):
-        return f"SSN({hex(self.addr)})"
-
-@frozen
 class PointerNode(Node):
+    """
+    A pointer node is an identified ValueNode. 
+    It do not need the value since it gives meaning to it.
+    """
     points_to: int
     color: str = attrib("orange")
 
     def __str__(self):
         return f"PN({hex(self.addr)})"
 
+@frozen
+class SessionStateNode(PointerNode, Filled):
+    color: str = attrib("red")
+
+    def __str__(self):
+        return f"SSN({hex(self.addr)})"
+
+@frozen
+class SSHStructNode(PointerNode, Filled):
+    color: str = attrib("purple")
+
+    def __str__(self):
+        return f"SSHN({hex(self.addr)})"
 
 
 # key stuff
@@ -67,7 +88,11 @@ class KeyData:
 
 
 @frozen
-class KeyNode(Node):
+class KeyNode(Node, Filled):
+    """
+    Composed of data from several ValueNodes.
+    It contains the key data from both the heap dump and the JSON file.
+    """
     key: bytes # found in heap dump
     key_data: KeyData # found in JSON file
     color: str = attrib("green")

@@ -14,7 +14,7 @@ def main():
     graph_data = GraphData(
         params,
         params.TEST_HEAP_DUMP_RAW_FILE_PATH,
-        params.POINTER_BYTE_SIZE
+        params.BLOCK_BYTE_SIZE
     )
     graph_analyser = GraphAnalyser(graph_data)
     graph_analyser.annotate_graph()

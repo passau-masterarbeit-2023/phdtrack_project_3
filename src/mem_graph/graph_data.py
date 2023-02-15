@@ -44,13 +44,13 @@ class GraphData:
         """
         Wrapper for is_pointer.
         """
-        return is_pointer(data, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.ENDIANNESS)
+        return is_pointer(data, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
     
     def __get_node_from_bytes_wrapper(self, data: bytes, addr: int):
         """
         Wrapper for get_node_from_bytes.
         """
-        return get_node_from_bytes(data, addr, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.ENDIANNESS)
+        return get_node_from_bytes(data, addr, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
 
 
     def __get_node_from_bytes_wrapper_index(self, data: bytes, block_index: int):
@@ -64,7 +64,7 @@ class GraphData:
         """
         Wrapper for add_node. Add a node with its color to the graph.
         """
-        if isinstance(node, (KeyNode, SessionStateNode)) :
+        if isinstance(node, Filled):
             self.graph.add_node(node, style="filled", color=node.color)
         else:
             self.graph.add_node(node, color=node.color)
@@ -81,13 +81,48 @@ class GraphData:
             edge_type = Edge.DATA_STRUCTURE
         else:
             raise ValueError("Unknown node type: %s" % node_start)
+        
+        # case where a pointer points to a data structure
+        # NOTE: a pointer never points to a DataStructureNode,
+        # it always points to a ValueNode, and if this one is 
+        # the first one after the data structure malloc header (DataStructureNode), 
+        # then it means that the pointer points to the data structure.
+        if isinstance(node_start, PointerNode):
+            parent_data_structure = self.get_data_structure_from_first_children(node_end)
+
+            if parent_data_structure is not None:
+                node_end = parent_data_structure
+
 
         self.graph.add_edge(
             node_start, 
             node_end,
             label=edge_type
         )
+
+    ########## UTILS ##########
+
+    def get_all_addr_to_nodes(self, node_type: type[Node]):
+        """
+        Get all the Nodes (of given type) in the graph.
+        """
+        value_nodes: dict[int, node_type] = {}
+        node: Node
+        for node in self.graph:
+            if isinstance(node, node_type):
+                value_nodes[node.addr] = node
+        return value_nodes
     
+    def get_node(self, addr: int):
+        """
+        Get a node from its address.
+        """
+        node: Node
+        for node in self.graph:
+            if node.addr == addr:
+                return node
+        return None
+
     def replace_node_by_new_one(self, old_node: Node, new_node: Node):
         """
         Replace a node in the graph.
@@ -108,7 +143,26 @@ class GraphData:
         for following_node in following_nodes:
             self.add_edge_wrapper(new_node, following_node)
 
-    
+    def get_data_structure_from_first_children(self, node: Node):
+        """
+        Get the data structure from the first children of a node.
+        This means the function only returns a data structure if the node 
+        is the first one after the data structure malloc header.
+        """
+        # get the ancestors of the node
+        ancestors: list[Node] = list(self.graph.predecessors(node))
+
+        preceding_data_structure: DataStructureNode | None = None
+        for ancestor in ancestors:
+            if (
+                isinstance(ancestor, DataStructureNode) and
+                # check if the node is the first one after the data structure malloc header
+                ancestor.addr == node.addr - self.params.BLOCK_BYTE_SIZE
+            ):
+                preceding_data_structure = ancestor
+                break
+        return preceding_data_structure
+
     ########## LOGIC ##########
     
     def __data_structure_step(self, pointer_byte_size: int):

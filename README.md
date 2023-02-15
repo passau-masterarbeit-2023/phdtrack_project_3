@@ -99,4 +99,10 @@ So, a pointer that points to a data structure actually points to the block immed
 
 This means that our corrected representation represent pointers that points to the first node after the DataStructureNode as actually pointing to the DataStructureNode instead. We do not loose information this way, as any pointer that would point to a DataStructureNode would be known to actually points to the node immediatly after.
 
-> WARN: The addresses of data structures in the JSON, for instance SSH_STRUCT_ADDR, actually points to the real first block of the data structure, and not to the address of the malloc header of it, meaning we alway have to substract a block to any address of a data structure to find the root  DataStructureNode.
+> WARN: The addresses of data structures in the JSON, for instance SSH_STRUCT_ADDR, actually refer to the address of a pointer that points to the data structure (not necessarily directly).
+
+
+## Questions
+
+* [ ] What is `SSH_STRUCT_ADDR` and `SESSION_STATE_ADDR`
+* [ ] Why we don't find `SESSION_STATE_ADDR`?

@@ -79,7 +79,7 @@ class HeapDumpData:
             # print some lines
             if self.params.DEBUG: 
                 for i in range(100, 105):
-                    print(heap_dump_lines[i].hex(), "int value:", int.from_bytes(heap_dump_lines[i], byteorder=self.params.ENDIANNESS, signed=False))
+                    print(heap_dump_lines[i].hex(), "int value:", int.from_bytes(heap_dump_lines[i], byteorder=self.params.PTR_ENDIANNESS, signed=False))
             
                 print("Number of dump lines: %d" % len(heap_dump_lines), "of size:", block_size, "bytes")
 

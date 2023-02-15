@@ -22,6 +22,13 @@ def hex_str_to_addr(hex_str: str) -> int:
     byte_addr = bytes.fromhex(hex_str)
     return int.from_bytes(byte_addr, byteorder='big', signed=False)
 
+def addr_to_bytes(addr: int) -> bytes:
+    """
+    Convert an address to bytes.
+    NOTE: any address is a Python int, so it is big endian.
+    """
+    return addr.to_bytes(8, byteorder='big', signed=False)
+
 
 def is_pointer(data: bytes | int, min_addr: int, max_addr: int, endianness: str):
         """

@@ -8,7 +8,14 @@ graph -> generate representation
 
 We discovered a problem with pointers pointing to data structures, since they do not really points to the data structure malloc header (DataStructureNode), but instead, to the first block after it. This means our current representation is wrong and do not make possible to really understand links between data structures.
 
-* [ ] Correct graph representation
+The data structures addresses given in the JSON file are neither the malloc header address of the data stucture nor the first block after a malloc header. It is in fact the address of a pointer pointing to the data structure!
+
+* [X] Refactor the PointerNode and ValueNode classes.
+* [X] Correct graph representation
+* [ ] Correct JSON data annotation
+
+
+
 
 
 ### Tue 14th Feb 2023

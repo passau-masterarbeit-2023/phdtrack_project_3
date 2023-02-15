@@ -56,18 +56,6 @@ class GraphAnalyser:
         return addr_key_pairs
     
 
-    def __get_all_addr_to_nodes(self, node_type: type[Node]):
-        """
-        Get all the Nodes (of given type) in the graph.
-        """
-        value_nodes: dict[int, node_type] = {}
-        node: Node
-        for node in self.graph:
-            if isinstance(node, node_type):
-                value_nodes[node.addr] = node
-        return value_nodes
-    
-
     def __annotate_graph_with_key_data(self):
         """
         Use JSON data to annotate the graph concerning the keys.
@@ -75,7 +63,7 @@ class GraphAnalyser:
         addr_key_pairs = self.__generate_key_data_from_json()
 
         # create a dictionary of address to node
-        addr_to_value_node = self.__get_all_addr_to_nodes(ValueNode)
+        addr_to_value_node = self.graph_data.get_all_addr_to_nodes(ValueNode)
         
         # annotate the graph with the key data
         for key_addr, key_data in addr_key_pairs.items():
@@ -123,35 +111,36 @@ class GraphAnalyser:
                 if self.params.DEBUG:
                     print("WARNING: Key address (%s) not found in graph!" % hex(key_addr))
 
-    def __annotate_graph_with_session_state(self):
+    def __annotate_graph_with_json_ptr(
+            self, 
+            ptr_addr_hex: str, 
+            annotation_type: type[PointerNode]
+    ):
         """
         Annotate the graph with session state.
         """
-        # create a dictionary of address to node
-        addr_to_value_node = self.__get_all_addr_to_nodes(Node)
-
         # get the session state address from the JSON file
-        session_state_addr = hex_str_to_addr(self.heap_dump_data.json_data["SESSION_STATE_ADDR"])
-        print("SESSION_STATE_ADDR:", self.heap_dump_data.json_data["SESSION_STATE_ADDR"])
+        pointer_addr = hex_str_to_addr(ptr_addr_hex)
+        if self.params.DEBUG:
+            print(f"{annotation_type}:", ptr_addr_hex)
 
-        # get the DataStructureNode that contains the session state
-        value_node_for_session_state: ValueNode
-        try:
-            value_node_for_session_state = addr_to_value_node[session_state_addr]
-        except KeyError:
-            print("WARNING: Session state address (%s) not found in graph!" % hex(session_state_addr))
-            print("session_state_addr:", hex(session_state_addr))
+        # get the PointerNode
+        pointer = self.graph_data.get_node(pointer_addr)
+        if pointer is None or not isinstance(pointer, PointerNode):
+            print(f"WARNING: {annotation_type} pointer not found in graph!")
             return
 
         # replace the SessionStateNode in the graph
-        session_state_node = SessionStateNode(
-            addr=session_state_addr,
-            value=value_node_for_session_state.value
+        annotated_pointer = annotation_type(
+            addr=pointer.addr,
+            points_to=pointer.points_to
         )
         self.graph_data.replace_node_by_new_one(
-            value_node_for_session_state, 
-            session_state_node
+            pointer, 
+            annotated_pointer
         )
+    
+
 
 
     def annotate_graph(self):
@@ -159,4 +148,11 @@ class GraphAnalyser:
         Annotate the graph with data from the JSON file.
         """
         self.__annotate_graph_with_key_data()
-        self.__annotate_graph_with_session_state()
+        self.__annotate_graph_with_json_ptr(
+            self.heap_dump_data.json_data["SSH_STRUCT_ADDR"],
+            SSHStructNode
+        )
+        self.__annotate_graph_with_json_ptr(
+            self.heap_dump_data.json_data["SESSION_STATE_ADDR"],
+            SessionStateNode
+        )
