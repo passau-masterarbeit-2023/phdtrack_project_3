@@ -31,7 +31,7 @@ The data structures addresses given in the JSON file are neither the malloc head
 Because we are working on a custom graph, representing a precise data structure, we think that rely on **Random Walk based** or **Deep Learning based** will not preserve enough the specificities of the graph we have. So the best idea now is to do some Feature Engineering to generate our own node vector representation that we can easily label. Because what we want to predict is just the address of the key, and because the keys are of different possible lenght, we will only keep the address of the first block.
 
 * [X] Refactor KeyNode, so that when we keep it for visualization step, but we need not to remove the other ValueNodes, the non-first key data ValueNodes. We want our ML model to find only the KeyNode, i.e. the address of the first block of the keys.
-* [ ] create pipeline for embedding
+* [X] create pipeline for embedding
 * [ ] create training ML pipeline
 * [ ] create ML evaluation pipeline
 

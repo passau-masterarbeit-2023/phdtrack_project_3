@@ -20,6 +20,10 @@ class ProgramParams:
     DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data/Training/Training/scp/V_7_8_P1/16"
     PTR_ENDIANNESS = "little"
 
+    # ML
+    BASE_EMBEDDING_DEPTH = 5
+    MODELS_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/models"
+
     def __init__(self, debug=False, **kwargs):
         self.DEBUG = debug
 
@@ -27,7 +31,8 @@ class ProgramParams:
             self.check_path_exists(self.TEST_JSON_TEST_FILE_PATH) and
             self.check_path_exists(self.TEST_HEAP_DUMP_RAW_FILE_PATH) and
             self.check_path_exists(self.TEST_DATA_DIR) and
-            self.check_path_exists(self.DATA_DIR_PATH)
+            self.check_path_exists(self.DATA_DIR_PATH) and
+            self.check_path_exists(self.MODELS_DIR_PATH)
         ):
             print("Program paths are OK.")
         else:
