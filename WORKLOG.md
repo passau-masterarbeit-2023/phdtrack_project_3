@@ -2,12 +2,13 @@
 
 ### Thu 16th Feb 2023
 
-We debugged the ML training process and added multi-threading to both the loading/generation of samples and lables, and the classifier fitti
+We debugged the ML training process and added multi-threading to both the loading/generation of samples and lables, and the classifier fitting. We also did a lot of refactoring around the data loading pipeline.
 
 * [X] debug ML training
 * [X] Start working on ML detection of keys
 * [X] find how to vectorize graph or node
 * [ ] pipeline for the model evaluation
+* [ ] Investigate why the samples and labels generation is so slow.
 
 ### Wed 15th Feb 2023
 
