@@ -70,16 +70,16 @@ def load_files_and_generate_samples_and_labels(
         return samples, labels
 
 
-def save_model(params: ProgramParams, clf: Any, model_file_name: str):
+def save_model(params: ProgramParams, clf: Any, model_name: str):
         """Save the model to a file."""
-        model_file_path = os.path.join(params.MODELS_DIR_PATH, model_file_name)
+        model_file_path = os.path.join(params.MODELS_DIR_PATH, model_name + ".pkl")
         with open(model_file_path, 'wb') as file:
             pickle.dump(clf, file)
     
 
-def load_model(params: ProgramParams, model_file_name: str):
+def load_model(params: ProgramParams, model_name: str):
     """Load the model from a file."""
-    model_file_path = os.path.join(params.MODELS_DIR_PATH, model_file_name)
+    model_file_path = os.path.join(params.MODELS_DIR_PATH, model_name + ".pkl")
     with open(model_file_path, 'rb') as file:
         clf = pickle.load(file)
     return clf

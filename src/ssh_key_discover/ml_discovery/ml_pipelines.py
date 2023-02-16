@@ -1,4 +1,5 @@
-from .ml_data_manips import get_samples_and_labels
+from .ml_data_manips import get_samples_and_labels, load_model
+from .ml_evaluate import evaluate
 from ..params import ProgramParams
 from .ml_train import train_rfc
 
@@ -50,3 +51,30 @@ class Pipelines():
         )
 
         return train_rfc(self.params, model_name, samples, labels)
+    
+    def testing_pipeline(self, model_name: str, testing_dir_path: str):
+        """
+        Testing pipeline.
+        """
+        # get all nested .raw files
+        heap_dump_raw_files = self.__get_all_nested_files(testing_dir_path, "raw")
+
+        # generate save file name
+        # get last 4 filepath components
+        filepath_components = testing_dir_path.split(os.sep)
+        filepath_components = filepath_components[-4:]
+        samples_and_labels_save_file_name = "samples_and_labels_testing__{}.pkl".format(
+            "_".join(filepath_components)
+        )
+
+        # train on each heap dump
+        samples, labels = get_samples_and_labels(
+            self.params,
+            samples_and_labels_save_file_name,
+            heap_dump_raw_files
+        )
+
+        # load model
+        clf = load_model(self.params, model_name)
+
+        return evaluate(clf, samples, labels)

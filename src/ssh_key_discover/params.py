@@ -21,6 +21,7 @@ class ProgramParams:
     # ML 
     BASE_EMBEDDING_DEPTH = 5
     TRAINING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data/Training/Training/scp/V_7_8_P1/16"
+    TESTING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data/Validation/Validation/scp/V_7_8_P1/16"
     MODELS_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/models"
     SAMPLES_AND_LABELS_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/samples_and_labels"
     MAX_WORKERS = 16

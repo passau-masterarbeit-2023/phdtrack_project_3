@@ -16,8 +16,6 @@ def train_rfc(
     """
     Train a random forest classifier.
     """
-    model_file_name = model_name + ".pkl"
-
     # initialize the classifier[:10]
     clf = RandomForestClassifier(random_state=0, n_jobs=-1)
 
@@ -27,6 +25,6 @@ def train_rfc(
         clf.fit(samples, labels)
 
     # save the model
-    save_model(params, clf, model_file_name)
+    save_model(params, clf, model_name)
 
     return clf

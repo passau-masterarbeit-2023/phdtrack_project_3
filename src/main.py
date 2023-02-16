@@ -14,11 +14,14 @@ def main():
     params = ProgramParams(debug=False)
 
     pipelines = Pipelines(params)
-    pipelines.training_pipeline(
+    # pipelines.training_pipeline(
+    #     model_name="random_forest_classifier_1_depth_5",
+    #     training_dir_path=params.TRAINING_DATA_DIR_PATH
+    # )
+    pipelines.testing_pipeline(
         model_name="random_forest_classifier_1_depth_5",
-        training_dir_path=params.TRAINING_DATA_DIR_PATH
+        testing_dir_path=params.TESTING_DATA_DIR_PATH
     )
-    
 
     # # generate graphviz file
     # outfile_path = params.TEST_DATA_DIR + "/" + params.TEST_GRAPH_DATA_FILENAME
