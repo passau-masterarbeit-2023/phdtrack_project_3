@@ -72,7 +72,6 @@ class SSHStructNode(PointerNode, Filled):
     def __str__(self):
         return f"SSHN({hex(self.addr)})"
 
-
 # key stuff
 # read the JSON file and get all pair of addresses and keys
 @frozen
@@ -112,3 +111,9 @@ class Edge(Enum):
             return "ptr"
 
 
+# type lists
+IMPORTANT_VALUE_NODE_SUBTYPES = (
+    SessionStateNode,
+    SSHStructNode,
+    KeyNode
+)

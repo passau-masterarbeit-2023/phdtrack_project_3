@@ -44,28 +44,21 @@ class GraphData:
         """
         return is_pointer(data, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
     
-    def __get_node_from_bytes_wrapper(self, data: bytes, addr: int):
-        """
-        Wrapper for get_node_from_bytes.
-        """
-        return get_node_from_bytes(data, addr, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
+    def __create_node_from_bytes_wrapper(self, data: bytes, addr: int):
+        return create_node_from_bytes(data, addr, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
 
-
-    def __get_node_from_bytes_wrapper_index(self, data: bytes, block_index: int):
-        """
-        Wrapper for get_node_from_bytes.
-        """
+    def __create_node_from_bytes_wrapper_index(self, data: bytes, block_index: int):
         addr = self.heap_dump_data.index_to_addr_wrapper(block_index)
-        return self.__get_node_from_bytes_wrapper(data, addr)
+        return self.__create_node_from_bytes_wrapper(data, addr)
 
     def add_node_wrapper(self, node: Node):
         """
         Wrapper for add_node. Add a node with its color to the graph.
         """
         if isinstance(node, Filled):
-            self.graph.add_node(node, style="filled", color=node.color)
+            self.graph.add_node(node.addr, node=node, style="filled", color=node.color)
         else:
-            self.graph.add_node(node, color=node.color)
+            self.graph.add_node(node.addr, node=node, color=node.color)
     
     def add_edge_wrapper(self, node_start: Node, node_end: Node):
         """
@@ -93,53 +86,43 @@ class GraphData:
 
 
         self.graph.add_edge(
-            node_start, 
-            node_end,
+            node_start.addr, 
+            node_end.addr,
             label=edge_type
         )
 
     ########## UTILS ##########
 
-    def get_all_addr_to_nodes(self, node_type: type[Node]):
+    def get_all_addr_from_node_type(self, node_type: type[Node]):
         """
         Get all the Nodes (of given type) in the graph.
         """
-        value_nodes: dict[int, node_type] = {}
-        node: Node
-        for node in self.graph:
-            if isinstance(node, node_type):
-                value_nodes[node.addr] = node
-        return value_nodes
+        all_addrs_for_given_type: list[int] = []
+        for node_addr in self.graph.nodes.keys():
+            node = self.get_node(node_addr)
+            if (isinstance(node, node_type)):
+                all_addrs_for_given_type.append(node_addr)
+        return all_addrs_for_given_type
     
-    def get_node(self, addr: int):
+    def get_node(self, addr: int) -> Node | None:
         """
         Get a node from its address.
         """
-        node: Node
-        for node in self.graph:
-            if node.addr == addr:
-                return node
+        node = self.graph.nodes.get(addr)
+        if node is not None:
+            return node["node"]
         return None
+
 
     def replace_node_by_new_one(self, old_node: Node, new_node: Node):
         """
         Replace a node in the graph.
         """
-        # get the ancestors and successors of the session state node
-        ancestors: list[Node] = list(self.graph.predecessors(old_node))
-        following_nodes: list[Node] = list(self.graph.successors(old_node))
-
-        # remove the node from the graph
-        self.graph.remove_node(old_node)
-
-        # add the new node to the graph
-        self.add_node_wrapper(new_node)
-
-        # add edges from the ancestors and successors to the SessionStateNode
-        for ancestor in ancestors:
-            self.add_edge_wrapper(ancestor, new_node)
-        for following_node in following_nodes:
-            self.add_edge_wrapper(new_node, following_node)
+        nx.set_node_attributes(self.graph, {old_node.addr: new_node}, "node")
+        nx.set_node_attributes(self.graph, {old_node.addr: new_node.color}, "color")
+        if isinstance(new_node, Filled):
+            nx.set_node_attributes(self.graph, {old_node.addr: "filled"}, "style")
+        
 
     def get_data_structure_from_first_children(self, node: Node):
         """
@@ -148,10 +131,11 @@ class GraphData:
         is the first one after the data structure malloc header.
         """
         # get the ancestors of the node
-        ancestors: list[Node] = list(self.graph.predecessors(node))
+        ancestor_addrs: list[int] = list(self.graph.predecessors(node.addr))
 
         preceding_data_structure: DataStructureNode | None = None
-        for ancestor in ancestors:
+        for ancestor_addr in ancestor_addrs:
+            ancestor = self.get_node(ancestor_addr)
             if (
                 isinstance(ancestor, DataStructureNode) and
                 # check if the node is the first one after the data structure malloc header
@@ -195,11 +179,6 @@ class GraphData:
         """
         Parse all pointers step.
         """
-        # create a dictionary of address to node
-        addr_to_node: dict[int, Node] = {}
-        node: Node
-        for node in self.graph:
-            addr_to_node[node.addr] = node
 
         def parse_pointer(node: PointerNode):
             """
@@ -208,19 +187,17 @@ class GraphData:
             # check if the pointer points to a node in the graph
             current_pointer_node: Node = node
             while isinstance(current_pointer_node, PointerNode):
-                if node.points_to not in addr_to_node:
+                pointed_node = self.get_node(current_pointer_node.points_to)
+                if pointed_node is None:
                     
                     # create a new node
-                    pointed_node = self.__get_node_from_bytes_wrapper(
+                    pointed_node = self.__create_node_from_bytes_wrapper(
                         self.heap_dump_data.blocks[self.heap_dump_data.addr_to_index_wrapper(node.addr)],
                         node.points_to
                     )
 
                     # add the node to the graph
                     self.add_node_wrapper(pointed_node)
-
-                    # add the node to the dictionary
-                    addr_to_node[node.points_to] = pointed_node
 
                     # add the edge
                     self.add_edge_wrapper(node, pointed_node)
@@ -229,7 +206,6 @@ class GraphData:
                     current_pointer_node = pointed_node
                 else:
                     # get the node from the dictionary, and add the edge
-                    pointed_node = addr_to_node[node.points_to]
                     self.add_edge_wrapper(node, pointed_node) 
 
                     # no more iterations
@@ -237,14 +213,15 @@ class GraphData:
 
         # get all pointer nodes
         all_pointer_nodes: list[PointerNode] = []
-        for node in self.graph:
+        for node_dict in self.graph.nodes.values():
+            node: Node = node_dict["node"]
             if isinstance(node, PointerNode):
                 all_pointer_nodes.append(node)
 
-        for node in all_pointer_nodes:
-            parse_pointer(node)
+        for pointer_node in all_pointer_nodes:
+            parse_pointer(pointer_node)
             if self.params.DEBUG:
-                print("pointer node:", node)
+                print("pointer node:", pointer_node)
 
 
     def __get_memalloc_header(self, data: bytes):
@@ -305,7 +282,7 @@ class GraphData:
         self.add_node_wrapper(datastructure_node)
 
         for block_index in range(startBlockIndex + 1, startBlockIndex + nb_blocks_in_datastructure):
-            node = self.__get_node_from_bytes_wrapper_index(self.heap_dump_data.blocks[block_index], block_index)
+            node = self.__create_node_from_bytes_wrapper_index(self.heap_dump_data.blocks[block_index], block_index)
             self.add_node_wrapper(node)
             self.add_edge_wrapper(datastructure_node, node)
         

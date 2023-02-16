@@ -10,7 +10,7 @@ We debugged the ML training process and added multi-threading to both the loadin
 * [X] pipeline for the model evaluation
 * [ ] Investigate why the samples and labels generation is so slow. Idea: limit the number of simultaneous thread, we think we are RAM memory bound...
 * [ ] make another classifier with high recall
-* [ ] make bigger test
+* [ ] make bigger model (use more data).
 
 ### Wed 15th Feb 2023
 

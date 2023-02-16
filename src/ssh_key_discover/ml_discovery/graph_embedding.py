@@ -74,7 +74,7 @@ class GraphEmbedding:
         """
 
         # get all the ValueNodes
-        value_nodes: list[ValueNode] = self.graph_data.get_all_addr_to_nodes(ValueNode).values()
+        value_nodes: list[ValueNode] = self.graph_data.get_all_addr_from_node_type(ValueNode).values()
 
         # vectorize the nodes
         embedded_samples: dict[int, list[int]] = {}
@@ -88,7 +88,7 @@ class GraphEmbedding:
         Generates a dictionary of labels, from addresses to labels. (if the graph has been analyzed)
         """
         # get all the ValueNodes
-        value_nodes: list[ValueNode] = self.graph_data.get_all_addr_to_nodes(ValueNode).values()
+        value_nodes: list[ValueNode] = self.graph_data.get_all_addr_from_node_type(ValueNode).values()
 
         # generate the labels
         labels: dict[int, int] = {}

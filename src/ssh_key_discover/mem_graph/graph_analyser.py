@@ -1,5 +1,6 @@
 
 
+import subprocess
 from .graph_data import GraphData
 from .graph_structures import *
 from .heap_dump_data import HeapDumpData
@@ -66,18 +67,18 @@ class GraphAnalyser:
         addr_key_pairs = self.__generate_key_data_from_json()
 
         # create a dictionary of address to node
-        addr_to_value_node = self.graph_data.get_all_addr_to_nodes(ValueNode)
+        addrs_of_value_nodes = self.graph_data.get_all_addr_from_node_type(ValueNode)
         
         # annotate the graph with the key data
         for key_addr, key_data in addr_key_pairs.items():
-            if key_addr in addr_to_value_node.keys():
+            if key_addr in addrs_of_value_nodes:
                 value_nodes_of_key: list[ValueNode] = []
 
                 # get all the ValueNodes that are part of the key
                 for i in range(key_data.len // self.heap_dump_data.block_size):
                     addr = key_addr + i * self.heap_dump_data.block_size
                     value_nodes_of_key.append(
-                        addr_to_value_node[addr]
+                        self.graph_data.get_node(addr)
                     )
                 
                 # concat the data of the ValueNodes
@@ -161,7 +162,7 @@ class GraphAnalyser:
             self.__clean_graph_of_useless_subgraphs(self.ssh_struct_node)
     
 
-    def __clean_graph_of_useless_subgraphs(self, node: Node):
+    def __clean_graph_of_useless_subgraphs(self, node_addr: Node):
         """
         Clean the graph. Keep only the connected subgraph which contains the specified node.
         """
@@ -169,10 +170,42 @@ class GraphAnalyser:
         undirected_graph = self.graph.to_undirected()
 
         # get the connected subgraph
-        node_connected_component = nx.node_connected_component(undirected_graph, node)
+        node_connected_component = nx.node_connected_component(undirected_graph, node_addr.addr)
 
         # remove all nodes that are not in the connected subgraph
-        all_nodes: list[Node] = [node for node in self.graph] # keep a fixed set of nodes
-        for node in all_nodes:
-            if node not in node_connected_component:
-                self.graph.remove_node(node)
+        all_node_addrs: list[int] = [node for node in self.graph] # keep a fixed set of nodes
+        for node_addr in all_node_addrs:
+            if node_addr not in node_connected_component:
+                self.graph.remove_node(node_addr)
+    
+    def visualize_graph(self):
+        """
+        Visualize the graph.
+        """
+        # filter out ValueNodes from graph
+        filtered_graph = self.graph.copy()
+        for node_addr in self.graph.nodes.keys():
+            node = self.graph_data.get_node(node_addr)
+            if (isinstance(node, ValueNode)):
+                if not isinstance(node, IMPORTANT_VALUE_NODE_SUBTYPES):
+                    filtered_graph.remove_node(node_addr)
+                else:
+                    print("IMPORTANT VALUE NODE: %s of type %s" % (node, type(node)))
+
+        # generate graphviz file
+        file_name = self.heap_dump_data.heap_dump_raw_file_path.split("/")[-1].replace(".raw", ".gv")
+        outfile_path = self.params.TEST_DATA_DIR + "/" + file_name
+        nx.nx_agraph.write_dot(filtered_graph, outfile_path)
+
+        # generate graph image
+        # with open(outfile_path, 'r') as f:
+        #     dot_graph_data = f.read()
+        #     graph_png_file_path = outfile_path.replace('.gv', '.png')
+        #     s = graphviz.Source(dot_graph_data)
+        #     s.render(outfile=graph_png_file_path, format='png', view=True)
+
+        # run sfdp command on graphviz file to generate graph image
+        process = subprocess.Popen(
+            ["sfdp", "-Gsize=67!", "-Goverlap=prism", "-Tpng", outfile_path, "-o", outfile_path.replace('.gv', '-sfdp.png')],
+        )
+        process.wait()

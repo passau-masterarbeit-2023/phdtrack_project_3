@@ -54,7 +54,7 @@ def is_pointer(data: bytes | int, min_addr: int, max_addr: int, endianness: str)
             return None
 
 
-def get_node_from_bytes(block: bytes, addr: int, min_addr: int, max_addr: int, endianness: str) -> Node:
+def create_node_from_bytes(block: bytes, addr: int, min_addr: int, max_addr: int, endianness: str) -> Node:
     """
     Get the node from the data.
     NOTE: Remember that all addresses are relative to the heap, and converted to absolute addresses as int.

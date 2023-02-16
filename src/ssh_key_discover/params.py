@@ -24,7 +24,7 @@ class ProgramParams:
     TESTING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data/Validation/Validation/scp/V_7_8_P1/16"
     MODELS_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/models"
     SAMPLES_AND_LABELS_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/samples_and_labels"
-    MAX_WORKERS = 16
+    MAX_WORKERS = 14
 
     def __init__(self, debug=False, **kwargs):
         self.DEBUG = debug
