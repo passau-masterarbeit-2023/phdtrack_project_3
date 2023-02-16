@@ -11,7 +11,7 @@ import networkx as nx
 def main():
     print("Running program...")
 
-    params = ProgramParams(debug=True)
+    params = ProgramParams(debug=False)
 
     pipelines = Pipelines(params)
     pipelines.training_pipeline()

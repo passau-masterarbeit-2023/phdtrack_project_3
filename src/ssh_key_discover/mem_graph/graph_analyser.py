@@ -121,7 +121,8 @@ class GraphAnalyser:
         # get the PointerNode
         pointer = self.graph_data.get_node(pointer_addr)
         if pointer is None or not isinstance(pointer, PointerNode):
-            print(f"WARNING: {annotation_type} pointer not found in graph!")
+            if self.params.DEBUG:
+                print(f"WARNING: {annotation_type} pointer not found in graph!")
             return
 
         # replace the SessionStateNode in the graph

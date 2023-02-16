@@ -1,8 +1,13 @@
 # Worklog
 
-look at malloc headers (in little endian format) to determine the lenght (number of block)
+### Thu 16th Feb 2023
 
-graph -> generate representation
+We debugged the ML training process and added multi-threading to both the loading/generation of samples and lables, and the classifier fitti
+
+* [X] debug ML training
+* [X] Start working on ML detection of keys
+* [X] find how to vectorize graph or node
+* [ ] pipeline for the model evaluation
 
 ### Wed 15th Feb 2023
 
@@ -13,6 +18,7 @@ The data structures addresses given in the JSON file are neither the malloc head
 * [X] Refactor the PointerNode and ValueNode classes.
 * [X] Correct graph representation
 * [X] Correct JSON data annotation
+* [ ] debug ML training
 * [ ] Start working on ML detection of keys
 * [ ] find how to vectorize graph or node
 
@@ -38,7 +44,6 @@ Because we are working on a custom graph, representing a precise data structure,
 Features idea, for ValueNodes only
 
 * number of input ancestor node, by type, of a given depth. The depth is an hyper-param. Considering the relative small size of the structure, a small int, like 5 or 10 should be enough. This representation take in consideration the very directive structure of the graph.
-
 
 ### Tue 14th Feb 2023
 
@@ -78,6 +83,10 @@ We then debugged and worked on the step two: following the pointers identified i
 * [ ] Need to further test step 2
 
 ### Tue 31th Jan 2023
+
+look at malloc headers (in little endian format) to determine the lenght (number of block)
+
+graph -> generate representation
 
 * [ ] Finish to refactor the python module
 * [ ] Use NetworkX to generate and [display graphs](https://networkx.org/documentation/stable/reference/drawing.html#module-networkx.drawing.nx_agraph)

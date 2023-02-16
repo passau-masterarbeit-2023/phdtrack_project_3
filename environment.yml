@@ -136,4 +136,5 @@ dependencies:
     - seaborn==0.12.2
     - threadpoolctl==3.1.0
     - tornado==6.2
+    - tqdm==4.64.1
 prefix: /home/onyr/anaconda3/envs/phdtrack

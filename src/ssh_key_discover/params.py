@@ -23,6 +23,9 @@ class ProgramParams:
     # ML
     BASE_EMBEDDING_DEPTH = 5
     MODELS_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/models"
+    SAMPLES_AND_LABELS_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/samples_and_labels"
+    LOAD_SAMPLES_AND_LABELS_FROM_FILE = False
+    MAX_WORKERS = 16
 
     def __init__(self, debug=False, **kwargs):
         self.DEBUG = debug

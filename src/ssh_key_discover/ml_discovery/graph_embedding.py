@@ -26,21 +26,26 @@ class GraphEmbedding:
         self.heap_dump_data = self.graph_data.heap_dump_data
         self.params = self.graph_data.params
 
-    def __vectorize_node(self, node: Node) -> list[int]:
+    def __vectorize_node(self, node: ValueNode) -> list[int]:
         """
         Vectorize a node.
         """
-        current_ancestors: set[Node] = set() # ancestors to discover at step N
-        previous_ancestors: set[Node] = set([node]) # ancestors discovered at step N-1
+        assert isinstance(node, ValueNode)
+
+        current_ancestors: set[ValueNode] = set() # ancestors to discover at step N
+        previous_ancestors: set[ValueNode] = set() # ancestors discovered at step N-1
+        previous_ancestors.add(node) # init 
 
         vector: list[int] = []
 
-        for _ in range(self.depth):
+        for i in range(self.depth):
 
             # get the ancestors of the previous ancestors
             current_ancestors = set()
             for ancestor in previous_ancestors:
-                current_ancestors.add(self.graph.predecessors(ancestor))
+                predecessors = self.graph.predecessors(ancestor)
+                for predecessor in predecessors:
+                    current_ancestors.add(predecessor)
         
             # feature computations
             count_data_structures = 0

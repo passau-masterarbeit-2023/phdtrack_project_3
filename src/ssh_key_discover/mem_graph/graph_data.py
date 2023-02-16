@@ -243,7 +243,8 @@ class GraphData:
 
         for node in all_pointer_nodes:
             parse_pointer(node)
-            print("pointer node:", node)
+            if self.params.DEBUG:
+                print("pointer node:", node)
 
 
     def __get_memalloc_header(self, data: bytes):

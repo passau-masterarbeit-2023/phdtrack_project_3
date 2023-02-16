@@ -24,7 +24,7 @@ A repo following the advancement of PhDTrack Project.
 
 ## Env
 
-`conda env export --no-builds > environment.yml` : export conda env to yml file.
+`conda env export --no-builds > ../environment.yml` : export conda env to yml file.
 
 ## Notes
 
@@ -100,7 +100,6 @@ So, a pointer that points to a data structure actually points to the block immed
 This means that our corrected representation represent pointers that points to the first node after the DataStructureNode as actually pointing to the DataStructureNode instead. We do not loose information this way, as any pointer that would point to a DataStructureNode would be known to actually points to the node immediatly after.
 
 > WARN: The addresses of data structures in the JSON, for instance SSH_STRUCT_ADDR, actually refer to the address of a pointer that points to the data structure (not necessarily directly).
-
 
 ## Questions
 
