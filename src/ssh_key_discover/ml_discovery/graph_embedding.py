@@ -30,20 +30,22 @@ class GraphEmbedding:
         """
         Vectorize a node.
         """
-        assert isinstance(node, ValueNode)
+        try:
+            assert isinstance(node, ValueNode)
+        except AssertionError:
+            raise TypeError("The node must be a ValueNode. Found: %s, for node %s" % (type(node), node))
 
-        current_ancestors: set[ValueNode] = set() # ancestors to discover at step N
-        previous_ancestors: set[ValueNode] = set() # ancestors discovered at step N-1
-        previous_ancestors.add(node) # init 
+        current_ancestors: set[int] = set() # ancestors to discover at step N
+        previous_ancestors: set[int] = set() # ancestors discovered at step N-1
+        previous_ancestors.add(node.addr) # init 
 
         vector: list[int] = []
 
         for i in range(self.depth):
-
             # get the ancestors of the previous ancestors
             current_ancestors = set()
             for ancestor in previous_ancestors:
-                predecessors = self.graph.predecessors(ancestor)
+                predecessors: list[int] = self.graph.predecessors(ancestor)
                 for predecessor in predecessors:
                     current_ancestors.add(predecessor)
         
@@ -52,9 +54,10 @@ class GraphEmbedding:
             count_pointers = 0
 
             for ancestor in current_ancestors:
-                if isinstance(ancestor, DataStructureNode):
+                ancestor_node = self.graph_data.get_node(ancestor)
+                if isinstance(ancestor_node, DataStructureNode):
                     count_data_structures += 1
-                elif isinstance(ancestor, PointerNode):
+                elif isinstance(ancestor_node, PointerNode):
                     count_pointers += 1
             
             # add the features to the vector
@@ -72,13 +75,13 @@ class GraphEmbedding:
         Generates a dictionary of embedded samples, from addresses to vectors.
         NOTE: the depth is the number of ancestor levels to consider.
         """
-
         # get all the ValueNodes
-        value_nodes: list[ValueNode] = self.graph_data.get_all_addr_from_node_type(ValueNode).values()
+        value_node_addrs: list[int] = self.graph_data.get_all_addr_from_node_type(ValueNode)
 
         # vectorize the nodes
         embedded_samples: dict[int, list[int]] = {}
-        for value_node in value_nodes:
+        for value_node_addr in value_node_addrs:
+            value_node = self.graph_data.get_node(value_node_addr)
             embedded_samples[value_node.addr] = self.__vectorize_node(value_node)
         
         return embedded_samples
@@ -88,11 +91,12 @@ class GraphEmbedding:
         Generates a dictionary of labels, from addresses to labels. (if the graph has been analyzed)
         """
         # get all the ValueNodes
-        value_nodes: list[ValueNode] = self.graph_data.get_all_addr_from_node_type(ValueNode).values()
+        value_node_addrs: list[int] = self.graph_data.get_all_addr_from_node_type(ValueNode)
 
         # generate the labels
         labels: dict[int, int] = {}
-        for value_node in value_nodes:
+        for value_node_addr in value_node_addrs:
+            value_node = self.graph_data.get_node(value_node_addr)
             if isinstance(value_node, KeyNode):
                 labels[value_node.addr] = 1
             else:
