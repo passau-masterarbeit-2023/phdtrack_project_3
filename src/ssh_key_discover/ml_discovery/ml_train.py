@@ -42,7 +42,7 @@ def train_high_recall_classifier(
     param_grid = {
         'C': [0.1, 1, 10], 
         'kernel': ['rbf'],
-        'class_weight': {0: 1, 1: 100}
+        'class_weight': [{0: 1, 1: 100}]
     }
 
     # initialize the classifier

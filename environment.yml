@@ -131,7 +131,7 @@ dependencies:
     - python-graphviz==0.20.1
     - pytz==2022.7
     - pyzmq==24.0.1
-    - scikit-learn==1.2.0
+    - scikit-learn==1.2.1
     - scipy==1.9.3
     - seaborn==0.12.2
     - threadpoolctl==3.1.0
