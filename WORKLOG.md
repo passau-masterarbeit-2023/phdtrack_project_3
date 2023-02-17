@@ -1,5 +1,21 @@
 # Worklog
 
+## Meetings
+
+### Meeting - Fri 17th 2023
+
+These are the next steps for the project
+
+* [ ] A LOT of refactoring. Compress the pointer representation within weight of edges. We are only interested in the relationship between data structures.
+* [ ] Feature engineering: find the most significative features and their related hyper-parameters.
+
+  * [ ] allocation size in the DTN
+  * [ ] offset in the DTN (position of the value node inside the DTN)
+  * [ ] number of PN and VN in DTNs
+
+
+## Work
+
 ### Fri 17th Feb 2023
 
 We have ideas for many improvements. We have worked on the high recall training pipeline, as well as other refactoring stuff. We have added an command line argv parser.

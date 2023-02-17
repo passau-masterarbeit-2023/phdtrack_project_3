@@ -2,6 +2,7 @@
 
 A repo following the advancement of PhDTrack Project.
 
+
 ## Organisations
 
 [SmartVMI.org](http://www.smartvmi.org/)
@@ -60,9 +61,9 @@ PCAP file ? https://wiki.wireshark.org/Development/LibpcapFileFormat
 
 ### Get key in heap dump raw file from json data
 
-To get a key in a given heap dump raw file, we can use its associated .json file. Each given key comes with its address as an hex number. However, the raw heap dump lines of hex memory starts at address 0x0, whereas the address in the json are given relative to the real memory address in the sampled data. As the address of the start of the head dump file (0x0) is given from real memory (`"HEAP_START": "55a6d2356000"`), we can compute the address given relative to the raw file (given_json_key_addr - HEAP_START).
+To get a key in a given heap dump raw file, we can use its associated .json file. Each given key comes with its address as an hex number. However, the raw heap dump lines of hex memory starts at address 0x0, whereas the address in the json are given relative to the real memory address in the sampled data. As the address of the start of the head dump file (0x0) is given from real memory (`"HEAP_START": "55a6d2356000"`), we can compute the 
 
-Example: *302-1644391327.json*
+Example: *302-1644391327.json*address given relative to the raw file (given_json_key_addr - HEAP_START).
 
 ```
 {
@@ -135,6 +136,17 @@ We want to optimize the **recall** first. More info [here](https://inside-machin
 
 ## Questions
 
-* [ ] What is `SSH_STRUCT_ADDR` and `SESSION_STATE_ADDR`
-* [ ] Why we don't find `SESSION_STATE_ADDR`?
-* [ ] Discuss access to a big machine with CPU power and a LOT of RAM
+* [X] What is `SSH_STRUCT_ADDR` and `SESSION_STATE_ADDR`
+* [X] Why we don't find `SESSION_STATE_ADDR`?
+* [X] Discuss access to a big machine with CPU power and a LOT of RAM
+
+### Meeting - Fri 17th 2023
+
+These are the next steps for the project
+
+* [ ] A LOT of refactoring. Compress the pointer representation within weight of edges. We are only interested in the relationship between data structures.
+* [ ] Feature engineering: find the most significative features and their related hyper-parameters.
+
+  * [ ] allocation size in the DTN
+  * [ ] offset in the DTN (position of the value node inside the DTN)
+  * [ ] number of PN and VN in DTNs
