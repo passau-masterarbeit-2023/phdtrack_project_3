@@ -26,6 +26,34 @@ A repo following the advancement of PhDTrack Project.
 
 `conda env export --no-builds > ../environment.yml` : export conda env to yml file.
 
+## Program usage
+
+#### Calling the program
+
+there are some flags to pass to the program.
+
+`python src/main.py [FLAG]`: run the program
+
+```shell
+        python src/main.py [ARGUMENTS ...]
+
+        Parse program arguments.
+            -m model type (ml_structures.ModelType: RFC, GRID_SEARCH_CV)
+            -b balancing type (ml_structures.BalancingType: NONE, OVER, UNDER)
+            -t training dir path, path to the heap dump raw files
+            -e testing dir path, path to the heap dump raw files
+            -d debug
+            -v vectorizing depth (influence the size of the feature vector)
+            -h help
+```
+
+Example of usage:
+
+```shell
+python3 main.py -m GRID_SEARCH_CV -b OVER -t /home/onyr/Documents/code/phdtrack/phdtrack_data/Training/Training/scp/V_7_8_P1/16 -e /home/onyr/Documents/code/phdtrack/phdtrack_data/Validation/Validation/scp/V_7_8_P1/16 -d False -v 2
+```
+
+
 ## Notes
 
 PCAP file ? https://wiki.wireshark.org/Development/LibpcapFileFormat
@@ -103,11 +131,10 @@ This means that our corrected representation represent pointers that points to t
 
 #### ML model engineering
 
-We want to optimize the **recall** first. More info [here](https://inside-machinelearning.com/en/recall-precision-f1-score-simple-metric-explanation-machine-learning/). We want our model to detect every occurence of possible keys, without missing any potential key. This means we want an ideal **False Negative** value of 0, i.e. we want that our model detects all the keys. 
-
-
+We want to optimize the **recall** first. More info [here](https://inside-machinelearning.com/en/recall-precision-f1-score-simple-metric-explanation-machine-learning/). We want our model to detect every occurence of possible keys, without missing any potential key. This means we want an ideal **False Negative** value of 0, i.e. we want that our model detects all the keys.
 
 ## Questions
 
 * [ ] What is `SSH_STRUCT_ADDR` and `SESSION_STATE_ADDR`
 * [ ] Why we don't find `SESSION_STATE_ADDR`?
+* [ ] Discuss access to a big machine with CPU power and a LOT of RAM

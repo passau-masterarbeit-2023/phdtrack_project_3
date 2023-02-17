@@ -12,6 +12,7 @@ __version__ = "0.0.1"
 # modules
 from . import mem_graph
 from . import ml_discovery
+from . import utils
 
 # classes
 from .mem_graph.graph_analyser import GraphAnalyser

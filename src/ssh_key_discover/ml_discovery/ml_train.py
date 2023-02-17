@@ -49,7 +49,7 @@ def train_high_recall_classifier(
     svc = SVC()
 
     # initialize the grid search #TODO: RandomizedSearchCV
-    grid_search = GridSearchCV(svc, param_grid, cv=5, scoring='recall', n_jobs=8)
+    grid_search = GridSearchCV(svc, param_grid, cv=5, scoring='recall', n_jobs=2)
 
     # fit the grid search to the data
     print("Fitting the grid search classifier...")

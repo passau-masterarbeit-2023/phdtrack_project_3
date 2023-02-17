@@ -3,20 +3,12 @@ from .ml_data_manips import get_samples_and_labels, load_model, oversample_using
 from .ml_evaluate import evaluate
 from ..params import ProgramParams
 from .ml_train import train_high_recall_classifier, train_rfc
+from .ml_structures import ModelType, BalancingType 
 
 from enum import Enum
 
 import os
 import glob
-
-class BalancingType(Enum):
-    NONE = 0
-    OVER = 1
-    UNDER = 2
-
-class ModelType(Enum):
-    RFC = 0
-    GridSearchCV = 1
 
 
 class Pipelines():
@@ -135,7 +127,7 @@ class Pipelines():
                 self.params.BASE_EMBEDDING_DEPTH,
                 balancingType.name
             )
-        elif modelType == ModelType.GridSearchCV:
+        elif modelType == ModelType.GRID_SEARCH_CV:
             return "grid_search_cv_1_depth_{}_balancing_{}".format(
                 self.params.BASE_EMBEDDING_DEPTH,
                 balancingType.name
@@ -160,7 +152,7 @@ class Pipelines():
                 samples, 
                 labels
             )
-        elif modelType == ModelType.GridSearchCV:
+        elif modelType == ModelType.GRID_SEARCH_CV:
             return train_high_recall_classifier(
                 self.params, 
                 self.__get_model_name(modelType, balancingType), 
