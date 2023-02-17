@@ -1,10 +1,23 @@
-from .ml_data_manips import get_samples_and_labels, load_model
+from .ml_utils import get_name_for_feature_and_label_save_file
+from .ml_data_manips import get_samples_and_labels, load_model, oversample_using_smote, undersample_using_random_undersampler
 from .ml_evaluate import evaluate
 from ..params import ProgramParams
-from .ml_train import train_rfc
+from .ml_train import train_high_recall_classifier, train_rfc
+
+from enum import Enum
 
 import os
 import glob
+
+class BalancingType(Enum):
+    NONE = 0
+    OVER = 1
+    UNDER = 2
+
+class ModelType(Enum):
+    RFC = 0
+    GridSearchCV = 1
+
 
 class Pipelines():
     params: ProgramParams
@@ -28,7 +41,12 @@ class Pipelines():
 
         return all_files
     
-    def training_pipeline(self, model_name: str, training_dir_path: str):
+    def training_pipeline(
+            self, 
+            modelType : ModelType, 
+            balancingType : BalancingType, 
+            training_dir_path: str
+    ):
         """
         Training pipeline.
         """
@@ -37,10 +55,10 @@ class Pipelines():
 
         # generate save file name
         # get last 4 filepath components
-        filepath_components = training_dir_path.split(os.sep)
-        filepath_components = filepath_components[-4:]
-        samples_and_labels_save_file_name = "samples_and_labels_training__{}.pkl".format(
-            "_".join(filepath_components)
+        samples_and_labels_save_file_name = get_name_for_feature_and_label_save_file(
+            self.params,
+            "training",
+            training_dir_path
         )
 
         # train on each heap dump
@@ -49,10 +67,16 @@ class Pipelines():
             samples_and_labels_save_file_name,
             heap_dump_raw_files
         )
+        self.__data_balancing(balancingType, samples, labels)
 
-        return train_rfc(self.params, model_name, samples, labels)
+        return self.__train_model(modelType, balancingType, samples, labels)
     
-    def testing_pipeline(self, model_name: str, testing_dir_path: str):
+    def testing_pipeline(
+        self, 
+        modelType : ModelType, 
+        balancingType : BalancingType, 
+        testing_dir_path: str
+    ):
         """
         Testing pipeline.
         """
@@ -61,10 +85,10 @@ class Pipelines():
 
         # generate save file name
         # get last 4 filepath components
-        filepath_components = testing_dir_path.split(os.sep)
-        filepath_components = filepath_components[-4:]
-        samples_and_labels_save_file_name = "samples_and_labels_testing__{}.pkl".format(
-            "_".join(filepath_components)
+        samples_and_labels_save_file_name = get_name_for_feature_and_label_save_file(
+            self.params,
+            "testing",
+            testing_dir_path
         )
 
         # train on each heap dump
@@ -74,7 +98,75 @@ class Pipelines():
             heap_dump_raw_files
         )
 
+        model_name = self.__get_model_name(modelType, balancingType)
+
         # load model
         clf = load_model(self.params, model_name)
 
         return evaluate(clf, samples, labels)
+    
+
+    ############## -- logic -- #####################
+
+    def __data_balancing(
+            self, 
+            balancingType : BalancingType, 
+            samples : list[list[int]], 
+            labels : list[int]
+    ):
+        """
+        Data balancing.
+        """
+        if balancingType == BalancingType.NONE:
+            return samples, labels
+        elif balancingType == BalancingType.OVER:
+            return oversample_using_smote(samples, labels)
+        elif balancingType == BalancingType.UNDER:
+            return undersample_using_random_undersampler(samples, labels)
+        else:
+            raise Exception("Unknown balancing type.")
+        
+    def __get_model_name(self, modelType : ModelType, balancingType : BalancingType):
+        """
+        Get model name.
+        """
+        if modelType == ModelType.RFC:
+            return "random_forest_classifier_1_depth_{}_balancing_{}".format(
+                self.params.BASE_EMBEDDING_DEPTH,
+                balancingType.name
+            )
+        elif modelType == ModelType.GridSearchCV:
+            return "grid_search_cv_1_depth_{}_balancing_{}".format(
+                self.params.BASE_EMBEDDING_DEPTH,
+                balancingType.name
+            )
+        else:
+            raise Exception("Unknown model type.")
+        
+    def __train_model(
+            self, 
+            modelType : ModelType, 
+            balancingType : BalancingType,
+            samples : list[list[int]], 
+            labels : list[int]
+    ):
+        """
+        Train model.
+        """
+        if modelType == ModelType.RFC:
+            return train_rfc(
+                self.params, 
+                self.__get_model_name(modelType, balancingType), 
+                samples, 
+                labels
+            )
+        elif modelType == ModelType.GridSearchCV:
+            return train_high_recall_classifier(
+                self.params, 
+                self.__get_model_name(modelType, balancingType), 
+                samples, 
+                labels
+            )
+        else:
+            raise Exception("Unknown model type.")
+        

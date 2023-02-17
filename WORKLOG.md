@@ -1,5 +1,15 @@
 # Worklog
 
+### Fri 17th Feb 2023
+
+We have ideas for many improvements:
+
+* [ ] create a training and testing log system, to keep track of both result, but ESPECIALLY training parameters. The number of samples is missing !
+* [ ] add exe command line flags to control training and testing.
+* [ ] new potential features "ValueNode position" and "related data structure size". Note that we think that adding such features is possibly wrong, since our approach tries to hide any information about the addresses, including address ordering. This can also affect the generality of the model, since the size of the keys, hence the ordering and position of keys in heap dump block may differ and surspecialize the model.
+
+
+
 ### Thu 16th Feb 2023
 
 We debugged the ML training process and added multi-threading to both the loading/generation of samples and lables, and the classifier fitting. We also did a lot of refactoring around the data loading pipeline.
@@ -8,9 +18,12 @@ We debugged the ML training process and added multi-threading to both the loadin
 * [X] Start working on ML detection of keys
 * [X] find how to vectorize graph or node
 * [X] pipeline for the model evaluation
+* [ ] refactor the code (depht to file name), ...
 * [ ] Investigate why the samples and labels generation is so slow. Idea: limit the number of simultaneous thread, we think we are RAM memory bound...
 * [ ] make another classifier with high recall
 * [ ] make bigger model (use more data).
+* [ ] add exe command line flags to control traning and testing.
+* [ ] create a proper logger, using the standard library of Python. At least 2 loggers are necessary. Both loggers write to the terminal. One logs all messages to rotating log files (can use 20 files of 50Mb), the other log 1 file per model evaluation (1 eval == 1 file), including training and testing params, file number, depth, provenance of files...
 
 ### Wed 15th Feb 2023
 

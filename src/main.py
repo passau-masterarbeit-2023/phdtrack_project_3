@@ -1,8 +1,7 @@
 
 
 from ssh_key_discover.params import ProgramParams
-from ssh_key_discover import GraphAnalyser, GraphData
-from ssh_key_discover.ml_discovery.ml_pipelines import Pipelines
+from ssh_key_discover.ml_discovery.ml_pipelines import BalancingType, ModelType, Pipelines
 
 import subprocess
 import graphviz
@@ -15,11 +14,13 @@ def main():
 
     pipelines = Pipelines(params)
     pipelines.training_pipeline(
-        model_name="random_forest_classifier_1_depth_5",
+        modelType=ModelType.GridSearchCV,
+        balancingType=BalancingType.OVER,
         training_dir_path=params.TRAINING_DATA_DIR_PATH
     )
     pipelines.testing_pipeline(
-        model_name="random_forest_classifier_1_depth_5",
+        modelType=ModelType.GridSearchCV,
+        balancingType=BalancingType.OVER,
         testing_dir_path=params.TESTING_DATA_DIR_PATH
     )
 

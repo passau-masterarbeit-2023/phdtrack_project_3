@@ -101,6 +101,12 @@ This means that our corrected representation represent pointers that points to t
 
 > WARN: The addresses of data structures in the JSON, for instance SSH_STRUCT_ADDR, actually refer to the address of a pointer that points to the data structure (not necessarily directly).
 
+#### ML model engineering
+
+We want to optimize the **recall** first. More info [here](https://inside-machinelearning.com/en/recall-precision-f1-score-simple-metric-explanation-machine-learning/). We want our model to detect every occurence of possible keys, without missing any potential key. This means we want an ideal **False Negative** value of 0, i.e. we want that our model detects all the keys. 
+
+
+
 ## Questions
 
 * [ ] What is `SSH_STRUCT_ADDR` and `SESSION_STATE_ADDR`

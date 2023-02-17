@@ -8,6 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 import pickle
 import os
 from typing import Any
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
 
 
 def load_files_and_generate_samples_and_labels(
@@ -153,5 +155,30 @@ def get_samples_and_labels(
         save_samples_and_labels(
             params, samples, labels, save_file_name
         )
+
+    return samples, labels
+
+
+def oversample_using_smote(samples: list[list[int]], labels: list[int]):
+    """
+    Oversample the data using SMOTE.
+    """
+    print("Using SMOTE oversampling")
+
+    sm = SMOTE()
+    with time_measure('smote_oversampling'):
+        samples, labels = sm.fit_resample(samples, labels)
+
+    return samples, labels
+
+def undersample_using_random_undersampler(samples: list[list[int]], labels: list[int]):
+    """
+    Undersample the data using RandomUnderSampler.
+    """
+    print("Using undersampling")
+
+    rus = RandomUnderSampler()
+    with time_measure('random_undersampling'):
+        samples, labels = rus.fit_resample(samples, labels)
 
     return samples, labels
