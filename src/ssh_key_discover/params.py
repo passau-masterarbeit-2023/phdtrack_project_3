@@ -4,6 +4,10 @@ from .utils.utils import str2bool, str2enum
 
 from dataclasses import dataclass
 import os
+import sys
+import logging
+from logging.handlers import RotatingFileHandler
+from datetime import datetime
 
 
 @dataclass
@@ -38,12 +42,19 @@ class ProgramParams:
     MODEL_TYPE: ModelType = ModelType.RFC
     BALANCING_TYPE: BalancingType = BalancingType.NONE
 
+    # logger
+    COMMON_LOGGER_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/logs/common_log"
+    RESULTS_LOGGER_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/logs/results_log"
+    COMMON_LOGGER = logging.getLogger("common_logger")
+    RESULTS_LOGGER = logging.getLogger("results_logger")
+
     def __init__(self, debug=False, **kwargs):
         self.DEBUG = debug
 
         self.__load_program_argv()
         self.__consume_program_argv()
         self.__check_all_paths()
+        self.__construct_log()
         
 
     def __check_all_paths(self):
@@ -99,4 +110,38 @@ class ProgramParams:
         if self.cli_args.args.max_ml_workers is not None:
             self.MAX_ML_WORKERS = int(self.cli_args.args.max_ml_workers)
 
-PARAMS = ProgramParams()
+    def __construct_log(self):
+        """
+        construct logger. Must be call after __load_program_argv()
+        """
+        # common formater
+        common_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+        # add RotatingFileHandler to common logger
+        common_log_file_path = self.COMMON_LOGGER_DIR_PATH + "/common_log.log"
+        common_log_file_handler = RotatingFileHandler(
+            common_log_file_path, maxBytes=50000000, backupCount=5
+        )
+        logging_level = logging.DEBUG if self.DEBUG else logging.INFO
+        common_log_file_handler.setLevel(logging_level)
+        common_log_file_handler.setFormatter(common_formatter)
+        self.COMMON_LOGGER.addHandler(common_log_file_handler)
+
+        # add console handler to common logger
+        common_log_console_handler = logging.StreamHandler(stream=sys.stdout)
+        common_log_console_handler.setLevel(logging.ERROR)
+        common_log_console_handler.setFormatter(common_formatter)
+        self.COMMON_LOGGER.addHandler(common_log_console_handler)
+
+        # Result logger using file handler
+        results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + "/" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_results.log"
+        results_log_file_handler = logging.FileHandler(results_log_file_path)
+        results_log_file_handler.setLevel(logging.DEBUG)
+        results_log_file_handler.setFormatter(common_formatter)
+        self.RESULTS_LOGGER.addHandler(results_log_file_handler)
+
+        # Result logger using console handler
+        results_log_console_handler = logging.StreamHandler(stream=sys.stdout)
+        results_log_console_handler.setLevel(logging.DEBUG)
+        results_log_console_handler.setFormatter(common_formatter)
+        self.RESULTS_LOGGER.addHandler(results_log_console_handler)

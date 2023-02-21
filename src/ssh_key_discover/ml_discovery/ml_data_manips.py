@@ -30,7 +30,7 @@ def load_files_and_generate_samples_and_labels(
             """
             Load the samples and labels from one file.
             """
-            print(f"[{threadId}/{nb_threads}] Loading samples and labels from {filepath}")
+            params.RESULTS_LOGGER.info(f"[{threadId}/{nb_threads}] Loading samples and labels from {filepath}")
 
             graph_data = GraphData(
                 params,
@@ -38,16 +38,13 @@ def load_files_and_generate_samples_and_labels(
                 params.BLOCK_BYTE_SIZE
             )
             graph_analyser = GraphAnalyser(graph_data)
-            if params.DEBUG:
-                print("Annotating graph...")
+            params.COMMON_LOGGER.info("Annotating graph...")
             graph_analyser.annotate_graph()
-            if params.DEBUG:
-                print("Cleaning graph...")
+            params.COMMON_LOGGER.info("Cleaning graph...")
             graph_analyser.clean_graph()
 
             # generate the samples and labels
-            if params.DEBUG:
-                print("Generating samples and labels...")
+            params.COMMON_LOGGER.info("Generating samples and labels...")
             graph_embedding = GraphEmbedding(graph_data, params.BASE_EMBEDDING_DEPTH)
             current_addr_to_samples = graph_embedding.generate_embedded_samples()
             current_addr_to_labels = graph_embedding.generate_labels()
@@ -139,14 +136,12 @@ def get_samples_and_labels(
         save_file_name
     )
     if os.path.exists(samples_and_labels_file_path):
-        print(f"Loading samples and labels from {samples_and_labels_file_path}")
-        with time_measure('load_samples_and_labels_from_file'):
+        with time_measure(f'load_samples_and_labels_from_file {samples_and_labels_file_path}', params.RESULTS_LOGGER):
             samples, labels = load_samples_and_labels(
                 params, save_file_name
             )
     else:
-        print(f"Generating samples and labels from {len(filepaths)} heap dump files")
-        with time_measure('load_files_and_gen_samples_and_labels'): 
+        with time_measure(f'load_files_and_gen_samples_and_labels from {len(filepaths)} heap dump files', params.RESULTS_LOGGER): 
             samples, labels = load_files_and_generate_samples_and_labels(
                 params, filepaths
             )
@@ -159,26 +154,22 @@ def get_samples_and_labels(
     return samples, labels
 
 
-def oversample_using_smote(samples: list[list[int]], labels: list[int]):
+def oversample_using_smote(params : ProgramParams, samples: list[list[int]], labels: list[int]):
     """
     Oversample the data using SMOTE.
     """
-    print("Using SMOTE oversampling")
-
     sm = SMOTE()
-    with time_measure('smote_oversampling'):
+    with time_measure('smote_oversampling', params.RESULTS_LOGGER):
         samples, labels = sm.fit_resample(samples, labels)
 
     return samples, labels
 
-def undersample_using_random_undersampler(samples: list[list[int]], labels: list[int]):
+def undersample_using_random_undersampler(params : ProgramParams, samples: list[list[int]], labels: list[int]):
     """
     Undersample the data using RandomUnderSampler.
     """
-    print("Using undersampling")
-
     rus = RandomUnderSampler()
-    with time_measure('random_undersampling'):
+    with time_measure('random_undersampling', params.RESULTS_LOGGER):
         samples, labels = rus.fit_resample(samples, labels)
 
     return samples, labels

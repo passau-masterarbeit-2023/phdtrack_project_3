@@ -79,9 +79,9 @@ class HeapDumpData:
             # print some lines
             if self.params.DEBUG: 
                 for i in range(100, 105):
-                    print(heap_dump_lines[i].hex(), "int value:", int.from_bytes(heap_dump_lines[i], byteorder=self.params.PTR_ENDIANNESS, signed=False))
+                    self.params.COMMON_LOGGER.debug(heap_dump_lines[i].hex(), "int value:", int.from_bytes(heap_dump_lines[i], byteorder=self.params.PTR_ENDIANNESS, signed=False))
             
-                print("Number of dump lines: %d" % len(heap_dump_lines), "of size:", block_size, "bytes")
+                self.params.COMMON_LOGGER.debug("Number of dump lines: %d" % len(heap_dump_lines), "of size:", block_size, "bytes")
 
         if len(heap_dump_lines) == 0:
             raise ValueError("No lines found in heap dump file: %s" % heap_dump_raw_file_path)
@@ -100,9 +100,8 @@ class HeapDumpData:
         min_addr = hex_str_to_addr(self.json_data["HEAP_START"])
         max_addr = min_addr + len(self.blocks) * self.block_size
 
-        if self.params.DEBUG:
-            print("min_addr: %d, hex min_addr: %s" % (min_addr, hex(min_addr)))
-            print("max_addr: %s, hex max_addr: %s" % (hex(min_addr), hex(max_addr)))
+        self.params.COMMON_LOGGER.debug("min_addr: %d, hex min_addr: %s" % (min_addr, hex(min_addr)))
+        self.params.COMMON_LOGGER.debug("max_addr: %s, hex max_addr: %s" % (hex(min_addr), hex(max_addr)))
 
         return min_addr, max_addr
     

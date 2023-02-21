@@ -227,8 +227,7 @@ class GraphData:
 
         for pointer_addr in all_pointer_addr:
             parse_pointer(self.get_node(pointer_addr))
-            if self.params.DEBUG:
-                print("pointer node:", self.get_node(pointer_addr))
+            self.params.COMMON_LOGGER.debug("pointer node:", self.get_node(pointer_addr))
 
 
     def __parse_datastructure(self, startBlockIndex : int):
@@ -249,9 +248,8 @@ class GraphData:
         # check if nb_blocks_in_datastructure is an integer
         tmp_nb_blocks_in_datastructure = datastructure_size / self.heap_dump_data.block_size
         if tmp_nb_blocks_in_datastructure % 1 != 0:
-            if self.params.DEBUG:
-                print("tmp_nb_blocks_in_datastructure:", tmp_nb_blocks_in_datastructure)
-                print("The data structure size is not a multiple of the block size, at block index: %d" % startBlockIndex)
+            self.params.COMMON_LOGGER.debug("tmp_nb_blocks_in_datastructure:", tmp_nb_blocks_in_datastructure)
+            self.params.COMMON_LOGGER.debug("The data structure size is not a multiple of the block size, at block index: %d" % startBlockIndex)
             return 0 # this is not a data structure, no need to leap over it
 
         # get the number of blocks in the data structure as an integer
@@ -259,16 +257,14 @@ class GraphData:
 
         # check if the data structure is complete, i.e. if the data structure is still unclosed after at the end of the heap dump
         if startBlockIndex + nb_blocks_in_datastructure >= len(self.heap_dump_data.blocks):
-            if self.params.DEBUG:
-                print("The data structure is not complete, at block index: %d" % startBlockIndex)
+            self.params.COMMON_LOGGER.debug("The data structure is not complete, at block index: %d" % startBlockIndex)
             return 0
     
         # check that the data structure is not empty, i.e. that it contains at least one block
         # It cannot also be composed of only one block, since the first block is the malloc header,
         # and a data structure cannot be only the malloc header.
         if nb_blocks_in_datastructure < 2:
-            if self.params.DEBUG:
-                print("The data structure is too small (%d blocks), at block index: %d" % (nb_blocks_in_datastructure, startBlockIndex))
+            self.params.COMMON_LOGGER.debug("The data structure is too small (%d blocks), at block index: %d" % (nb_blocks_in_datastructure, startBlockIndex))
             return 0
         
         datastructure_node = DataStructureNode(

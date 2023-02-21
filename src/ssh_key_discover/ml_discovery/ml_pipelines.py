@@ -95,7 +95,7 @@ class Pipelines():
         # load model
         clf = load_model(self.params, model_name)
 
-        return evaluate(clf, samples, labels)
+        return evaluate(self.params, clf, samples, labels)
     
 
     ############## -- logic -- #####################
@@ -109,14 +109,20 @@ class Pipelines():
         """
         Data balancing.
         """
+        self.params.RESULTS_LOGGER.info("Data samples number before balancing {}, with {} valid.".format(len(samples), sum(labels)))
+        new_samples : int 
+        new_labels : int
         if balancingType == BalancingType.NONE:
-            return samples, labels
+            new_samples, new_labels = samples, labels
         elif balancingType == BalancingType.OVER:
-            return oversample_using_smote(samples, labels)
+            new_samples, new_labels = oversample_using_smote(self.params, samples, labels)
         elif balancingType == BalancingType.UNDER:
-            return undersample_using_random_undersampler(samples, labels)
+            new_samples, new_labels = undersample_using_random_undersampler(self.params, samples, labels)
         else:
             raise Exception("Unknown balancing type.")
+
+        self.params.RESULTS_LOGGER.info("Data samples number after balancing {}, with {} valid.".format(len(new_samples), sum(new_labels)))
+        return new_samples, new_labels
         
     def __get_model_name(self, modelType : ModelType, balancingType : BalancingType):
         """

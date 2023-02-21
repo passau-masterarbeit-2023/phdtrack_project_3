@@ -55,8 +55,7 @@ class GraphAnalyser:
                 )
 
         # print nb of keys
-        if self.params.DEBUG:
-            print("Nb of keys in JSON: %d" % len(addr_key_pairs))
+        self.params.COMMON_LOGGER.debug("Nb of keys in JSON: %d" % len(addr_key_pairs))
         
         return addr_key_pairs
     
@@ -87,7 +86,7 @@ class GraphAnalyser:
 
                 # watchdog: check if the key matches the key in the JSON
                 if key != key_data.key:
-                    print("WARNING: Key[%s] (%s) does not match key in JSON (%s)!" % (key_data.name, key.hex(), key_data.key.hex()))
+                    self.params.COMMON_LOGGER.warn("WARNING: Key[%s] (%s) does not match key in JSON (%s)!" % (key_data.name, key.hex(), key_data.key.hex()))
                 
                 # create the KeyNode
                 key_node = KeyNode(
@@ -104,8 +103,7 @@ class GraphAnalyser:
                 )
 
             else:
-                if self.params.DEBUG:
-                    print("WARNING: Key address (%s) not found in graph!" % hex(key_addr))
+                self.params.COMMON_LOGGER.warn("WARNING: Key address (%s) not found in graph!" % hex(key_addr))
 
     def __annotate_graph_with_json_ptr(
             self, 
@@ -117,14 +115,12 @@ class GraphAnalyser:
         """
         # get the session state address from the JSON file
         pointer_addr = hex_str_to_addr(ptr_addr_hex)
-        if self.params.DEBUG:
-            print(f"{annotation_type}:", ptr_addr_hex)
+        self.params.COMMON_LOGGER.debug(f"{annotation_type}:", ptr_addr_hex)
 
         # get the PointerNode
         pointer = self.graph_data.get_node(pointer_addr)
         if pointer is None or not isinstance(pointer, PointerNode):
-            if self.params.DEBUG:
-                print(f"WARNING: {annotation_type} pointer not found in graph!")
+            self.params.COMMON_LOGGER.warn(f"WARNING: {annotation_type} pointer not found in graph!")
             return
 
         # replace the SessionStateNode in the graph
@@ -193,7 +189,7 @@ class GraphAnalyser:
                 if not isinstance(node, IMPORTANT_VALUE_NODE_SUBTYPES):
                     filtered_graph.remove_node(node_addr)
                 else:
-                    print("IMPORTANT VALUE NODE: %s of type %s" % (node, type(node)))
+                    self.params.COMMON_LOGGER.info("IMPORTANT VALUE NODE: %s of type %s" % (node, type(node)))
 
         # generate graphviz file
         file_name = self.heap_dump_data.heap_dump_raw_file_path.split("/")[-1].replace(".raw", ".gv")

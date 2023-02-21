@@ -3,13 +3,25 @@ import time
 
 from ..params import ProgramParams
 import os
+import logging
 
 @contextlib.contextmanager
-def time_measure(ident):
+def time_measure(ident, logger : logging.Logger = None):
+    """
+    Measure the time elapsed since the begining of the context.
+    """
+    if logger is not None:
+        logger.info(ident + " started")
+    else:
+        print(ident + " started")
     tstart = time.time()
     yield
     elapsed = time.time() - tstart
-    print("{0}: {1} s".format(ident, elapsed))
+    message = "Time elapsed since the begining of {0}: {1} s".format(ident, elapsed)
+    if logger is not None:
+        logger.info(message)
+    else:
+        print(message)
 
 def get_name_for_feature_and_label_save_file(
     params : ProgramParams, 

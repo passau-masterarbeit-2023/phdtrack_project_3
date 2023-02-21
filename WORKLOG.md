@@ -22,6 +22,7 @@ To make the casual logging, use RotatingFileHandler ([here](https://stackoverflo
 
 
 * [X] refactoring and clean code
+* [X] beginning the implementation of logging
 
 ### Fri 17th Feb 2023
 
