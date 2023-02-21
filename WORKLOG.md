@@ -18,6 +18,9 @@ These are the next steps for the project
 
 ### Mon 21th Feb 2023
 
+To make the casual logging, use RotatingFileHandler ([here](https://stackoverflow.com/questions/40088496/how-to-use-pythons-rotatingfilehandler)).
+
+
 * [X] refactoring and clean code
 
 ### Fri 17th Feb 2023

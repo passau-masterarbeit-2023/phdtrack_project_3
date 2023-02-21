@@ -26,6 +26,7 @@ class CLIArguments:
             -b balancing type (ml_structures.BalancingType: NONE, OVER, UNDER)
             -t training dir path, path to the heap dump raw files
             -e testing dir path, path to the heap dump raw files
+            -w max ml workers (threads for ML threads pool, -1 for illimited)
             -d debug
             -v vectorizing depth (influence the size of the feature vector)
             -h help
@@ -75,6 +76,13 @@ class CLIArguments:
             type=int, 
             default=None,
             help="vectorizing depth (influence the size of the feature vector)"
+        )
+        parser.add_argument(
+            '-w',
+            '--max_ml_workers', 
+            type=int, 
+            default=None,
+            help="max ml workers (threads for ML threads pool, -1 for illimited)"
         )
 
         # save parsed arguments

@@ -55,7 +55,7 @@ def load_files_and_generate_samples_and_labels(
             return current_addr_to_samples, current_addr_to_labels
 
         # multi-threaded loading and generation of samples and labels
-        with ThreadPoolExecutor(max_workers=params.MAX_WORKERS) as executor:
+        with ThreadPoolExecutor(max_workers=params.MAX_SAMPLES_AND_TESTINGS_WORKERS) as executor:
             results = executor.map(
                 load_and_generate_samples_and_lables_for_one_file, 
                 filepaths,

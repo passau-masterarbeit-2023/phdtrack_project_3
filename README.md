@@ -43,6 +43,7 @@ there are some flags to pass to the program.
             -b balancing type (ml_structures.BalancingType: NONE, OVER, UNDER)
             -t training dir path, path to the heap dump raw files
             -e testing dir path, path to the heap dump raw files
+            -w max ml workers (threads for ML threads pool, -1 for illimited)
             -d debug
             -v vectorizing depth (influence the size of the feature vector)
             -h help

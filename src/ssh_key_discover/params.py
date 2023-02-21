@@ -33,7 +33,8 @@ class ProgramParams:
     TESTING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/data/phdtrack/Validation/scp/V_7_8_P1/16"
     MODELS_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/models"
     SAMPLES_AND_LABELS_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/samples_and_labels"
-    MAX_WORKERS = 14
+    MAX_SAMPLES_AND_TESTINGS_WORKERS = 14
+    MAX_ML_WORKERS = 2
     MODEL_TYPE: ModelType = ModelType.RFC
     BALANCING_TYPE: BalancingType = BalancingType.NONE
 
@@ -95,5 +96,7 @@ class ProgramParams:
             self.TESTING_DATA_DIR_PATH = self.cli_args.args.testing_dir_path
         if self.cli_args.args.debug is not None:
             self.DEBUG = str2bool(self.cli_args.args.debug)
+        if self.cli_args.args.max_ml_workers is not None:
+            self.MAX_ML_WORKERS = int(self.cli_args.args.max_ml_workers)
 
 PARAMS = ProgramParams()

@@ -20,7 +20,7 @@ def train_rfc(
     Train a random forest classifier.
     """
     # initialize the classifier[:10]
-    clf = RandomForestClassifier(random_state=0, n_jobs=2)
+    clf = RandomForestClassifier(random_state=0, n_jobs=params.MAX_ML_WORKERS)
 
     # fit the classifier to the training data, use multi-threading
     print("Fitting the rfc classifier...")
@@ -49,7 +49,7 @@ def train_high_recall_classifier(
     svc = SVC()
 
     # initialize the grid search #TODO: RandomizedSearchCV
-    grid_search = GridSearchCV(svc, param_grid, cv=5, scoring='recall', n_jobs=2)
+    grid_search = GridSearchCV(svc, param_grid, cv=5, scoring='recall', n_jobs=params.MAX_ML_WORKERS)
 
     # fit the grid search to the data
     print("Fitting the grid search classifier...")
