@@ -32,6 +32,7 @@ class GraphAnalyser:
         self.heap_dump_data = self.graph_data.heap_dump_data
         self.params = self.graph_data.params
     
+    ########## JSON EXPLOITATION ##########
 
     def __generate_key_data_from_json(self):
         """
@@ -137,6 +138,8 @@ class GraphAnalyser:
         )
     
         return annotated_pointer
+    
+    ########## GRAPH  ##########
 
 
     def annotate_graph(self):

@@ -20,7 +20,7 @@ def train_rfc(
     Train a random forest classifier.
     """
     # initialize the classifier[:10]
-    clf = RandomForestClassifier(random_state=0, n_jobs=-1)
+    clf = RandomForestClassifier(random_state=0, n_jobs=2)
 
     # fit the classifier to the training data, use multi-threading
     print("Fitting the rfc classifier...")

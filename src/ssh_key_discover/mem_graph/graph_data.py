@@ -37,12 +37,6 @@ class GraphData:
         self.__pointer_step()
     
     ########## WRAPPER FUNCTIONS ##########
-
-    def __is_pointer_wrapper(self, data: bytes | int):
-        """
-        Wrapper for is_pointer.
-        """
-        return is_pointer(data, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
     
     def __create_node_from_bytes_wrapper(self, data: bytes, addr: int):
         return create_node_from_bytes(data, addr, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
@@ -91,7 +85,24 @@ class GraphData:
             label=edge_type
         )
 
-    ########## UTILS ##########
+    ########## IDENTIFICATION ##########
+
+    def __is_pointer_wrapper(self, data: bytes | int):
+        """
+        Wrapper for is_pointer.
+        """
+        return is_pointer(data, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
+
+    def __get_memalloc_header(self, data: bytes):
+        """
+        get the malloc header (number of byte allocated + 1)
+        """
+        memalloc_header_int = int.from_bytes(
+            data, byteorder="little", signed=False
+        )
+        return memalloc_header_int
+
+    ########## GRAPH DATA ##########
 
     def get_all_addr_from_node_type(self, node_type: type[Node]):
         """
@@ -113,17 +124,6 @@ class GraphData:
             return node["node"]
         return None
 
-
-    def replace_node_by_new_one(self, old_node: Node, new_node: Node):
-        """
-        Replace a node in the graph.
-        """
-        nx.set_node_attributes(self.graph, {old_node.addr: new_node}, "node")
-        nx.set_node_attributes(self.graph, {old_node.addr: new_node.color}, "color")
-        if isinstance(new_node, Filled):
-            nx.set_node_attributes(self.graph, {old_node.addr: "filled"}, "style")
-        
-
     def get_data_structure_from_first_children(self, node: Node):
         """
         Get the data structure from the first children of a node.
@@ -144,6 +144,17 @@ class GraphData:
                 preceding_data_structure = ancestor
                 break
         return preceding_data_structure
+
+    ########## GRAPH MANIPULATION ##########
+
+    def replace_node_by_new_one(self, old_node: Node, new_node: Node):
+        """
+        Replace a node in the graph.
+        """
+        nx.set_node_attributes(self.graph, {old_node.addr: new_node}, "node")
+        nx.set_node_attributes(self.graph, {old_node.addr: new_node.color}, "color")
+        if isinstance(new_node, Filled):
+            nx.set_node_attributes(self.graph, {old_node.addr: "filled"}, "style")
 
     ########## LOGIC ##########
     
@@ -212,27 +223,12 @@ class GraphData:
                     break
 
         # get all pointer nodes
-        all_pointer_nodes: list[PointerNode] = []
-        for node_dict in self.graph.nodes.values():
-            node: Node = node_dict["node"]
-            if isinstance(node, PointerNode):
-                all_pointer_nodes.append(node)
+        all_pointer_addr: list[int] = self.get_all_addr_from_node_type(PointerNode)
 
-        for pointer_node in all_pointer_nodes:
-            parse_pointer(pointer_node)
+        for pointer_addr in all_pointer_addr:
+            parse_pointer(self.get_node(pointer_addr))
             if self.params.DEBUG:
-                print("pointer node:", pointer_node)
-
-
-    def __get_memalloc_header(self, data: bytes):
-        """
-        get the malloc header (number of byte allocated + 1)
-        """
-        memalloc_header_int = int.from_bytes(
-            data, byteorder="little", signed=False
-        )
-        return memalloc_header_int
-
+                print("pointer node:", self.get_node(pointer_addr))
 
 
     def __parse_datastructure(self, startBlockIndex : int):

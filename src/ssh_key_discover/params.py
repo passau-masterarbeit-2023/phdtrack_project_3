@@ -21,18 +21,18 @@ class ProgramParams:
     PTR_ENDIANNESS = "little"
 
     # manual
-    TEST_JSON_TEST_FILE_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/302-1644391327.json"
-    TEST_HEAP_DUMP_RAW_FILE_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data/Training/Training/scp/V_7_8_P1/16/30774-1644391327-heap.raw"
-    TEST_DATA_DIR = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/graphs"
+    TEST_JSON_TEST_FILE_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/302-1644391327.json"
+    TEST_HEAP_DUMP_RAW_FILE_PATH = os.environ['HOME'] + "/Documents/data/phdtrack/Training/scp/V_7_8_P1/16/30774-1644391327-heap.raw"
+    TEST_DATA_DIR = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/graphs"
     #TEST_GRAPH_DATA_FILENAME = "graph_302-1644391327.gv"
     TEST_GRAPH_DATA_FILENAME = "467-1644391327-heap.gv"
 
     # ML 
     BASE_EMBEDDING_DEPTH = 5
-    TRAINING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data/Training/Training/scp/V_7_8_P1/16"
-    TESTING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data/Validation/Validation/scp/V_7_8_P1/16"
-    MODELS_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/models"
-    SAMPLES_AND_LABELS_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_project_3/data/samples_and_labels"
+    TRAINING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/data/phdtrack/Training/scp/V_7_8_P1/16"
+    TESTING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/data/phdtrack/Validation/scp/V_7_8_P1/16"
+    MODELS_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/models"
+    SAMPLES_AND_LABELS_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/samples_and_labels"
     MAX_WORKERS = 14
     MODEL_TYPE: ModelType = ModelType.RFC
     BALANCING_TYPE: BalancingType = BalancingType.NONE

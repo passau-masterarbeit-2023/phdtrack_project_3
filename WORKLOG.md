@@ -16,6 +16,10 @@ These are the next steps for the project
 
 ## Work
 
+### Mon 21th Feb 2023
+
+* [X] refactoring and clean code
+
 ### Fri 17th Feb 2023
 
 We have ideas for many improvements. We have worked on the high recall training pipeline, as well as other refactoring stuff. We have added an command line argv parser.
