@@ -11,9 +11,9 @@ def time_measure(ident, logger : logging.Logger = None):
     Measure the time elapsed since the begining of the context.
     """
     if logger is not None:
-        logger.info(ident + " started")
+        logger.info("timer for " + ident + " started")
     else:
-        print(ident + " started")
+        print("timer for " + ident + " started")
     tstart = time.time()
     yield
     elapsed = time.time() - tstart

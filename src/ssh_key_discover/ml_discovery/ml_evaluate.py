@@ -22,8 +22,7 @@ def evaluate(
         # make predictions on the test data
         y_pred = clf.predict(test_samples)
         params.RESULTS_LOGGER.info(
-            "Sample of predicted labels:", y_pred[:20], 
-            "versus actual labels:", test_labels[:20], sep="\n"
+            "Sample of predicted labels: %s \n versus actual labels: %s", y_pred[:20], test_labels[:20]
         )
 
         # calculate the accuracy of the model
@@ -31,7 +30,10 @@ def evaluate(
         params.RESULTS_LOGGER.info("Accuracy: {:.2f}%".format(accuracy * 100))
 
         # print the classification report
-        params.RESULTS_LOGGER.info(classification_report(test_labels, y_pred))
+        classification = classification_report(test_labels, y_pred, output_dict=True)
+        if type(classification) == dict:
+            for key in classification_report.keys():
+                params.RESULTS_LOGGER.info("%s : %s", key, classification_report[key])
 
 
         # calculate the confusion matrix

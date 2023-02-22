@@ -248,8 +248,8 @@ class GraphData:
         # check if nb_blocks_in_datastructure is an integer
         tmp_nb_blocks_in_datastructure = datastructure_size / self.heap_dump_data.block_size
         if tmp_nb_blocks_in_datastructure % 1 != 0:
-            self.params.COMMON_LOGGER.debug("tmp_nb_blocks_in_datastructure:", tmp_nb_blocks_in_datastructure)
-            self.params.COMMON_LOGGER.debug("The data structure size is not a multiple of the block size, at block index: %d" % startBlockIndex)
+            self.params.COMMON_LOGGER.debug("tmp_nb_blocks_in_datastructure: %d", tmp_nb_blocks_in_datastructure)
+            self.params.COMMON_LOGGER.debug("The data structure size is not a multiple of the block size, at block index: %d", startBlockIndex)
             return 0 # this is not a data structure, no need to leap over it
 
         # get the number of blocks in the data structure as an integer

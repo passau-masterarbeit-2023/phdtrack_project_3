@@ -48,13 +48,13 @@ class ProgramParams:
     COMMON_LOGGER = logging.getLogger("common_logger")
     RESULTS_LOGGER = logging.getLogger("results_logger")
 
-    def __init__(self, debug=False, **kwargs):
-        self.DEBUG = debug
-
+    def __init__(self, **kwargs):
         self.__load_program_argv()
         self.__consume_program_argv()
         self.__check_all_paths()
+
         self.__construct_log()
+        self.__log_program_params()
         
 
     def __check_all_paths(self):
@@ -117,6 +117,10 @@ class ProgramParams:
         # common formater
         common_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
+        # ----------------- common logger -----------------
+        # create common logger
+        self.COMMON_LOGGER.setLevel(logging.DEBUG)
+
         # add RotatingFileHandler to common logger
         common_log_file_path = self.COMMON_LOGGER_DIR_PATH + "/common_log.log"
         common_log_file_handler = RotatingFileHandler(
@@ -133,6 +137,10 @@ class ProgramParams:
         common_log_console_handler.setFormatter(common_formatter)
         self.COMMON_LOGGER.addHandler(common_log_console_handler)
 
+        # ----------------- results logger -----------------
+        # create results logger
+        self.RESULTS_LOGGER.setLevel(logging.DEBUG)
+
         # Result logger using file handler
         results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + "/" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_results.log"
         results_log_file_handler = logging.FileHandler(results_log_file_path)
@@ -145,3 +153,16 @@ class ProgramParams:
         results_log_console_handler.setLevel(logging.DEBUG)
         results_log_console_handler.setFormatter(common_formatter)
         self.RESULTS_LOGGER.addHandler(results_log_console_handler)
+    
+    def __log_program_params(self):
+        """
+        Log given program arguments.
+        """
+        self.RESULTS_LOGGER.info("Program params:")
+        self.RESULTS_LOGGER.info("model_type: %s" % self.MODEL_TYPE)
+        self.RESULTS_LOGGER.info("balancing_type: %s" % self.BALANCING_TYPE)
+        self.RESULTS_LOGGER.info("training_dir_path: %s" % self.TRAINING_DATA_DIR_PATH)
+        self.RESULTS_LOGGER.info("testing_dir_path: %s" % self.TESTING_DATA_DIR_PATH)
+        self.RESULTS_LOGGER.info("debug: %s" % self.DEBUG)
+        self.RESULTS_LOGGER.info("max_ml_workers: %s" % self.MAX_ML_WORKERS)
+        self.RESULTS_LOGGER.info("Base embedding depth: %s" % self.BASE_EMBEDDING_DEPTH)

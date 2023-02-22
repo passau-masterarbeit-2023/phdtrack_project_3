@@ -86,7 +86,7 @@ class GraphAnalyser:
 
                 # watchdog: check if the key matches the key in the JSON
                 if key != key_data.key:
-                    self.params.COMMON_LOGGER.warn("WARNING: Key[%s] (%s) does not match key in JSON (%s)!" % (key_data.name, key.hex(), key_data.key.hex()))
+                    self.params.COMMON_LOGGER.warning("WARNING: Key[%s] (%s) does not match key in JSON (%s)!" % (key_data.name, key.hex(), key_data.key.hex()))
                 
                 # create the KeyNode
                 key_node = KeyNode(
@@ -103,7 +103,7 @@ class GraphAnalyser:
                 )
 
             else:
-                self.params.COMMON_LOGGER.warn("WARNING: Key address (%s) not found in graph!" % hex(key_addr))
+                self.params.COMMON_LOGGER.warning("WARNING: Key address (%s) not found in graph!" % hex(key_addr))
 
     def __annotate_graph_with_json_ptr(
             self, 
@@ -120,7 +120,7 @@ class GraphAnalyser:
         # get the PointerNode
         pointer = self.graph_data.get_node(pointer_addr)
         if pointer is None or not isinstance(pointer, PointerNode):
-            self.params.COMMON_LOGGER.warn(f"WARNING: {annotation_type} pointer not found in graph!")
+            self.params.COMMON_LOGGER.warning(f"WARNING: {annotation_type} pointer not found in graph!")
             return
 
         # replace the SessionStateNode in the graph
