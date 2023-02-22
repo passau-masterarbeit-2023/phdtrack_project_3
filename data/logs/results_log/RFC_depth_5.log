@@ -1,0 +1,36 @@
+2023-02-22 15:45:50,097 - results_logger - INFO - Program params:
+2023-02-22 15:45:50,097 - results_logger - INFO - model_type: ModelType.RFC
+2023-02-22 15:45:50,097 - results_logger - INFO - balancing_type: BalancingType.NONE
+2023-02-22 15:45:50,097 - results_logger - INFO - training_dir_path: /home/clement/Documents/data/phdtrack/Training/scp/V_7_8_P1/16
+2023-02-22 15:45:50,097 - results_logger - INFO - testing_dir_path: /home/clement/Documents/data/phdtrack/Validation/scp/V_7_8_P1/16
+2023-02-22 15:45:50,098 - results_logger - INFO - debug: False
+2023-02-22 15:45:50,098 - results_logger - INFO - max_ml_workers: 2
+2023-02-22 15:45:50,098 - results_logger - INFO - Base embedding depth: 5
+2023-02-22 15:45:50,104 - results_logger - INFO - timer for load_samples_and_labels_from_file /home/clement/Documents/repo_git/phdtrack_project_3/data/samples_and_labels/samples_and_labels_training__depth_5_Training_scp_V_7_8_P1_16.pkl started
+2023-02-22 15:45:59,836 - results_logger - INFO - Time elapsed since the begining of load_samples_and_labels_from_file /home/clement/Documents/repo_git/phdtrack_project_3/data/samples_and_labels/samples_and_labels_training__depth_5_Training_scp_V_7_8_P1_16.pkl: 9.7325279712677 s
+2023-02-22 15:45:59,912 - results_logger - INFO - Data samples number before balancing 13800079, with 6299 valid.
+2023-02-22 15:45:59,997 - results_logger - INFO - Data samples number after balancing 13800079, with 6299 valid.
+2023-02-22 15:45:59,997 - results_logger - INFO - timer for fit_rfc_classifier started
+2023-02-22 15:47:58,207 - results_logger - INFO - Time elapsed since the begining of fit_rfc_classifier: 118.20924401283264 s
+2023-02-22 15:47:58,658 - results_logger - INFO - timer for load_samples_and_labels_from_file /home/clement/Documents/repo_git/phdtrack_project_3/data/samples_and_labels/samples_and_labels_testing__depth_5_Validation_scp_V_7_8_P1_16.pkl started
+2023-02-22 15:47:59,453 - results_logger - INFO - Time elapsed since the begining of load_samples_and_labels_from_file /home/clement/Documents/repo_git/phdtrack_project_3/data/samples_and_labels/samples_and_labels_testing__depth_5_Validation_scp_V_7_8_P1_16.pkl: 0.7946674823760986 s
+2023-02-22 15:47:59,460 - results_logger - INFO - timer for evaluate_model_score started
+2023-02-22 15:48:05,408 - results_logger - INFO - Sample of predicted labels: [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] 
+ versus actual labels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+2023-02-22 15:48:05,813 - results_logger - INFO - Accuracy: 99.96%
+2023-02-22 15:48:08,591 - results_logger - INFO -               precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00   2356984
+           1       1.00      0.07      0.12      1070
+
+    accuracy                           1.00   2358054
+   macro avg       1.00      0.53      0.56   2358054
+weighted avg       1.00      1.00      1.00   2358054
+
+2023-02-22 15:48:09,131 - results_logger - INFO - Confusion Matrix: 
+2023-02-22 15:48:09,131 - results_logger - INFO - True Positives: 71
+2023-02-22 15:48:09,132 - results_logger - INFO - True Negatives: 2356984
+2023-02-22 15:48:09,132 - results_logger - INFO - False Positives: 0
+2023-02-22 15:48:09,132 - results_logger - INFO - False Negatives: 999
+2023-02-22 15:48:09,544 - results_logger - INFO - AUC: 0.53
+2023-02-22 15:48:09,815 - results_logger - INFO - Time elapsed since the begining of evaluate_model_score: 10.35486364364624 s

@@ -30,19 +30,16 @@ def evaluate(
         params.RESULTS_LOGGER.info("Accuracy: {:.2f}%".format(accuracy * 100))
 
         # print the classification report
-        classification = classification_report(test_labels, y_pred, output_dict=True)
-        if type(classification) == dict:
-            for key in classification_report.keys():
-                params.RESULTS_LOGGER.info("%s : %s", key, classification_report[key])
+        params.RESULTS_LOGGER.info(classification_report(test_labels, y_pred))
 
 
         # calculate the confusion matrix
         cm = confusion_matrix(test_labels, y_pred)
-        params.RESULTS_LOGGER.info("Confusion Matrix: \n", cm)
-        params.RESULTS_LOGGER.info("True Positives: ", cm[1, 1])
-        params.RESULTS_LOGGER.info("True Negatives: ", cm[0, 0])
-        params.RESULTS_LOGGER.info("False Positives: ", cm[0, 1])
-        params.RESULTS_LOGGER.info("False Negatives: ", cm[1, 0])
+        params.RESULTS_LOGGER.info("Confusion Matrix: ")
+        params.RESULTS_LOGGER.info("True Positives: %d", cm[1, 1])
+        params.RESULTS_LOGGER.info("True Negatives: %d", cm[0, 0])
+        params.RESULTS_LOGGER.info("False Positives: %d", cm[0, 1])
+        params.RESULTS_LOGGER.info("False Negatives: %d", cm[1, 0])
 
         # calculate the false positive rate and true positive rate
         fpr, tpr, thresholds = roc_curve(test_labels, y_pred)

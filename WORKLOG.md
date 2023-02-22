@@ -13,13 +13,15 @@ These are the next steps for the project
   * [ ] offset in the DTN (position of the value node inside the DTN)
   * [ ] number of PN and VN in DTNs
 
-
 ## Work
+
+### Tue 21th Feb 2023
+
+* [X] finishing and debuging the logging
 
 ### Mon 21th Feb 2023
 
 To make the casual logging, use RotatingFileHandler ([here](https://stackoverflow.com/questions/40088496/how-to-use-pythons-rotatingfilehandler)).
-
 
 * [X] refactoring and clean code
 * [X] beginning the implementation of logging
@@ -35,8 +37,6 @@ We have ideas for many improvements. We have worked on the high recall training 
 * [ ] Investigate why the samples and labels generation is so slow. Idea: limit the number of simultaneous thread, we think we are RAM memory bound... We have already made a lot of refactoring
 * [X] make another classifier with high recall
 * [ ] make bigger model (use more data).
-
-
 
 ### Thu 16th Feb 2023
 
