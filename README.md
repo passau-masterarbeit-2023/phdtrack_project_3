@@ -2,7 +2,6 @@
 
 A repo following the advancement of PhDTrack Project.
 
-
 ## Organisations
 
 [SmartVMI.org](http://www.smartvmi.org/)
@@ -55,6 +54,9 @@ Example of usage:
 python3 main.py -m GRID_SEARCH_CV -b OVER -t /home/onyr/Documents/code/phdtrack/phdtrack_data/Training/Training/scp/V_7_8_P1/16 -e /home/onyr/Documents/code/phdtrack/phdtrack_data/Validation/Validation/scp/V_7_8_P1/16 -d False -v 2
 ```
 
+#### linux library needed
+
+The library [graphviz](https://pygraphviz.github.io/documentation/stable/install.html) is needed to generate the image.
 
 ## Notes
 
@@ -62,7 +64,7 @@ PCAP file ? https://wiki.wireshark.org/Development/LibpcapFileFormat
 
 ### Get key in heap dump raw file from json data
 
-To get a key in a given heap dump raw file, we can use its associated .json file. Each given key comes with its address as an hex number. However, the raw heap dump lines of hex memory starts at address 0x0, whereas the address in the json are given relative to the real memory address in the sampled data. As the address of the start of the head dump file (0x0) is given from real memory (`"HEAP_START": "55a6d2356000"`), we can compute the 
+To get a key in a given heap dump raw file, we can use its associated .json file. Each given key comes with its address as an hex number. However, the raw heap dump lines of hex memory starts at address 0x0, whereas the address in the json are given relative to the real memory address in the sampled data. As the address of the start of the head dump file (0x0) is given from real memory (`"HEAP_START": "55a6d2356000"`), we can compute the
 
 Example: *302-1644391327.json*address given relative to the raw file (given_json_key_addr - HEAP_START).
 

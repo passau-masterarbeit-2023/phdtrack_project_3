@@ -1,0 +1,36 @@
+strict digraph "" {
+	1	[color=orange,
+		"node"="PN(0x1)"];
+	4	[color=orange,
+		"node"="PN(0x4)"];
+	5	[color=orange,
+		"node"="PN(0x5)"];
+	6	[color=blue,
+		"node"="DTN(0x6)"];
+	6 -> 1	[label=dts,
+		weight=1];
+	6 -> 4	[label=dts,
+		weight=1];
+	6 -> 5	[label=dts,
+		weight=1];
+	7	[color=orange,
+		"node"="PN(0x7)"];
+	8	[color=orange,
+		"node"="PN(0x8)"];
+	9	[color=blue,
+		"node"="DTN(0x9)"];
+	10	[color=orange,
+		"node"="PN(0xa)"];
+	9 -> 10	[label=dts,
+		weight=1];
+	10 -> 8	[label=ptr,
+		weight=1];
+	11	[color=orange,
+		"node"="PN(0xb)"];
+	11 -> 10	[label=ptr,
+		weight=2];
+	12	[color=orange,
+		"node"="PN(0xc)"];
+	12 -> 11	[label=ptr,
+		weight=1];
+}

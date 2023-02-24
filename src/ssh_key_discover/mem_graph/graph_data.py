@@ -10,22 +10,15 @@ class GraphData:
     """
     Generates a graph from a raw heap dump file.
     """
-    params: ProgramParams
-    heap_dump_data: HeapDumpData # WARN: allocated in generate_graph()
+    params: ProgramParams 
     graph: nx.DiGraph
+    heap_dump_data: HeapDumpData | None = None
 
-    def __init__(
-            self, 
-            params: ProgramParams,
-            heap_dump_raw_file_path: str,
-            pointer_byte_size: int
-        ):
+    ########## Init ##########
+    def __file_init(self, heap_dump_raw_file_path: str, pointer_byte_size: int):
         """
-        Generate a graph from a raw heap dump file.
+        Initialize the graph data from a raw heap dump file.
         """
-        self.params = params
-        self.graph = nx.DiGraph()
-
         # get the heap dump data
         self.heap_dump_data = HeapDumpData(
             heap_dump_raw_file_path=heap_dump_raw_file_path,
@@ -35,13 +28,48 @@ class GraphData:
         
         self.__data_structure_step(pointer_byte_size)
         self.__pointer_step()
+
+    def __test_graph_init(self, nodes: list[Node], edges: list[tuple[Node, Node, int]]):
+        """
+        Initialize the graph data from a list of nodes and edges for testing purposes.
+        WARNING: this function is only used for testing purposes, don't use the function to construct a graph (heap_dump_data isn't initialized)
+        """
+        self.graph = nx.DiGraph()
+        for node in nodes:
+            self.add_node_wrapper(node)
+        for edge in edges:
+            self.add_edge_wrapper(edge[0], edge[1], edge[2])
+        
+
+    def __init__(
+            self, 
+            params: ProgramParams,
+            heap_dump_raw_file_path_or_nodes: str | list[Node],
+            pointer_byte_size_or_edges: int | list[tuple[Node, Node, int]],
+        ):
+        """
+        Generate a graph. The graph can be generated from a raw heap dump file or from a list of nodes and edges for testing purposes.
+        """
+        self.params = params
+        self.graph = nx.DiGraph()
+
+        if isinstance(heap_dump_raw_file_path_or_nodes, str) and isinstance(pointer_byte_size_or_edges, int):
+            self.__file_init(heap_dump_raw_file_path_or_nodes, pointer_byte_size_or_edges)
+        elif isinstance(heap_dump_raw_file_path_or_nodes, list) and isinstance(pointer_byte_size_or_edges, list):
+            self.__test_graph_init(heap_dump_raw_file_path_or_nodes, pointer_byte_size_or_edges)
+        else:
+            raise ValueError("Invalid arguments for graph generation")
     
     ########## WRAPPER FUNCTIONS ##########
     
     def __create_node_from_bytes_wrapper(self, data: bytes, addr: int):
+        if self.heap_dump_data is None:
+            raise ValueError("heap_dump_data is None")
         return create_node_from_bytes(data, addr, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
 
     def __create_node_from_bytes_wrapper_index(self, data: bytes, block_index: int):
+        if self.heap_dump_data is None:
+            raise ValueError("heap_dump_data is None")
         addr = self.heap_dump_data.index_to_addr_wrapper(block_index)
         return self.__create_node_from_bytes_wrapper(data, addr)
 
@@ -54,7 +82,7 @@ class GraphData:
         else:
             self.graph.add_node(node.addr, node=node, color=node.color)
     
-    def add_edge_wrapper(self, node_start: Node, node_end: Node):
+    def add_edge_wrapper(self, node_start: Node, node_end: Node, weight: int = 1):
         """
         Wrapper for add_edge. Add an edge to the graph.
         """
@@ -82,7 +110,8 @@ class GraphData:
         self.graph.add_edge(
             node_start.addr, 
             node_end.addr,
-            label=edge_type
+            label=edge_type,
+            weight=weight
         )
 
     ########## IDENTIFICATION ##########
@@ -91,6 +120,8 @@ class GraphData:
         """
         Wrapper for is_pointer.
         """
+        if self.heap_dump_data is None:
+            raise ValueError("heap_dump_data is None")
         return is_pointer(data, self.heap_dump_data.min_addr, self.heap_dump_data.max_addr, self.params.PTR_ENDIANNESS)
 
     def __get_memalloc_header(self, data: bytes):
@@ -162,11 +193,15 @@ class GraphData:
         """
         Parse all data structures step. Don't follow pointers yet.
         """
+        if self.heap_dump_data is None:
+            raise ValueError("heap_dump_data is None")
 
         def pass_null_blocks(index: int):
             """
             Pass null blocks.
             """
+            if self.heap_dump_data is None:
+                raise ValueError("heap_dump_data is None")
             while (
                 index < len(self.heap_dump_data.blocks) and # check if index is in bounds
                 self.heap_dump_data.blocks[index] == b'\x00' * pointer_byte_size
@@ -193,31 +228,22 @@ class GraphData:
 
         def parse_pointer(node: PointerNode):
             """
-            Parse a pointer node.
+            Parse a pointer node. Follow it until it point to a node that is not a pointer, and add the edge 
+            weightened by the number of intermediate pointer nodes.
             """
             # check if the pointer points to a node in the graph
             current_pointer_node: Node = node
+            weight = 1
             while isinstance(current_pointer_node, PointerNode):
                 pointed_node = self.get_node(current_pointer_node.points_to)
                 if pointed_node is None:
-                    
-                    # create a new node
-                    pointed_node = self.__create_node_from_bytes_wrapper(
-                        self.heap_dump_data.blocks[self.heap_dump_data.addr_to_index_wrapper(node.addr)],
-                        node.points_to
-                    )
-
-                    # add the node to the graph
-                    self.add_node_wrapper(pointed_node)
-
-                    # add the edge
-                    self.add_edge_wrapper(node, pointed_node)
+                    weight += 1
 
                     # next iteration
                     current_pointer_node = pointed_node
                 else:
                     # get the node from the dictionary, and add the edge
-                    self.add_edge_wrapper(node, pointed_node) 
+                    self.add_edge_wrapper(node, pointed_node, weight) 
 
                     # no more iterations
                     break
@@ -237,6 +263,9 @@ class GraphData:
         :return: The number of blocks in the data structure.
         If the data structure is not valid, return 0, since there no data structure to leap over.
         """
+        if self.heap_dump_data is None:
+            raise ValueError("heap_dump_data is None")
+
         # precondition: the block at startBlockIndex is not the last block of the heap dump or after
         if startBlockIndex >= len(self.heap_dump_data.blocks) - 1:
             return 0 # this is not a data structure, no need to leap over it

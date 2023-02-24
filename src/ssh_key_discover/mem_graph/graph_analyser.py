@@ -18,8 +18,8 @@ class GraphAnalyser:
 
     # aliases
     graph: nx.DiGraph
-    heap_dump_data: HeapDumpData
     params: ProgramParams
+    heap_dump_data: HeapDumpData | None = None
 
     # important nodes
     ssh_struct_node: Node
@@ -38,6 +38,9 @@ class GraphAnalyser:
         """
         Generate a dictionary of key data from the JSON file.
         """
+        if self.heap_dump_data is None:
+            raise Exception("HeapDumpData is None")
+        
         json_data = self.heap_dump_data.json_data # alias
         addr_key_pairs: dict[int, KeyData] = {} # key addr (int in base 16 - hex) -> key data (KeyData)
 
@@ -64,6 +67,9 @@ class GraphAnalyser:
         """
         Use JSON data to annotate the graph concerning the keys.
         """
+        if self.heap_dump_data is None:
+            raise Exception("HeapDumpData is None")
+        
         addr_key_pairs = self.__generate_key_data_from_json()
 
         # create a dictionary of address to node
@@ -142,6 +148,9 @@ class GraphAnalyser:
         """
         Annotate the graph with data from the JSON file.
         """
+        if self.heap_dump_data is None:
+            raise Exception("HeapDumpData is None")
+
         self.__annotate_graph_with_key_data()
         self.ssh_struct_node = self.__annotate_graph_with_json_ptr(
             self.heap_dump_data.json_data["SSH_STRUCT_ADDR"],
@@ -177,7 +186,7 @@ class GraphAnalyser:
             if node_addr not in node_connected_component:
                 self.graph.remove_node(node_addr)
     
-    def visualize_graph(self):
+    def visualize_graph(self, file_name: str = None):
         """
         Visualize the graph.
         """
@@ -192,7 +201,10 @@ class GraphAnalyser:
                     self.params.COMMON_LOGGER.info("IMPORTANT VALUE NODE: %s of type %s" % (node, type(node)))
 
         # generate graphviz file
-        file_name = self.heap_dump_data.heap_dump_raw_file_path.split("/")[-1].replace(".raw", ".gv")
+        if file_name is None:
+            if self.heap_dump_data is None:
+                raise Exception("HeapDumpData is None")
+            file_name = self.heap_dump_data.heap_dump_raw_file_path.split("/")[-1].replace(".raw", ".gv")
         outfile_path = self.params.TEST_DATA_DIR + "/" + file_name
         nx.nx_agraph.write_dot(filtered_graph, outfile_path)
 

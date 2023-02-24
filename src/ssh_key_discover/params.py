@@ -48,9 +48,13 @@ class ProgramParams:
     COMMON_LOGGER = logging.getLogger("common_logger")
     RESULTS_LOGGER = logging.getLogger("results_logger")
 
-    def __init__(self, **kwargs):
-        self.__load_program_argv()
-        self.__consume_program_argv()
+    def __init__(self, load_program_argv : bool = True, **kwargs):
+        """
+        Program parameters. If load_program_argv is True, the program parameters are loaded from the command line arguments.
+        """
+        if load_program_argv:
+            self.__load_program_argv()
+            self.__consume_program_argv()
         self.__check_all_paths()
 
         self.__construct_log()

@@ -15,6 +15,11 @@ These are the next steps for the project
 
 ## Work
 
+### Fri 24th feb 2023
+
+* [X] begining the implementation of simplification of the graph
+* [ ] debugging the simplification of the graph
+
 ### Tue 21th Feb 2023
 
 * [X] finishing and debuging the logging
