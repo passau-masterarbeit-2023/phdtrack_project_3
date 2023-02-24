@@ -24,6 +24,9 @@ class WeightingEdgeNode():
 
     def __eq__(self, other):
         return self.ancestorNode.addr == other.ancestorNode.addr and self.node.addr == other.node.addr
+    
+    def __str__(self):
+        return f"WeightingEdgeNode(weight={self.weight}, firstTimeIndex={self.firstTimeIndex}, node={self.node}, ancestorNode={self.ancestorNode})"
 
 class GraphEmbedding:
     graph_data: GraphData
@@ -40,7 +43,8 @@ class GraphEmbedding:
 
         # aliases
         self.graph = self.graph_data.graph
-        self.heap_dump_data = self.graph_data.heap_dump_data
+        if self.graph_data.heap_dump_data is not None:
+            self.heap_dump_data = self.graph_data.heap_dump_data
         self.params = self.graph_data.params
 
     #------------ vectorization ------------
@@ -73,24 +77,27 @@ class GraphEmbedding:
             current_ancestors = set()
             for previous_ancestor in previous_ancestors:
                 # if we haven't reached the number of ancestor of this edge, we keep it
-                if previous_ancestor.weight >= (i - previous_ancestor.firstTimeIndex):
+                if previous_ancestor.weight > (i - previous_ancestor.firstTimeIndex):
                     current_ancestors.add(previous_ancestor)
                 else:
                     predecessors: list[int] = self.graph.predecessors(previous_ancestor.ancestorNode.addr)
                     for predecessor in predecessors:
                         current_ancestors.add(self.__get_first_weighting_edge_node(previous_ancestor.ancestorNode, self.graph_data.get_node(predecessor), i))
-        
+
             # feature computations
             count_data_structures = 0
             count_pointers = 0
 
+            self.params.COMMON_LOGGER.debug("current_ancestors at %s: ", i)
             for current_ancestor in current_ancestors:
+                self.params.COMMON_LOGGER.debug("current_ancestor: %s" % current_ancestor)
                 ancestor_node = current_ancestor.ancestorNode
                 if isinstance(ancestor_node, DataStructureNode):
                     count_data_structures += 1
                 elif isinstance(ancestor_node, PointerNode):
                     count_pointers += 1
-            
+            self.params.COMMON_LOGGER.debug("End of current_ancestors.")
+
             # add the features to the vector
             vector.append(count_data_structures)
             vector.append(count_pointers)
@@ -98,6 +105,8 @@ class GraphEmbedding:
             previous_ancestors = current_ancestors
 
         return vector
+    
+    
 
     def __vectorize_node(self, node: ValueNode) -> list[int]:
         """

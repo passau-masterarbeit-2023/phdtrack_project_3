@@ -36,7 +36,7 @@ strict digraph "" {
 	9 -> 10	[label=dts,
 		weight=1];
 	10 -> 8	[label=ptr,
-		weight=1];
+		weight=2];
 	11	[color=orange,
 		"node"="PN(0xb)"];
 	11 -> 10	[label=ptr,
