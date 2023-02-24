@@ -105,7 +105,7 @@ class GraphData:
 
             if parent_data_structure is not None:
                 node_end = parent_data_structure
-
+        self.params.COMMON_LOGGER.debug("Adding edge: %s -> %s" % (node_start, node_end))
 
         self.graph.add_edge(
             node_start.addr, 

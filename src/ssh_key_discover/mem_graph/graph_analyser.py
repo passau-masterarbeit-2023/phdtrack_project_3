@@ -186,19 +186,20 @@ class GraphAnalyser:
             if node_addr not in node_connected_component:
                 self.graph.remove_node(node_addr)
     
-    def visualize_graph(self, file_name: str = None):
+    def visualize_graph(self, file_name: str = None, filter_out_value_nodes: bool = True):
         """
         Visualize the graph.
         """
         # filter out ValueNodes from graph
         filtered_graph = self.graph.copy()
-        for node_addr in self.graph.nodes.keys():
-            node = self.graph_data.get_node(node_addr)
-            if (isinstance(node, ValueNode)):
-                if not isinstance(node, IMPORTANT_VALUE_NODE_SUBTYPES):
-                    filtered_graph.remove_node(node_addr)
-                else:
-                    self.params.COMMON_LOGGER.info("IMPORTANT VALUE NODE: %s of type %s" % (node, type(node)))
+        if filter_out_value_nodes:
+            for node_addr in self.graph.nodes.keys():
+                node = self.graph_data.get_node(node_addr)
+                if (isinstance(node, ValueNode)):
+                    if not isinstance(node, IMPORTANT_VALUE_NODE_SUBTYPES):
+                        filtered_graph.remove_node(node_addr)
+                    else:
+                        self.params.COMMON_LOGGER.info("IMPORTANT VALUE NODE: %s of type %s" % (node, type(node)))
 
         # generate graphviz file
         if file_name is None:

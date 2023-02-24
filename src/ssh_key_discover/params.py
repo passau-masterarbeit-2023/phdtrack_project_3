@@ -48,13 +48,23 @@ class ProgramParams:
     COMMON_LOGGER = logging.getLogger("common_logger")
     RESULTS_LOGGER = logging.getLogger("results_logger")
 
-    def __init__(self, load_program_argv : bool = True, **kwargs):
+    USE_IMPORTANT_LOG_FILE = True
+
+    def __init__(self, load_program_argv : bool = True, debug : bool = False, generate_important_log_file = True, **kwargs):
         """
         Program parameters. If load_program_argv is True, the program parameters are loaded from the command line arguments.
+        Otherwise, the program parameters are loaded from the default values.
+        if generate_important_log_file is True, the program will generate an important log file with the current date and time.
+        otherwise, the program will use the default log file.
+
+        debug and generate_important_log_file parameter is used only if load_program_argv is True.
         """
         if load_program_argv:
             self.__load_program_argv()
             self.__consume_program_argv()
+        else:
+            self.DEBUG = debug
+            self.USE_IMPORTANT_LOG_FILE = generate_important_log_file
         self.__check_all_paths()
 
         self.__construct_log()
@@ -146,7 +156,10 @@ class ProgramParams:
         self.RESULTS_LOGGER.setLevel(logging.DEBUG)
 
         # Result logger using file handler
-        results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + "/" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_results.log"
+        if self.USE_IMPORTANT_LOG_FILE:
+            results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + "/" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_results.log"
+        else:
+            results_log_file_path = common_log_file_path
         results_log_file_handler = logging.FileHandler(results_log_file_path)
         results_log_file_handler.setLevel(logging.DEBUG)
         results_log_file_handler.setFormatter(common_formatter)
