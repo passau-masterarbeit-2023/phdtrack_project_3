@@ -71,7 +71,7 @@ class GraphEmbedding:
         previous_ancestors.add(WeightingEdgeNode(0, 0, node, node)) # init 
 
         vector: list[int] = []
-
+        self.params.COMMON_LOGGER.debug("Vectorizing node %s" % node)
         for i in range(1, self.depth + 1):
             # get the ancestors of the previous ancestors
             current_ancestors = set()
@@ -106,13 +106,46 @@ class GraphEmbedding:
 
         return vector
     
+    def __vectorize_DTN(self, node: ValueNode) -> list[int]:
+        """ 
+        Vectorize a node, with data structure data.
+        put the following information in the order :
+        - allocation size in the DTN
+        - offset of the VN in the DTN
+        - number of pointers in the DTN
+        - number of VN in the DTN
+        """
+
+        data_structure_node : DataStructureNode = self.graph_data.get_data_structure_from_child(node, False)
+        if data_structure_node is None:
+            return [0] * 4 # if the node is not in a data structure, we return a vector of 0
+        feature : list[int] = []
+        feature.append(data_structure_node.byte_size)
+        feature.append((node.addr - data_structure_node.addr) / self.params.BLOCK_BYTE_SIZE)
+
+        # get the children nodes addresses
+        children_nodes_address : list[int] = self.graph.successors(data_structure_node.addr)
+
+        # count the number of pointers and value nodes
+        count_pointers : int = 0
+        count_value_nodes : int = 0
+        for child_node_address in children_nodes_address:
+            child_node : Node = self.graph_data.get_node(child_node_address)
+            if isinstance(child_node, PointerNode):
+                count_pointers += 1
+            elif isinstance(child_node, ValueNode):
+                count_value_nodes += 1
+        
+        feature.append(count_pointers)
+        feature.append(count_value_nodes)
+        return feature    
     
 
     def __vectorize_node(self, node: ValueNode) -> list[int]:
         """
         Vectorize a node.
         """
-        return self.__vectorize_ancestor(node)
+        return self.__vectorize_ancestor(node) + self.__vectorize_DTN(node)
 
     #------------ generation ------------
 

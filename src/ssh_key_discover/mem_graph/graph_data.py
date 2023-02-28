@@ -101,7 +101,7 @@ class GraphData:
         # the first one after the data structure malloc header (DataStructureNode), 
         # then it means that the pointer points to the data structure.
         if isinstance(node_start, PointerNode):
-            parent_data_structure = self.get_data_structure_from_first_children(node_end)
+            parent_data_structure = self.get_data_structure_from_child(node_end)
 
             if parent_data_structure is not None:
                 node_end = parent_data_structure
@@ -155,22 +155,22 @@ class GraphData:
             return node["node"]
         return None
 
-    def get_data_structure_from_first_children(self, node: Node):
+    def get_data_structure_from_child(self, child_node: Node, must_be_first_child: bool = True):
         """
-        Get the data structure from the first children of a node.
-        This means the function only returns a data structure if the node 
+        Get the data structure from child node.
+        if must_be_first_child is true, This means the function only returns a data structure if the node 
         is the first one after the data structure malloc header.
         """
         # get the ancestors of the node
-        ancestor_addrs: list[int] = list(self.graph.predecessors(node.addr))
+        ancestor_addrs: list[int] = list(self.graph.predecessors(child_node.addr))
 
         preceding_data_structure: DataStructureNode | None = None
         for ancestor_addr in ancestor_addrs:
             ancestor = self.get_node(ancestor_addr)
             if (
                 isinstance(ancestor, DataStructureNode) and
-                # check if the node is the first one after the data structure malloc header
-                ancestor.addr == node.addr - self.params.BLOCK_BYTE_SIZE
+                # check if the node is the first one after the data structure malloc header if must_be_first_child is true
+                ((not must_be_first_child) or ancestor.addr == child_node.addr - self.params.BLOCK_BYTE_SIZE)
             ):
                 preceding_data_structure = ancestor
                 break

@@ -7,6 +7,10 @@ strict digraph "" {
 		"node"="VN(0x3)"];
 	4	[color=orange,
 		"node"="PN(0x4)"];
+	13	[color=blue,
+		"node"="DTN(0xd)"];
+	4 -> 13	[label=ptr,
+		weight=3];
 	5	[color=orange,
 		"node"="PN(0x5)"];
 	6	[color=blue,
@@ -44,5 +48,13 @@ strict digraph "" {
 	12	[color=orange,
 		"node"="PN(0xc)"];
 	12 -> 11	[label=ptr,
+		weight=1];
+	14	[color=grey,
+		"node"="VN(0xe)"];
+	13 -> 14	[label=dts,
+		weight=1];
+	15	[color=orange,
+		"node"="PN(0xf)"];
+	13 -> 15	[label=dts,
 		weight=1];
 }

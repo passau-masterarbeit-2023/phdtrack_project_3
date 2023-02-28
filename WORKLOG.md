@@ -15,10 +15,14 @@ These are the next steps for the project
 
 ## Work
 
+### Sat 25th feb 2023
+
+* [ ] beautify graph representation
+
 ### Fri 24th feb 2023
 
 * [X] begining the implementation of simplification of the graph
-* [ ] debugging the simplification of the graph
+* [X] debugging the simplification of the graph
 
 ### Tue 21th Feb 2023
 
