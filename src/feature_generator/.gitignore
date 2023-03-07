@@ -1,0 +1,7 @@
+# cpp compilation files
+obj/
+bin/
+*.o
+
+# ressource files
+*.zip

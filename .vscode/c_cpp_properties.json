@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/src/feature_generator/*",
+                "${workspaceFolder}/src/feature_generator/inc/*",
+                "${workspaceFolder}/src/feature_generator/inc/main/*",
+                "${workspaceFolder}/src/feature_generator/inc/test/*",
+                "${workspaceFolder}/src/feature_generator/inc/perf/*"
+            ],
+            "defines": [],
+            "cStandard": "c11",
+            "cppStandard": "c++14"
+        }
+    ],
+    "version": 4
+}
