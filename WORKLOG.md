@@ -24,6 +24,12 @@ Rust improvements
 * [ ] Compute number of nodes (VN and PN) just after creation of a DTN node.
 * [ ] While loading vectorization results (features and labels), calculate all the features one time with max depths, then save differents depths from there instead of computig several times.
 
+notes about current compute time:
+
+```shell
+Time elapsed since the begining of load_files_and_gen_samples_and_labels from 1065 heap dump files: 5273.103894233704 s (~= 1h30 / 1065 files, or ~= 5s / heap dump file)
+```
+
 
 ### Sat 25th feb 2023
 

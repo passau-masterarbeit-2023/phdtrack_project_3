@@ -180,11 +180,11 @@ class ProgramParams:
         """
         Log given program arguments.
         """
-        self.RESULTS_LOGGER.info("Program params:")
-        self.RESULTS_LOGGER.info("model_type: %s" % self.MODEL_TYPE)
-        self.RESULTS_LOGGER.info("balancing_type: %s" % self.BALANCING_TYPE)
-        self.RESULTS_LOGGER.info("training_dir_path: %s" % self.TRAINING_DATA_DIR_PATH)
-        self.RESULTS_LOGGER.info("testing_dir_path: %s" % self.TESTING_DATA_DIR_PATH)
-        self.RESULTS_LOGGER.info("debug: %s" % self.DEBUG)
-        self.RESULTS_LOGGER.info("max_ml_workers: %s" % self.MAX_ML_WORKERS)
-        self.RESULTS_LOGGER.info("Base embedding depth: %s" % self.BASE_EMBEDDING_DEPTH)
+        self.RESULTS_LOGGER.info("Program params:   [see below]")
+        self.RESULTS_LOGGER.info("\tmodel_type: %s" % self.MODEL_TYPE)
+        self.RESULTS_LOGGER.info("\tbalancing_type: %s" % self.BALANCING_TYPE)
+        self.RESULTS_LOGGER.info("\ttraining_dir_path: %s" % self.TRAINING_DATA_DIR_PATH)
+        self.RESULTS_LOGGER.info("\ttesting_dir_path: %s" % self.TESTING_DATA_DIR_PATH)
+        self.RESULTS_LOGGER.info("\tdebug: %s" % self.DEBUG)
+        self.RESULTS_LOGGER.info("\tmax_ml_workers: %s" % self.MAX_ML_WORKERS)
+        self.RESULTS_LOGGER.info("\tBase embedding depth: %s" % self.BASE_EMBEDDING_DEPTH)

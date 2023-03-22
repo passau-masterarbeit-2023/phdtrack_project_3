@@ -21,8 +21,15 @@ def evaluate(
         
         # make predictions on the test data
         y_pred = clf.predict(test_samples)
+
+        # print information about the labels (test and predicted labels)
         params.RESULTS_LOGGER.info(
             "Sample of predicted labels: %s \n versus actual labels: %s", y_pred[:20], test_labels[:20]
+        )
+        params.RESULTS_LOGGER.info(
+            "Number of predicted 1 labels: {} \n versus number of predicted 0 labels: {}".format(
+                sum(y_pred), len(y_pred) - sum(y_pred)
+            )
         )
 
         # calculate the accuracy of the model

@@ -124,6 +124,8 @@ def get_samples_and_labels(
 ):
     """
     Get the samples and labels.
+    If the samples and labels are already saved to a file, load them from the file.
+    Otherwise, load the files and generate the samples and labels.
     :return: samples, a list of vectors of features 
     :return: labels, corresponding list of labels
     """
@@ -136,12 +138,12 @@ def get_samples_and_labels(
         save_file_name
     )
     if os.path.exists(samples_and_labels_file_path):
-        with time_measure(f'load_samples_and_labels_from_file {samples_and_labels_file_path}', params.RESULTS_LOGGER):
+        with time_measure(f'load_samples_and_labels {samples_and_labels_file_path}', params.RESULTS_LOGGER):
             samples, labels = load_samples_and_labels(
                 params, save_file_name
             )
     else:
-        with time_measure(f'load_files_and_gen_samples_and_labels from {len(filepaths)} heap dump files', params.RESULTS_LOGGER): 
+        with time_measure(f'load_files_and_generate_samples_and_labels from {len(filepaths)} heap dump files', params.RESULTS_LOGGER): 
             samples, labels = load_files_and_generate_samples_and_labels(
                 params, filepaths
             )
@@ -150,6 +152,8 @@ def get_samples_and_labels(
         save_samples_and_labels(
             params, samples, labels, save_file_name
         )
+    
+    check_samples_and_labels(params, samples, labels)
 
     return samples, labels
 
@@ -173,3 +177,21 @@ def undersample_using_random_undersampler(params : ProgramParams, samples: list[
         samples, labels = rus.fit_resample(samples, labels)
 
     return samples, labels
+
+def check_samples_and_labels(params : ProgramParams, samples: list[list[int]], labels: list[int]):
+    """
+    Check that the samples and labels are valid.
+    """
+    # check that the number of samples and labels is the same
+    assert len(samples) == len(labels), "The number of samples and labels is not the same."
+    # check that the number of features is the same for all samples
+    assert len(set([len(sample) for sample in samples])) == 1, "The number of features is not the same for all samples."
+    # check that the labels are either 0 or 1
+    assert set(labels) == {0, 1}, "The labels are not either 0 or 1."
+    # check that labels are not all the same
+    assert len(set(labels)) > 1, "The labels are all the same."
+    # check that the samples are not all the same
+    assert len(set([tuple(sample) for sample in samples])) > 1, "The samples are all the same."
+
+    # log that the samples and labels have been checked
+    params.RESULTS_LOGGER.info(f"✅ Checked samples and labels.")
