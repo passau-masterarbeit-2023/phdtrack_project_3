@@ -22,6 +22,7 @@ Restarted to work on the project. Clément added some code and a Logger, but a l
 Rust improvements
 
 * [ ] Compute number of nodes (VN and PN) just after creation of a DTN node.
+* [ ] While loading vectorization results (features and labels), calculate all the features one time with max depths, then save differents depths from there instead of computig several times.
 
 
 ### Sat 25th feb 2023
