@@ -121,7 +121,7 @@ class GraphAnalyser:
         """
         # get the session state address from the JSON file
         pointer_addr = hex_str_to_addr(ptr_addr_hex)
-        self.params.COMMON_LOGGER.debug(f"{annotation_type}:", ptr_addr_hex)
+        self.params.COMMON_LOGGER.debug(f"{annotation_type}: {ptr_addr_hex}")
 
         # get the PointerNode
         pointer = self.graph_data.get_node(pointer_addr)

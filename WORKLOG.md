@@ -15,6 +15,15 @@ These are the next steps for the project
 
 ## Work
 
+### Wed 22th mar 2023
+
+Restarted to work on the project. Clément added some code and a Logger, but a lot of debugging is needed.
+
+Rust improvements
+
+* [ ] Compute number of nodes (VN and PN) just after creation of a DTN node.
+
+
 ### Sat 25th feb 2023
 
 * [ ] beautify graph representation

@@ -253,7 +253,7 @@ class GraphData:
 
         for pointer_addr in all_pointer_addr:
             parse_pointer(self.get_node(pointer_addr))
-            self.params.COMMON_LOGGER.debug("pointer node:", self.get_node(pointer_addr))
+            self.params.COMMON_LOGGER.debug(f"pointer node: {self.get_node(pointer_addr)}")
 
 
     def __parse_datastructure(self, startBlockIndex : int):
@@ -277,8 +277,8 @@ class GraphData:
         # check if nb_blocks_in_datastructure is an integer
         tmp_nb_blocks_in_datastructure = datastructure_size / self.heap_dump_data.block_size
         if tmp_nb_blocks_in_datastructure % 1 != 0:
-            self.params.COMMON_LOGGER.debug("tmp_nb_blocks_in_datastructure: %d", tmp_nb_blocks_in_datastructure)
-            self.params.COMMON_LOGGER.debug("The data structure size is not a multiple of the block size, at block index: %d", startBlockIndex)
+            self.params.COMMON_LOGGER.debug("tmp_nb_blocks_in_datastructure: {}".format(tmp_nb_blocks_in_datastructure))
+            self.params.COMMON_LOGGER.debug("The data structure size is not a multiple of the block size, at block index: {}".format(startBlockIndex))
             return 0 # this is not a data structure, no need to leap over it
 
         # get the number of blocks in the data structure as an integer
@@ -293,7 +293,11 @@ class GraphData:
         # It cannot also be composed of only one block, since the first block is the malloc header,
         # and a data structure cannot be only the malloc header.
         if nb_blocks_in_datastructure < 2:
-            self.params.COMMON_LOGGER.debug("The data structure is too small (%d blocks), at block index: %d" % (nb_blocks_in_datastructure, startBlockIndex))
+            self.params.COMMON_LOGGER.debug(
+                "The data structure is too small ({} blocks), at block index: {}".format(
+                    nb_blocks_in_datastructure, startBlockIndex
+                )
+            )
             return 0
         
         datastructure_node = DataStructureNode(
@@ -302,10 +306,27 @@ class GraphData:
         )
         self.add_node_wrapper(datastructure_node)
 
+        count_pointer_nodes = 0
+        count_value_nodes = 0
         for block_index in range(startBlockIndex + 1, startBlockIndex + nb_blocks_in_datastructure):
             node = self.__create_node_from_bytes_wrapper_index(self.heap_dump_data.blocks[block_index], block_index)
             self.add_node_wrapper(node)
             self.add_edge_wrapper(datastructure_node, node)
+
+            # stats
+            if isinstance(node, PointerNode):
+                count_pointer_nodes += 1
+            elif isinstance(node, ValueNode):
+                count_value_nodes += 1
+        
+        # recreate the data structure node with the correct number of pointer and value nodes
+        datastructure_node = DataStructureNode(
+            self.heap_dump_data.index_to_addr_wrapper(startBlockIndex),
+            datastructure_size,
+            count_pointer_nodes,
+            count_value_nodes
+        )
+        self.add_node_wrapper(datastructure_node)
         
         return nb_blocks_in_datastructure
 

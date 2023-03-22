@@ -24,27 +24,31 @@ class ProgramParams:
     BLOCK_BYTE_SIZE = 8 # 64-bit, ex: C0 03 7B 09 2A 56 00 00
     PTR_ENDIANNESS = "little"
 
+    # base directories
+    PHDTRACK_BASE_DIR = os.environ['HOME'] + "/Documents/code/phdtrack/"
+    DATA_BASE_DIR = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data"
+
     # manual
-    TEST_JSON_TEST_FILE_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/302-1644391327.json"
-    TEST_HEAP_DUMP_RAW_FILE_PATH = os.environ['HOME'] + "/Documents/data/phdtrack/Training/scp/V_7_8_P1/16/30774-1644391327-heap.raw"
-    TEST_DATA_DIR = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/graphs"
+    TEST_JSON_TEST_FILE_PATH = PHDTRACK_BASE_DIR + "/phdtrack_project_3/data/302-1644391327.json"
+    TEST_HEAP_DUMP_RAW_FILE_PATH = DATA_BASE_DIR + "/Training/Training/scp/V_7_8_P1/16/30774-1644391327-heap.raw"
+    TEST_DATA_DIR = PHDTRACK_BASE_DIR + "/phdtrack_project_3/data/graphs"
     #TEST_GRAPH_DATA_FILENAME = "graph_302-1644391327.gv"
     TEST_GRAPH_DATA_FILENAME = "467-1644391327-heap.gv"
 
     # ML 
     BASE_EMBEDDING_DEPTH = 5
-    TRAINING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/data/phdtrack/Training/scp/V_7_8_P1/16"
-    TESTING_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/data/phdtrack/Validation/scp/V_7_8_P1/16"
-    MODELS_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/models"
-    SAMPLES_AND_LABELS_DATA_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/samples_and_labels"
+    TRAINING_DATA_DIR_PATH = DATA_BASE_DIR + "/Training/Training/scp/V_7_8_P1/16"
+    TESTING_DATA_DIR_PATH = DATA_BASE_DIR + "/Validation/Validation/scp/V_7_8_P1/16"
+    MODELS_DIR_PATH = PHDTRACK_BASE_DIR + "/phdtrack_project_3/models"
+    SAMPLES_AND_LABELS_DATA_DIR_PATH = PHDTRACK_BASE_DIR + "/phdtrack_project_3/data/samples_and_labels"
     MAX_SAMPLES_AND_TESTINGS_WORKERS = 14
     MAX_ML_WORKERS = 2
     MODEL_TYPE: ModelType = ModelType.RFC
     BALANCING_TYPE: BalancingType = BalancingType.NONE
 
     # logger
-    COMMON_LOGGER_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/logs/common_log"
-    RESULTS_LOGGER_DIR_PATH = os.environ['HOME'] + "/Documents/repo_git/phdtrack_project_3/data/logs/results_log"
+    COMMON_LOGGER_DIR_PATH = PHDTRACK_BASE_DIR + "/phdtrack_project_3/data/logs/common_log"
+    RESULTS_LOGGER_DIR_PATH = PHDTRACK_BASE_DIR + "/phdtrack_project_3/data/logs/results_log"
     COMMON_LOGGER = logging.getLogger("common_logger")
     RESULTS_LOGGER = logging.getLogger("results_logger")
 
@@ -120,7 +124,8 @@ class ProgramParams:
         if self.cli_args.args.testing_dir_path is not None:
             self.TESTING_DATA_DIR_PATH = self.cli_args.args.testing_dir_path
         if self.cli_args.args.debug is not None:
-            self.DEBUG = str2bool(self.cli_args.args.debug)
+            self.DEBUG = self.cli_args.args.debug
+            assert isinstance(self.DEBUG, bool)
         if self.cli_args.args.max_ml_workers is not None:
             self.MAX_ML_WORKERS = int(self.cli_args.args.max_ml_workers)
 

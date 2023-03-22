@@ -1,4 +1,5 @@
 
+from typing import Iterator
 from ..mem_graph.graph_data import GraphData
 from ..mem_graph.graph_structures import *
 from ..params import ProgramParams
@@ -88,9 +89,9 @@ class GraphEmbedding:
             count_data_structures = 0
             count_pointers = 0
 
-            self.params.COMMON_LOGGER.debug("current_ancestors at %s: ", i)
+            self.params.COMMON_LOGGER.debug(f"current_ancestors at {i}:   [see below]")
             for current_ancestor in current_ancestors:
-                self.params.COMMON_LOGGER.debug("current_ancestor: %s" % current_ancestor)
+                self.params.COMMON_LOGGER.debug(f"current_ancestor: {current_ancestor}")
                 ancestor_node = current_ancestor.ancestorNode
                 if isinstance(ancestor_node, DataStructureNode):
                     count_data_structures += 1
@@ -119,25 +120,17 @@ class GraphEmbedding:
         data_structure_node : DataStructureNode = self.graph_data.get_data_structure_from_child(node, False)
         if data_structure_node is None:
             return [0] * 4 # if the node is not in a data structure, we return a vector of 0
+
         feature : list[int] = []
         feature.append(data_structure_node.byte_size)
         feature.append((node.addr - data_structure_node.addr) / self.params.BLOCK_BYTE_SIZE)
 
-        # get the children nodes addresses
-        children_nodes_address : list[int] = self.graph.successors(data_structure_node.addr)
-
-        # count the number of pointers and value nodes
-        count_pointers : int = 0
-        count_value_nodes : int = 0
-        for child_node_address in children_nodes_address:
-            child_node : Node = self.graph_data.get_node(child_node_address)
-            if isinstance(child_node, PointerNode):
-                count_pointers += 1
-            elif isinstance(child_node, ValueNode):
-                count_value_nodes += 1
+        # use DTN statistics for the number of pointers and value nodes
+        feature.append(data_structure_node.nb_pointer_nodes)
+        feature.append(data_structure_node.nb_value_nodes)
         
-        feature.append(count_pointers)
-        feature.append(count_value_nodes)
+        #print(f"nb of children nodes: pn: {data_structure_node.nb_pointer_nodes}, vn: {data_structure_node.nb_value_nodes}")
+
         return feature    
     
 
@@ -145,7 +138,19 @@ class GraphEmbedding:
         """
         Vectorize a node.
         """
-        return self.__vectorize_ancestor(node) + self.__vectorize_DTN(node)
+        import time
+        # count time needed
+        start_time = time.time()
+        ancestor_vector = self.__vectorize_ancestor(node)
+        end_time = time.time()
+        self.params.COMMON_LOGGER.info("Ancestors vectorization time: %s" % (end_time - start_time))
+
+        start_time = time.time()
+        DTN_vector = self.__vectorize_DTN(node)
+        end_time = time.time()
+        self.params.COMMON_LOGGER.info("DTN vectorization time: %s" % (end_time - start_time))
+
+        return ancestor_vector + DTN_vector
 
     #------------ generation ------------
 

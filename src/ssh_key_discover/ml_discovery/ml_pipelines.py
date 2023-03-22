@@ -3,7 +3,7 @@ from .ml_data_manips import get_samples_and_labels, load_model, oversample_using
 from .ml_evaluate import evaluate
 from ..params import ProgramParams
 from .ml_train import train_high_recall_classifier, train_rfc
-from .ml_structures import ModelType, BalancingType 
+from .ml_structures import ModelType, BalancingType
 
 from enum import Enum
 

@@ -27,6 +27,12 @@ class Filled(ABC):
 @frozen
 class DataStructureNode(Node):
     byte_size : int
+
+    # stats
+    nb_pointer_nodes: int = attrib(0)
+    nb_value_nodes: int = attrib(0)
+
+    # style
     color: str = attrib("blue")
     style: str = attrib("")
 

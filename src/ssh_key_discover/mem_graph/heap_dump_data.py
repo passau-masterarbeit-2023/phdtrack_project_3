@@ -79,9 +79,18 @@ class HeapDumpData:
             # print some lines
             if self.params.DEBUG: 
                 for i in range(100, 105):
-                    self.params.COMMON_LOGGER.debug(heap_dump_lines[i].hex(), "int value:", int.from_bytes(heap_dump_lines[i], byteorder=self.params.PTR_ENDIANNESS, signed=False))
+                    self.params.COMMON_LOGGER.debug(
+                        "{} int value: {}".format(
+                            heap_dump_lines[i].hex(),
+                            int.from_bytes(heap_dump_lines[i], byteorder=self.params.PTR_ENDIANNESS, signed=False)
+                        )
+                    )
             
-                self.params.COMMON_LOGGER.debug("Number of dump lines: %d" % len(heap_dump_lines), "of size:", block_size, "bytes")
+                self.params.COMMON_LOGGER.debug(
+                    "Number of dump lines: {}, of size {} bytes".format(
+                        len(heap_dump_lines), "of size:", block_size,
+                    )
+                )
 
         if len(heap_dump_lines) == 0:
             raise ValueError("No lines found in heap dump file: %s" % heap_dump_raw_file_path)
