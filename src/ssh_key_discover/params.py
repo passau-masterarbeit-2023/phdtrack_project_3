@@ -25,8 +25,8 @@ class ProgramParams:
     PTR_ENDIANNESS = "little"
 
     # base directories
-    PHDTRACK_BASE_DIR = os.environ['HOME'] + "/Documents/code/phdtrack/"
-    DATA_BASE_DIR = os.environ['HOME'] + "/Documents/code/phdtrack/phdtrack_data"
+    PHDTRACK_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/"
+    DATA_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_data"
 
     # manual
     TEST_JSON_TEST_FILE_PATH = PHDTRACK_BASE_DIR + "/phdtrack_project_3/data/302-1644391327.json"
