@@ -15,6 +15,16 @@ These are the next steps for the project
 
 ## Work
 
+### Tue 
+
+### Mon 27th mar 2023
+
+Started to rework the `mem_graph` python sub-module in Rust. We have tested to generate bindings using `pyo3` rust crate. We then switched to rewrite `heap_dump_data.py`. In order to make sure we reimplement the code according to what we did in Python, we are using TDD on the Rust project.
+
+The tests and code is already working for `heap_dump_data.rs`.
+
+* [ ] Continue to rewrite components in Rust, for improved security and speed.
+
 ### Wed 22th mar 2023
 
 Restarted to work on the project. Clément added some code and a Logger, but a lot of debugging is needed.
@@ -29,7 +39,6 @@ notes about current compute time:
 ```shell
 Time elapsed since the begining of load_files_and_gen_samples_and_labels from 1065 heap dump files: 5273.103894233704 s (~= 1h30 / 1065 files, or ~= 5s / heap dump file)
 ```
-
 
 ### Sat 25th feb 2023
 
