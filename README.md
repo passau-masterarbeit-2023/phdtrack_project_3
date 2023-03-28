@@ -94,7 +94,9 @@ Using vim regex, run `:%!xxd`, then `:%s/\s\+//g`, then search for pointers with
 
 > WARN: The pointers in the raw heap dump files are coded using LITTLE-ENDIANNESS. They are coded as 8 byte-aligned memory blocks.
 
-Example of pointers from `.1010-1644391327-heap.raw`:
+> 8 bytes means 16 chars!
+
+Example of potential pointers from `.1010-1644391327-heap.raw`:
 
 ```shell
 00000300:20947e968b55000040947e968b550000.~..U..@.~..U..
@@ -104,6 +106,14 @@ Example of pointers from `.1010-1644391327-heap.raw`:
 00000340:40957e968b55000070957e968b550000@.~..U..p.~..U..
 00000350:90957e968b550000b0957e968b550000..~..U....~..U..
 ```
+
+Those are pointers in range. 
+
+##### determine pointer range
+
+> WARN: `HEAP_START` from associated json file is in big endian!!!
+
+To determine the valid pointer, one need to check that the pointer points to a reachable address, within the program heap range. Just determine the number of bytes in the heap dump, and use associated JSON file `HEAP_DUMP` values in order to compute the range.
 
 #### Search for datastructures
 

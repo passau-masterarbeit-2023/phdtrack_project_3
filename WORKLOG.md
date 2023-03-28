@@ -15,7 +15,7 @@ These are the next steps for the project
 
 ## Work
 
-### Tue 
+### Tue
 
 ### Mon 27th mar 2023
 
@@ -23,7 +23,8 @@ Started to rework the `mem_graph` python sub-module in Rust. We have tested to g
 
 The tests and code is already working for `heap_dump_data.rs`.
 
-* [ ] Continue to rewrite components in Rust, for improved security and speed.
+* [X] Continue to rewrite components in Rust, for improved security and speed.
+* [ ] WARN: Python `is_pointer()` is dead broken code, determine how to check that a block content is a pointer !
 
 ### Wed 22th mar 2023
 
