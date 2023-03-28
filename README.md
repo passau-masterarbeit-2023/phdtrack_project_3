@@ -94,6 +94,17 @@ Using vim regex, run `:%!xxd`, then `:%s/\s\+//g`, then search for pointers with
 
 > WARN: The pointers in the raw heap dump files are coded using LITTLE-ENDIANNESS. They are coded as 8 byte-aligned memory blocks.
 
+Example of pointers from `.1010-1644391327-heap.raw`:
+
+```shell
+00000300:20947e968b55000040947e968b550000.~..U..@.~..U..
+00000310:60947e968b55000080947e968b550000`.~..U....~..U..
+00000320:a0947e968b550000e0947e968b550000..~..U....~..U..
+00000330:00957e968b55000020957e968b550000..~..U...~..U..
+00000340:40957e968b55000070957e968b550000@.~..U..p.~..U..
+00000350:90957e968b550000b0957e968b550000..~..U....~..U..
+```
+
 #### Search for datastructures
 
 Data structures starts with the number of bytes allocated (in heap).
