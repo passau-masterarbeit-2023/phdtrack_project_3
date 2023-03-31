@@ -15,7 +15,22 @@ These are the next steps for the project
 
 ## Work
 
-### Tue
+Fri 31st mar 2023
+
+Need to change our graph data structure with a [GraphMap](https://docs.rs/petgraph/0.5.0/petgraph/graphmap/struct.GraphMap.html), so as to be able to have a test for edge existence in constant time.
+
+More ressources: [GraphMap doc](https://docs.rs/petgraph/0.5.0/petgraph/graphmap/struct.GraphMap.html), [Introduction to PetGraph](https://depth-first.com/articles/2020/02/03/graphs-in-rust-an-introduction-to-petgraph/)
+
+BIG refactor needed. Need to have a Map of `NodeIndex <u64>` to `Node`, where `u64` is an address in the heap dump. The graph is then filled with `u64` and edges with more complex data.
+
+The annotation of type and data for `u64` graph vertices happen through the map.
+
+The hash function should be actually sending back the address.
+
+
+### Tue 28th mar 2023
+
+Continuing to work on Rust code version.
 
 ### Mon 27th mar 2023
 
