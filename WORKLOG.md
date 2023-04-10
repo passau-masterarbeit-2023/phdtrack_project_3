@@ -15,7 +15,15 @@ These are the next steps for the project
 
 ## Work
 
-Fri 31st mar 2023
+### Mon 8th april 2023 (and week before)
+
+We finally managed to get out of the endianness hell. The idea was to simply remove the endianness param from the function that is supposed to convert a str intp a block of bytes. Now, we are facing a design problem. We cannot chain mutable references in rust, contrary to python, so no possibility to have several function doing some chained calls on different mutability variants of self.
+
+* [ ] Rewrite the constructor to move from internal function to external function
+* [ ] fix the borrowing problem.
+
+
+### Fri 31st mar 2023
 
 Need to change our graph data structure with a [GraphMap](https://docs.rs/petgraph/0.5.0/petgraph/graphmap/struct.GraphMap.html), so as to be able to have a test for edge existence in constant time.
 
@@ -26,7 +34,6 @@ BIG refactor needed. Need to have a Map of `NodeIndex <u64>` to `Node`, where `u
 The annotation of type and data for `u64` graph vertices happen through the map.
 
 The hash function should be actually sending back the address.
-
 
 ### Tue 28th mar 2023
 
