@@ -15,12 +15,21 @@ These are the next steps for the project
 
 ## Work
 
-### Mon 8th april 2023 (and week before)
+Tue 11th Apr 2023
+
+Finished to debug the immutable and mutable and lifetime errors due to the edges having references of nodes. Now, edges have real addresses as u64 which greatly simplifies the code.
+
+I rewrote the pointer parsing workflow, but some testing and debugging is needed.
+
+* [ ] debug the pointer parsing workflow
+* [ ] test the pointer parsing workflow
+
+### Mon 10th april 2023 (and week before)
 
 We finally managed to get out of the endianness hell. The idea was to simply remove the endianness param from the function that is supposed to convert a str intp a block of bytes. Now, we are facing a design problem. We cannot chain mutable references in rust, contrary to python, so no possibility to have several function doing some chained calls on different mutability variants of self.
 
-* [ ] Rewrite the constructor to move from internal function to external function
-* [ ] fix the borrowing problem.
+* [X] Rewrite the constructor to move from internal function to external function (no more need)
+* [X] fix the borrowing problem.
 
 
 ### Fri 31st mar 2023
