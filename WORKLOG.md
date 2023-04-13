@@ -15,7 +15,17 @@ These are the next steps for the project
 
 ## Work
 
-Tue 11th Apr 2023
+### Thu 13th apr 2023
+
+Investigating on the graph structure generation. I have corrected the formatter of the graph, added code to save it to a file and have been working on a Python script to clean and generate images from the .gv file.
+
+### Wed 12th apr 2023
+
+We continued to work on graph_data correction and testing. We have tried to find a datastructure by hand from the heap dump raw file, but we couldn't find it in our results from file parsing. We now need to investigate the issue.
+
+> It is highly probable that the issue is related to nested data structures. Actually, our code doesn't work for nested data structures!
+
+### Tue 11th Apr 2023
 
 Finished to debug the immutable and mutable and lifetime errors due to the edges having references of nodes. Now, edges have real addresses as u64 which greatly simplifies the code.
 
@@ -30,7 +40,6 @@ We finally managed to get out of the endianness hell. The idea was to simply rem
 
 * [X] Rewrite the constructor to move from internal function to external function (no more need)
 * [X] fix the borrowing problem.
-
 
 ### Fri 31st mar 2023
 
