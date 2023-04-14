@@ -15,6 +15,15 @@ These are the next steps for the project
 
 ## Work
 
+### Fri 14th apr 2023
+
+Finally finished graph_data after weeks of hard work. We have tested the graph creation process. We also have added 2 differents ways of creating edges, one doing a compression of data, by wrapping chains of pointers. This make the final graph having no links between data structures since intermediate pointer to pointer links are missing.
+
+We then started to work on graph_annotate, added the code to get the key data inside heap_dump_data (to load key data at json loading, only once contrary to Python). The base pipeline for annonation is already implemented for SSH_STRUCT and SESSION_STATE.
+
+* [ ] add the pipeline for key annotation
+* [ ] add the code to generate samples and labels
+
 ### Thu 13th apr 2023
 
 Investigating on the graph structure generation. I have corrected the formatter of the graph, added code to save it to a file and have been working on a Python script to clean and generate images from the .gv file.
