@@ -15,6 +15,10 @@ These are the next steps for the project
 
 ## Work
 
+### Tue 18th apr 2023
+
+Continued to work on the graph annotation pipeline. We added the code for key annotation and the associated tests.
+
 ### Fri 14th apr 2023
 
 Finally finished graph_data after weeks of hard work. We have tested the graph creation process. We also have added 2 differents ways of creating edges, one doing a compression of data, by wrapping chains of pointers. This make the final graph having no links between data structures since intermediate pointer to pointer links are missing.
