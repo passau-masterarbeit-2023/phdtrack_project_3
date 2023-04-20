@@ -15,6 +15,14 @@ These are the next steps for the project
 
 ## Work
 
+### Thu 20th apr 2023
+
+Working on sample generation pipeline from many files given a folder as input.
+
+### Wed 19th apr 2023
+
+Worked on sample generation from the graph. We have added a parameter to activate or not the edge compression. But it appears that this compression is probably meaningless in our case since we need the graph structure in order to generate meaningfull samples.
+
 ### Tue 18th apr 2023
 
 Continued to work on the graph annotation pipeline. We added the code for key annotation and the associated tests.
