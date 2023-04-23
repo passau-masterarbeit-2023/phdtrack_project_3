@@ -17,7 +17,33 @@ These are the next steps for the project
 
 ### Thu 20th apr 2023
 
-Working on sample generation pipeline from many files given a folder as input.
+Working on sample generation pipeline from many files given a folder as input. The rust pipeline is able to detect all `-heap.raw` files of nested sub-directories, given a base directory. It call the samples and labels generation by chunks and save every chunks into its own file of results.
+
+We even added time logging and a progress bar.
+
+```shell
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/13263-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/13885-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/13760-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/12490-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/13028-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/12607-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/12733-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/12392-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/14668-1644324152-heap.raw"
+[2023-04-20T15:14:48Z INFO  mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Training/Training/port-forwarding/V_8_0_P1/16/13305-1644324152-heap.raw"
+[2023-04-20T15:14:51Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°576 / 86760 files] [id: 12733-1644324152]    (Nb samples: 8733)
+[2023-04-20T15:14:51Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°571 / 86760 files] [id: 12490-1644324152]    (Nb samples: 8734)
+[2023-04-20T15:14:51Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°574 / 86760 files] [id: 12392-1644324152]    (Nb samples: 8733)
+[2023-04-20T15:14:51Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°573 / 86760 files] [id: 13028-1644324152]    (Nb samples: 8734)
+[2023-04-20T15:14:51Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°578 / 86760 files] [id: 13305-1644324152]    (Nb samples: 8734)
+[2023-04-20T15:14:51Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°570 / 86760 files] [id: 13885-1644324152]    (Nb samples: 8735)
+[2023-04-20T15:14:52Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°577 / 86760 files] [id: 12607-1644324152]    (Nb samples: 8733)
+[2023-04-20T15:14:52Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°572 / 86760 files] [id: 13760-1644324152]    (Nb samples: 8734)
+[2023-04-20T15:14:52Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°575 / 86760 files] [id: 13263-1644324152]    (Nb samples: 8734)
+[2023-04-20T15:14:52Z INFO  mem_to_graph::exe_pipeline]  🟢 [N°579 / 86760 files] [id: 14668-1644324152]    (Nb samples: 8734)
+[2023-04-20T15:14:52Z INFO  mem_to_graph::exe_pipeline]  ⏱️  [chunk: 3.82s / total: 34.60s] |                    | 0.66%
+```
 
 ### Wed 19th apr 2023
 
