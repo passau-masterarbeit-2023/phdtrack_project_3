@@ -15,6 +15,31 @@ These are the next steps for the project
 
 ## Work
 
+### Mon 24th apr 2023
+
+I launched the program during the night, but it failed at about 30% due to an unwrap on a None value. We investigated the issue, and it appears that this comes from the processing of JSON annotation files. Some of them are incomplete, and do not have the necessary keys we need.
+
+Example of wrong JSON file: `/home/onyr/code/phdtrack/phdtrack_data/Training/Training/basic/V_6_2_P1/16/12847-1644307405.json`:
+
+```json
+{
+    "ENCRYPTION_KEY_NAME": "aes for femb * size >cdsa curve doesn't matchrestore old [e]gid", 
+    "ENCRYPTION_KEY_LENGTH": "16", 
+    "KEY_C": "e231ee54a3311c8570316162fd73aafb", 
+    "KEY_D": "fe6d048d7cc569a6413950e9d443f6bb", 
+    "HEAP_START": "56064e1a4000"
+}
+```
+
+We have added error handling for this situation.
+
+```shell
+[2023-04-24T16:33:18 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [N°57094 / 86760 files] [id: 30555-1644309926-heap.raw]    Missing JSON key: KEY_C_ADDR[2023-04-24T16:33:18 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [N°57094 / 86760 files] [id: 30555-1644309926-heap.raw]    Missing JSON key: KEY_C_ADDR
+```
+
+* [ ] Fix invalid special node like SESSION_STATE_NODE...
+* [ ] Check invalid keys, investigate if we did mistakes with key lenght processing (node gathering, computing...). Do we check the key lenght in the JSON file ?
+
 ### Thu 20th apr 2023
 
 Working on sample generation pipeline from many files given a folder as input. The rust pipeline is able to detect all `-heap.raw` files of nested sub-directories, given a base directory. It call the samples and labels generation by chunks and save every chunks into its own file of results.
