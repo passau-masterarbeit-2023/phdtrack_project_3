@@ -15,6 +15,119 @@ These are the next steps for the project
 
 ## Work
 
+### Fri 28th apr 2023 - investigating on last bugs or rust Mem2Graph
+
+Added command line parser in the rust program. Modified the pipeline to be able to take either a file or a dir path as input.
+
+Now, investigation on the error related to key len.
+
+
+Example of broken file:
+
+```shell
+/home/onyr/code/phdtrack/phdtrack_data/Training/Training/basic/V_7_8_P1/32/3654-1643978226-heap.raw
+```
+
+Example of errors:
+
+```shell
+[2023-04-28T16:07:15 UTC][WARN mem_to_graph::graph_annotate] key (KEY_A) found in heap dump is not the same as the key found in the json file.  
+                        found aggregated_key: [180, 1, 116, 30, 70, 114, 12, 163, 42, 14, 135, 60], 
+                        expected key_data.key: [180, 1, 116, 30, 70, 114, 12, 163]
+[2023-04-28T16:07:15 UTC][WARN mem_to_graph::graph_annotate] key (KEY_B) found in heap dump is not the same as the key found in the json file.  
+                        found aggregated_key: [91, 254, 235, 104, 52, 221, 95, 47, 195, 17, 20, 233], 
+                        expected key_data.key: [91, 254, 235, 104, 52, 221, 95, 47]
+```
+
+Inside the associated json:
+
+```shell
+(base) [onyr@kenzael mem_to_graph]$ cat /home/onyr/code/phdtrack/phdtrack_data/Training/Training/basic/V_7_8_P1/32/3654-1643978226.json | json_pp
+{
+   "ENCRYPTION_KEY_1_NAME" : "aes256-gcm@openssh.com",
+   "ENCRYPTION_KEY_1_NAME_ADDR" : "563ae7de5250",
+   "ENCRYPTION_KEY_2_NAME" : "aes256-gcm@openssh.com",
+   "ENCRYPTION_KEY_2_NAME_ADDR" : "563ae7de4280",
+   "HEAP_START" : "563ae7dda000",
+   "KEY_A" : "b401741e46720ca32a0e873c",
+   "KEY_A_ADDR" : "563ae7de4fc0",
+   "KEY_A_LEN" : "12",
+   "KEY_A_REAL_LEN" : "12",
+   "KEY_B" : "5bfeeb6834dd5f2fc31114e9",
+   "KEY_B_ADDR" : "563ae7de7a10",
+   "KEY_B_LEN" : "12",
+   "KEY_B_REAL_LEN" : "12",
+   "KEY_C" : "fbfcd9b57c493dcd35b42dcbb5d217cab3ac084f59ecdffce1acad9f638f61ef",
+   "KEY_C_ADDR" : "563ae7de5020",
+   "KEY_C_LEN" : "32",
+   "KEY_C_REAL_LEN" : "32",
+   "KEY_D" : "3386b72857694ab7d2121adbaaf94ea5c4ac2e09afbc35c4d58683d7c8edb44a",
+   "KEY_D_ADDR" : "563ae7de9d80",
+   "KEY_D_LEN" : "32",
+   "KEY_D_REAL_LEN" : "32",
+   "KEY_E" : "",
+   "KEY_E_ADDR" : "563ae7de6010",
+   "KEY_E_LEN" : "0",
+   "KEY_E_REAL_LEN" : "0",
+   "KEY_F" : "",
+   "KEY_F_ADDR" : "563ae7dea950",
+   "KEY_F_LEN" : "0",
+   "KEY_F_REAL_LEN" : "0",
+   "NEWKEYS_1_ADDR" : "563ae7dec5c0",
+   "NEWKEYS_2_ADDR" : "563ae7dec6c0",
+   "SESSION_STATE_ADDR" : "563ae7de6ef0",
+   "SSH_PID" : "3654",
+   "SSH_STRUCT_ADDR" : "563ae7de6670",
+   "enc_KEY_OFFSET" : "0",
+   "iv_ENCRYPTION_KEY_OFFSET" : "40",
+   "iv_len_ENCRYPTION_KEY_OFFSET" : "24",
+   "key_ENCRYPTION_KEY_OFFSET" : "32",
+   "key_len_ENCRYPTION_KEY_OFFSET" : "20",
+   "mac_KEY_OFFSET" : "48",
+   "name_ENCRYPTION_KEY_OFFSET" : "0",
+   "newkeys_OFFSET" : "344",
+   "session_state_OFFSET" : "0"
+}
+```
+
+It appears that the annotations for key length of KEY_A and KEY_B is true:
+
+```shell
+>>> len(bytes.fromhex("3386b72857694ab7d2121adbaaf94ea5c4ac2e09afbc35c4d58683d7c8edb44a"))
+32
+>>> len(bytes.fromhex("b401741e46720ca32a0e873c")) # KEY_A
+12
+```
+
+When trying to Rust code in a Jupyter kernel, we get:
+
+```rust
+:dep hex = "0.4"
+use hex;
+
+let key_hex = "b401741e46720ca32a0e873c"; // KEY_A
+let key_bytes: Vec<u8> = hex::decode(key_hex).unwrap();
+println!("key_bytes: {:?}", key_bytes);
+println!("key_bytes len: {} {}", key_bytes.len(), "bytes")
+```
+
+```shell
+key_bytes: [180, 1, 116, 30, 70, 114, 12, 163, 42, 14, 135, 60]
+key_bytes len: 12 bytes
+```
+
+Which is still correct.
+
+```shell
+found aggregated_key: [180, 1, 116, 30, 70, 114, 12, 163, 42, 14, 135, 60], 
+expected key_data.key: [180, 1, 116, 30, 70, 114, 12, 163]
+```
+
+It turns out we had inverted the print of `key_data.key` from the json and the `aggregated_key`. So the real problem comes from the aggregation process of blocks forming the key.
+
+* [ ] Investigate and fix the aggregation of key data blocks into a real value of key.
+* [ ] Fix the special pointer annotation.
+
 ### Mon 24th apr 2023
 
 I launched the program during the night, but it failed at about 30% due to an unwrap on a None value. We investigated the issue, and it appears that this comes from the processing of JSON annotation files. Some of them are incomplete, and do not have the necessary keys we need.
