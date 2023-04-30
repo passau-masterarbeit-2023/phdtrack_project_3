@@ -15,12 +15,15 @@ These are the next steps for the project
 
 ## Work
 
+### Sun 30 apr 2023 - identification of the bug (28th apr)
+
+The error comes from the key wich aren't a multiple of 8 (block size). This lead to the aggregation of to much data. The right think to do isn't clear, and we must investigate.
+
 ### Fri 28th apr 2023 - investigating on last bugs or rust Mem2Graph
 
 Added command line parser in the rust program. Modified the pipeline to be able to take either a file or a dir path as input.
 
 Now, investigation on the error related to key len.
-
 
 Example of broken file:
 
