@@ -15,6 +15,10 @@ These are the next steps for the project
 
 ## Work
 
+### Mon 1 mai 2023 - bug fix
+
+We fixed the bug found the 30 apr and fix the special node discovery, implementing map addr to label.
+
 ### Sun 30 apr 2023 - identification of the bug (28th apr)
 
 The error comes from the key wich aren't a multiple of 8 (block size). This lead to the aggregation of to much data. The right think to do isn't clear, and we must investigate.
