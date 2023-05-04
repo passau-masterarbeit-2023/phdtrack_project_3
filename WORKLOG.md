@@ -15,6 +15,18 @@ These are the next steps for the project
 
 ## Work
 
+### Thu 4 mai 2023 - restarting to work on Python
+
+Refactoring the project to work on Python.
+
+Launching the rust program on all files with `cargo run -- -d /home/onyr/code/phdtrack/phdtrack_data/Training/ -d /home/onyr/code/phdtrack/phdtrack_data/Validation/ -d /home/onyr/code/phdtrack/phdtrack_data/Performance_Test/` 
+
+> We had to remove `__MACOSX/` folders due to errors on parsing. These files are duplicates and are of no use.
+
+We have modified the Rust code to be able to take a list of paths, so that the generated chunks are annotated with the original folder.
+
+We also added a test on provided path at launch.
+
 ### Mon 1 mai 2023 - bug fix
 
 We fixed the bug found the 30 apr and fix the special node discovery, implementing map addr to label.
