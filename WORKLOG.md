@@ -27,6 +27,8 @@ We have modified the Rust code to be able to take a list of paths, so that the g
 
 We also added a test on provided path at launch.
 
+Added basis for working on new Python project.
+
 ### Mon 1 mai 2023 - bug fix
 
 We fixed the bug found the 30 apr and fix the special node discovery, implementing map addr to label.
