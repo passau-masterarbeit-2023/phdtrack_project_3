@@ -109,6 +109,26 @@ No problem from here.
 
 Looking at the log, a half-block is missing from our aggregation.
 
+The error comes from the computation of the number of blocks needed for the aggregation, inside `src/mem_to_graph/src/graph_annotate/mod.rs`:
+
+```rust
+let block_size = self.graph_data.heap_dump_data.as_ref().unwrap().block_size;
+    for i in 0..(key_data.len / block_size) {
+        let current_key_block_addr = addr + (i * block_size) as u64;
+```
+
+Since we are using the integer division, when the rest of the division is non zero, it means we need one part of the following block. To correct that, we need to round up the division if the rest is not zero.
+
+Corrected version:
+
+```rust
+let block_size = self.graph_data.heap_dump_data.as_ref().unwrap().block_size;
+    for i in 0..div_round_up(key_data.len, block_size) {
+        let current_key_block_addr = addr + (i * block_size) as u64;
+```
+
+This error is related to the previous error of the 28th of April that was not fully fixed until now.
+
 
 ### Thu 4 mai 2023 - restarting to work on Python
 
