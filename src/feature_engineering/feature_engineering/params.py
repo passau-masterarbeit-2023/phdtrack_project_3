@@ -16,18 +16,23 @@ class ProgramParams:
     """
     cli_args: CLIArguments
 
-
+    # default values
     DEBUG: bool = False
+    MAX_ML_WORKERS = 10
 
     # base directories
-    PHDTRACK_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/"
-    DATA_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_data"
+    REPO_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_project_3/"
+    DATA_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_data/"
+
+    # data
+    CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH = REPO_BASE_DIR + "src/mem_to_graph/data/samples_and_labels/"
 
     # logger
-    COMMON_LOGGER_DIR_PATH = PHDTRACK_BASE_DIR + "/phdtrack_project_3/data/logs/common_log"
-    RESULTS_LOGGER_DIR_PATH = PHDTRACK_BASE_DIR + "/phdtrack_project_3/data/logs/results_log"
+    COMMON_LOGGER_DIR_PATH = REPO_BASE_DIR + "data/logs/common_log/"
+    RESULTS_LOGGER_DIR_PATH = REPO_BASE_DIR + "data/logs/results_log/"
     COMMON_LOGGER = logging.getLogger("common_logger")
     RESULTS_LOGGER = logging.getLogger("results_logger")
+
 
     USE_IMPORTANT_LOG_FILE = True
 
@@ -41,8 +46,7 @@ class ProgramParams:
         debug and generate_important_log_file parameter is used only if load_program_argv is True.
         """
         if load_program_argv:
-            self.__load_program_argv()
-            self.__consume_program_argv()
+            self.__parse_program_argv()
         else:
             self.DEBUG = debug
             self.USE_IMPORTANT_LOG_FILE = generate_important_log_file
@@ -50,7 +54,12 @@ class ProgramParams:
 
         self.__construct_log()
         self.__log_program_params()
-        
+
+    def __is_running_under_pytest(self):
+        """
+        Check whether the code is running under pytest.
+        """
+        return 'pytest' in sys.modules
 
     def __check_all_paths(self):
         """
@@ -74,7 +83,16 @@ class ProgramParams:
             print('WARNING: Path does not exist: %s' % path)
             return False
         return True
-
+    
+    def __parse_program_argv(self):
+        """
+        Parse program arguments.
+        WARN: Do NOT parse program argv if running under pytest.
+        """
+        if not self.__is_running_under_pytest():
+            self.__load_program_argv()
+            self.__consume_program_argv()
+    
     def __load_program_argv(self):
         """
         Load given program arguments.

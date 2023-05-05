@@ -1,6 +1,7 @@
+from typing import Tuple
 import numpy as np
 
-def load_samples_and_labels_from_csv(csv_file_path: str):
+def load_samples_and_labels_from_csv(csv_file_path: str) -> Tuple[np.ndarray, np.ndarray]:
     # Load the data from the CSV file
     data = np.genfromtxt(csv_file_path, delimiter=',', skip_header=1)
 
@@ -13,3 +14,5 @@ def load_samples_and_labels_from_csv(csv_file_path: str):
     # Print the shapes of the arrays
     print(f'Shape of labels: {labels.shape}')
     print(f'Shape of samples: {samples.shape}')
+
+    return samples, labels

@@ -31,24 +31,17 @@ class CLIArguments:
         """
         parser = argparse.ArgumentParser(description='Program [ARGUMENTS]')
         parser.add_argument(
-            '-b',
-            '--balancing_type', 
-            type=str, 
-            default=None,
-            help="balancing type (ml_structures.BalancingType: NONE, OVER, UNDER)"
-        )
-        parser.add_argument(
             '-d',
             '--debug', 
             type=bool, 
-            default=False,
+            default=None,
             help="debug, True or False"
         )
         parser.add_argument(
             '-w',
             '--max_ml_workers', 
             type=int, 
-            default=10,
+            default=None,
             help="max ml workers (threads for ML threads pool, -1 for illimited)"
         )
 

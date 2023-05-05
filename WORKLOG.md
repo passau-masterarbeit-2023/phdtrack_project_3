@@ -129,12 +129,16 @@ let block_size = self.graph_data.heap_dump_data.as_ref().unwrap().block_size;
 
 This error is related to the previous error of the 28th of April that was not fully fixed until now.
 
+In Python, corrected program params. Added unit tests using `pytest`.
+
+* [ ] Clean repo
+* [ ] load data
 
 ### Thu 4 mai 2023 - restarting to work on Python
 
 Refactoring the project to work on Python.
 
-Launching the rust program on all files with `cargo run -- -d /home/onyr/code/phdtrack/phdtrack_data/Training/ -d /home/onyr/code/phdtrack/phdtrack_data/Validation/ -d /home/onyr/code/phdtrack/phdtrack_data/Performance_Test/` 
+Launching the rust program on all files with `cargo run -- -d /home/onyr/code/phdtrack/phdtrack_data/Training/ -d /home/onyr/code/phdtrack/phdtrack_data/Validation/ -d /home/onyr/code/phdtrack/phdtrack_data/Performance_Test/`
 
 > We had to remove `__MACOSX/` folders due to errors on parsing. These files are duplicates and are of no use.
 

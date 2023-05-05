@@ -1,3 +1,4 @@
+from feature_engineering.feature_engineering.data_loading.data_loading import load_samples_and_labels_from_csv
 from feature_engineering.params import ProgramParams
 
 
@@ -9,7 +10,9 @@ def main():
     params = ProgramParams()
 
 
-
+    load_samples_and_labels_from_csv(
+        params.DATA_SAMPLES_AND_LABELS_CSV_DIR_PATH + ""
+    )
 
 
 
