@@ -15,6 +15,101 @@ These are the next steps for the project
 
 ## Work
 
+### Fri 5 Mai 2023
+
+Launched the Rust program overnight. Took 6h to run, but failed near the end (97%) due to an error. We corrected this problem: the associated JSON file can be missing for some raw files.
+
+Now another error appear, similar to the one we fixed on Fri 28th April.
+
+```shell
+(base) [onyr@kenzael mem_to_graph]$ cargo run -- -f /home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/port-forwarding/V_8_0_P1/32/14987-1644326802-heap.raw
+[...]
+ Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/mem_to_graph -f /home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/port-forwarding/V_8_0_P1/32/14987-1644326802-heap.raw`
+[2023-05-05T13:55:44 UTC][INFO mem_to_graph::params]  🚀 starting mem to graph converter
+[2023-05-05T13:55:44 UTC][INFO mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/port-forwarding/V_8_0_P1/32/14987-1644326802-heap.raw"
+[2023-05-05T13:55:44 UTC][INFO mem_to_graph::graph_data::heap_dump_data]  📋 json file path: "/home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/port-forwarding/V_8_0_P1/32/14987-1644326802.json"
+[2023-05-05T13:55:44 UTC][WARN mem_to_graph::graph_annotate] key (KEY_A) found in heap dump is not the same as the key found in the json file.  
+                        found aggregated_key: [177, 166, 229, 150, 194, 104, 165, 32], 
+                        expected key_data.key: [177, 166, 229, 150, 194, 104, 165, 32, 11, 29, 170, 139]
+[2023-05-05T13:55:44 UTC][WARN mem_to_graph::graph_annotate] key (KEY_B) found in heap dump is not the same as the key found in the json file.  
+                        found aggregated_key: [224, 159, 177, 150, 129, 255, 174, 41], 
+                        expected key_data.key: [224, 159, 177, 150, 129, 255, 174, 41, 23, 191, 223, 164]
+[2023-05-05T13:55:46 UTC][INFO mem_to_graph::exe_pipeline]  🟢 [t: worker-9] [N°0 / 1 files] [fid: 14987-1644326802]    (Nb samples: 8737)
+[2023-05-05T13:55:46 UTC][INFO mem_to_graph::exe_pipeline]  ⏱️  [chunk: 2.43s / total: 2.43s] |                    | 0.00%
+
+
+```
+
+Here, KEY_A and KEY_B are broken.
+
+```shell
+(base) [onyr@kenzael ~]$ cat /home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/port-forwarding/V_8_0_P1/32/14987-1644326802.json | json_pp
+{
+   "ENCRYPTION_KEY_1_NAME" : "aes256-gcm@openssh.com",
+   "ENCRYPTION_KEY_1_NAME_ADDR" : "55d900d6fd30",
+   "ENCRYPTION_KEY_2_NAME" : "aes256-gcm@openssh.com",
+   "ENCRYPTION_KEY_2_NAME_ADDR" : "55d900d6b8d0",
+   "HEAP_START" : "55d900d48000",
+   "KEY_A" : "b1a6e596c268a5200b1daa8b",
+   "KEY_A_ADDR" : "55d900d6bf80",
+   "KEY_A_LEN" : "12",
+   "KEY_A_REAL_LEN" : "12",
+   "KEY_B" : "e09fb19681ffae2917bfdfa4",
+   "KEY_B_ADDR" : "55d900d6b120",
+   "KEY_B_LEN" : "12",
+   "KEY_B_REAL_LEN" : "12",
+   "KEY_C" : "8e319b6d4d851254de8a743f1a12abf07586229a59b350891a87b7a514110231",
+   "KEY_C_ADDR" : "55d900d4d480",
+   "KEY_C_LEN" : "32",
+   "KEY_C_REAL_LEN" : "32",
+   "KEY_D" : "52a4623280017933d4bc90bf5cfcb918dd3cdf3af4415c42d99d7e8b5061b4bd",
+   "KEY_D_ADDR" : "55d900d519b0",
+   "KEY_D_LEN" : "32",
+   "KEY_D_REAL_LEN" : "32",
+   "KEY_E" : "",
+   "KEY_E_ADDR" : "0",
+   "KEY_E_LEN" : "0",
+   "KEY_E_REAL_LEN" : "0",
+   "KEY_F" : "",
+   "KEY_F_ADDR" : "0",
+   "KEY_F_LEN" : "0",
+   "KEY_F_REAL_LEN" : "0",
+   "NEWKEYS_1_ADDR" : "55d900d77830",
+   "NEWKEYS_2_ADDR" : "55d900d777b0",
+   "SESSION_STATE_ADDR" : "55d900d6e0e0",
+   "SSH_PID" : "14987",
+   "SSH_STRUCT_ADDR" : "55d900d6d050",
+   "enc_KEY_OFFSET" : "0",
+   "iv_ENCRYPTION_KEY_OFFSET" : "40",
+   "iv_len_ENCRYPTION_KEY_OFFSET" : "24",
+   "key_ENCRYPTION_KEY_OFFSET" : "32",
+   "key_len_ENCRYPTION_KEY_OFFSET" : "20",
+   "mac_KEY_OFFSET" : "48",
+   "name_ENCRYPTION_KEY_OFFSET" : "0",
+   "newkeys_OFFSET" : "344",
+   "session_state_OFFSET" : "0"
+}
+```
+
+Checking provided annotation key length:
+
+```shell
+(base) [onyr@kenzael ~]$ python
+Python 3.9.13 (main, Aug 25 2022, 23:26:10) 
+[GCC 11.2.0] :: Anaconda, Inc. on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> len(bytes.fromhex("b1a6e596c268a5200b1daa8b"))
+12
+>>> len(bytes.fromhex("e09fb19681ffae2917bfdfa4"))
+12
+```
+
+No problem from here.
+
+Looking at the log, a half-block is missing from our aggregation.
+
+
 ### Thu 4 mai 2023 - restarting to work on Python
 
 Refactoring the project to work on Python.
