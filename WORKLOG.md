@@ -15,6 +15,17 @@ These are the next steps for the project
 
 ## Work
 
+### Sat 6 Mai 2023
+
+Launched the Rust program overnight. Took `1919.22s` (~30min) to parse `15332` for `Validation`).
+
+Why so few files ? Response: Since we have 3 directories as input, we have the compute time of only the current considered dir. But all documents were processed before. (`10727s`, around 3h for `Training`).
+
+* [ ] Improve program time tracking.
+
+Fixed worker panic error on key to value conversion. All JSON files in `Training` and `Validation` have their integer values represented as string, but JSON in `Performance_Test` are int in JSON.
+
+
 ### Fri 5 Mai 2023
 
 Launched the Rust program overnight. Took 6h to run, but failed near the end (97%) due to an error. We corrected this problem: the associated JSON file can be missing for some raw files.
@@ -131,6 +142,7 @@ This error is related to the previous error of the 28th of April that was not fu
 
 In Python, corrected program params. Added unit tests using `pytest`.
 
+* [ ] Relaunch computations: `cargo run -- -d /home/onyr/code/phdtrack/phdtrack_data/Training/ -d /home/onyr/code/phdtrack/phdtrack_data/Validation/ -d /home/onyr/code/phdtrack/phdtrack_data/Performance_Test/`
 * [ ] Clean repo
 * [ ] load data
 
