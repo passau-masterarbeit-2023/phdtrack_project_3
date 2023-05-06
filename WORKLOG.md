@@ -17,13 +17,15 @@ These are the next steps for the project
 
 ### Sat 6 Mai 2023
 
-Launched the Rust program overnight. Took `1919.22s` (~30min) to parse `15332` for `Validation`).
+Launched the Rust program overnight. Took `1919.22s` (~30min) to parse `15332` files for `Validation`).
 
 Why so few files ? Response: Since we have 3 directories as input, we have the compute time of only the current considered dir. But all documents were processed before. (`10727s`, around 3h for `Training`).
 
 * [ ] Improve program time tracking.
 
 Fixed worker panic error on key to value conversion. All JSON files in `Training` and `Validation` have their integer values represented as string, but JSON in `Performance_Test` are int in JSON.
+
+Relaunched corrected program on `Performance_Test`, it took `292.04s` (~5min) for `1503` files.
 
 
 ### Fri 5 Mai 2023
