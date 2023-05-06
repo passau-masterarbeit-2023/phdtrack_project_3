@@ -24,6 +24,7 @@ class CLIArguments:
         Parse program arguments.
             -w max ml workers (threads for ML threads pool, -1 for illimited)
             -d debug
+            -p pipelines
             -h help
         
         usage example:
@@ -43,6 +44,14 @@ class CLIArguments:
             type=int, 
             default=None,
             help="max ml workers (threads for ML threads pool, -1 for illimited)"
+        )
+        parser.add_argument(
+            '-p',
+            '--pipelines',
+            type=str,
+            nargs='*',
+            default=None,
+            help="List of pipelines to run"
         )
 
         # save parsed arguments

@@ -19,6 +19,7 @@ class ProgramParams:
     # default values
     DEBUG: bool = False
     MAX_ML_WORKERS = 10
+    PIPELINES: list[str] | None = None
 
     # base directories
     REPO_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_project_3/"
@@ -108,6 +109,10 @@ class ProgramParams:
             assert isinstance(self.DEBUG, bool)
         if self.cli_args.args.max_ml_workers is not None:
             self.MAX_ML_WORKERS = int(self.cli_args.args.max_ml_workers)
+            assert isinstance(self.MAX_ML_WORKERS, int)
+        if self.cli_args.args.pipelines is not None:
+            self.PIPELINES = self.cli_args.args.pipelines
+            assert isinstance(self.PIPELINES, list | str)
 
     def __construct_log(self):
         """
@@ -132,7 +137,7 @@ class ProgramParams:
 
         # add console handler to common logger
         common_log_console_handler = logging.StreamHandler(stream=sys.stdout)
-        common_log_console_handler.setLevel(logging.ERROR)
+        common_log_console_handler.setLevel(logging.INFO)
         common_log_console_handler.setFormatter(common_formatter)
         self.COMMON_LOGGER.addHandler(common_log_console_handler)
 
