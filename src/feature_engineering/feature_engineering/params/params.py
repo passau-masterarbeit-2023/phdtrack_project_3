@@ -1,5 +1,6 @@
-from .cli import CLIArguments
-from .utils.utils import str2bool, str2enum
+from .data_origin import DataOriginEnum, convert_str_arg_to_data_origin
+from ..cli import CLIArguments
+from ..utils.utils import str2bool, str2enum
 
 from dataclasses import dataclass
 import os
@@ -20,6 +21,7 @@ class ProgramParams:
     DEBUG: bool = False
     MAX_ML_WORKERS = 10
     PIPELINES: list[str] | None = None
+    DATA_ORIGINS: set[DataOriginEnum] | None = None
 
     # base directories
     REPO_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_project_3/"
@@ -107,12 +109,18 @@ class ProgramParams:
         if self.cli_args.args.debug is not None:
             self.DEBUG = self.cli_args.args.debug
             assert isinstance(self.DEBUG, bool)
+
         if self.cli_args.args.max_ml_workers is not None:
             self.MAX_ML_WORKERS = int(self.cli_args.args.max_ml_workers)
             assert isinstance(self.MAX_ML_WORKERS, int)
+
         if self.cli_args.args.pipelines is not None:
             self.PIPELINES = self.cli_args.args.pipelines
             assert isinstance(self.PIPELINES, list | str)
+
+        if self.cli_args.args.origins is not None:
+            self.DATA_ORIGINS = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins))
+            assert isinstance(self.DATA_ORIGINS, set)
 
     def __construct_log(self):
         """

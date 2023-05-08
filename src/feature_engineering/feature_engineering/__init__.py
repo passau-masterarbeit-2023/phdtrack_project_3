@@ -14,4 +14,4 @@ __version__ = "0.0.1"
 from . import data_loading
 
 # classes
-from .params import ProgramParams
+from .params.params import ProgramParams

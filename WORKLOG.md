@@ -15,6 +15,20 @@ These are the next steps for the project
 
 ## Work
 
+### Mon 8 Mai 2023
+
+* [X] Create a pipeline for data loading and checking
+* [X] remove data checking from other pipelines
+* [X] correct and optimize `check_samples_and_labels`
+* [X] correct error `ValueError: Found input variables with inconsistent numbers of samples: [5194279, 6059402]`
+
+We fixed the inconsistent `ValueError` by using a Lock on the arrays we concatenate on. 
+
+Now, we have started to work on the feature engineering code.
+
+* [ ] Find and fix the `nan` value being computer for p-values of feature 5.
+* [ ] Complete feature importance sorting.
+
 ### Sat 6 Mai 2023
 
 Launched the Rust program overnight. Took `1919.22s` (~30min) to parse `15332` files for `Validation`).
@@ -78,11 +92,6 @@ Traceback (most recent call last):
     raise ValueError(
 ValueError: Found input variables with inconsistent numbers of samples: [5194279, 6059402]
 ```
-
-* [ ] Create a pipeline for data loading and checking
-* [ ] remove data checking from other pipelines
-* [ ] correct and optimize `check_samples_and_labels`
-* [ ] correct error `ValueError: Found input variables with inconsistent numbers of samples: [5194279, 6059402]`
 
 ### Fri 5 Mai 2023
 

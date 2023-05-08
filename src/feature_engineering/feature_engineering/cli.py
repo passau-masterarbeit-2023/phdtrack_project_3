@@ -25,6 +25,7 @@ class CLIArguments:
             -w max ml workers (threads for ML threads pool, -1 for illimited)
             -d debug
             -p pipelines
+            -o origins
             -h help
         
         usage example:
@@ -52,6 +53,14 @@ class CLIArguments:
             nargs='*',
             default=None,
             help="List of pipelines to run"
+        )
+        parser.add_argument(
+            '-o',
+            '--origins',
+            type=str,
+            nargs='*',
+            default=None,
+            help="Data origin (training, validation, testing)"
         )
 
         # save parsed arguments

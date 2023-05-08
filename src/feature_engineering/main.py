@@ -1,14 +1,13 @@
-from feature_engineering.data_loading.data_loading import load_samples_and_labels_from_csv
+from feature_engineering.data_loading.data_loading import load
 from feature_engineering.utils.utils import time_measure
-from feature_engineering.pipelines.pipelines import PIPELINE_NAME_TO_FUNCTION, print_all_possible_pipeline_names
+from feature_engineering.pipelines.pipelines import PIPELINE_NAME_TO_FUNCTION, check_pipelines_params, print_all_possible_pipeline_names
 from feature_engineering.pipelines.univariate_feature_selection import univariate_feature_selection_pipeline
-from feature_engineering.params import ProgramParams
+from feature_engineering.params.params import ProgramParams
 
 
 # run: python src/feature_engineering/main.py
 def main():
-    print("Running program...")
-    print("Program finished.")
+    print("🚀 Running program...")
 
     params = ProgramParams()
 
@@ -23,15 +22,22 @@ def main():
             params.COMMON_LOGGER.warning(f"No pipelines to run (params.PIPELINES: {params.PIPELINES})")
             print_all_possible_pipeline_names(params)
 
+        # check pipeline params
+        check_pipelines_params(params)
+
+        # load data
+        samples, labels = load(
+            params, 
+            params.CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH,
+            params.DATA_ORIGINS
+        )
+
         for pipeline_name in params.PIPELINES:
-            if pipeline_name in PIPELINE_NAME_TO_FUNCTION:
-                params.COMMON_LOGGER.info(f"Running pipeline: {pipeline_name}")
-                pipeline_function = PIPELINE_NAME_TO_FUNCTION[pipeline_name]
-                with time_measure(f'main pipeline launch: {pipeline_name}', params.RESULTS_LOGGER):
-                    pipeline_function(params, params.CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH)
-            else:
-                # pipeline does not exist
-                params.COMMON_LOGGER.error(f"Pipeline {pipeline_name} does not exist.")
+            params.COMMON_LOGGER.info(f"Running pipeline: {pipeline_name}")
+            pipeline_function = PIPELINE_NAME_TO_FUNCTION[pipeline_name]
+            with time_measure(f'main pipeline launch: {pipeline_name}', params.RESULTS_LOGGER):
+                pipeline_function(params, samples, labels)
+                
         
 
 
