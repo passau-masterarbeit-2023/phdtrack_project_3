@@ -1,33 +1,30 @@
 from concurrent.futures import ThreadPoolExecutor
 import glob
-from typing import Tuple
-import numpy as np
+from typing import Tuple, List
 import os
+from threading import Lock
+import pandas as pd
 
 from feature_engineering.utils.data_utils import count_positive_and_negative_labels
 from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.utils.utils import time_measure
 from feature_engineering.params.params import ProgramParams
 
-def load_samples_and_labels_from_csv(csv_file_path: str) -> Tuple[np.ndarray, np.ndarray] | None:
-    # Load the data from the CSV file
-    data = np.genfromtxt(
-        csv_file_path, 
-        delimiter=',', 
-        skip_header=1,
-        dtype=np.int32,  # enforce int32 data type
-    )
 
-    # check if data is empty
-    if data.size == 0:
+def load_samples_and_labels_from_csv(csv_file_path: str) -> Tuple[pd.DataFrame, pd.Series] | None:
+    # Load the data from the CSV file
+    data = pd.read_csv(csv_file_path, dtype='int32')
+
+    # Check if data is empty
+    if data.empty:
         return None
 
     try:
         # Extract the labels from the last column
-        labels = data[:, -1]
+        labels = data.iloc[:, -1]
 
         # Extract the samples from the other columns
-        samples = data[:, :-1]
+        samples = data.iloc[:, :-1]
 
     except Exception as e:
         raise type(e)(e.__str__() + f". Error loading data from {csv_file_path}")
@@ -37,18 +34,17 @@ def load_samples_and_labels_from_csv(csv_file_path: str) -> Tuple[np.ndarray, np
 
 def load_samples_and_labels_from_all_csv_files(
         params: ProgramParams, csv_file_paths: list[str]
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> Tuple[pd.DataFrame, pd.Series]:
     """
     Load the samples and labels from all .csv files.
     """
     # stats
     list_of_empty_files = []
 
-    all_samples: np.ndarray | None = None
-    all_labels: np.ndarray | None = None
+    all_samples_list: list[pd.DataFrame] = []
+    all_labels_list: list[pd.Series] = []
 
-    for i in range(len(csv_file_paths)):
-        csv_file_path = csv_file_paths[i]
+    for i, csv_file_path in enumerate(csv_file_paths):
 
         # log the current file with respect to the total number of files
         params.COMMON_LOGGER.info(f'📋 [f: {i} / {len(csv_file_paths)}] Loading file {csv_file_path} ')
@@ -62,26 +58,21 @@ def load_samples_and_labels_from_all_csv_files(
             # Print the shapes of the arrays
             params.COMMON_LOGGER.debug(f'shape of samples: {samples.shape}, shape of labels: {labels.shape}')
 
-            if all_samples is None and all_labels is None:
-                all_samples = samples
-                all_labels = labels
-            else:
-                all_samples = np.concatenate((all_samples, samples))
-                all_labels = np.concatenate((all_labels, labels))
+            all_samples_list.append(samples)
+            all_labels_list.append(labels)
 
     params.COMMON_LOGGER.info(f'Number of empty files: {len(list_of_empty_files)}')
+
+    # Concatenate DataFrames and labels Series
+    all_samples = pd.concat(all_samples_list, ignore_index=True)
+    all_labels = pd.concat(all_labels_list, ignore_index=True)
 
     return all_samples, all_labels
 
 
-from concurrent.futures import ThreadPoolExecutor
-from threading import Lock
-import numpy as np
-from typing import Tuple
-
 def parallel_load_samples_and_labels_from_all_csv_files(
-        params: ProgramParams, csv_file_paths: list[str]
-) -> Tuple[np.ndarray, np.ndarray]:
+        params: ProgramParams, csv_file_paths: List[str]
+) -> Tuple[pd.DataFrame, pd.Series]:
     """
     Load the samples and labels from all .csv files.
     Load using multiple threads.
@@ -89,8 +80,8 @@ def parallel_load_samples_and_labels_from_all_csv_files(
     # stats
     list_of_empty_files = []
 
-    all_samples: np.ndarray | None = None
-    all_labels: np.ndarray | None = None
+    all_samples_list: List[pd.DataFrame] = []
+    all_labels_list: List[pd.Series] = []
 
     # Define a lock for thread safety
     concat_lock = Lock()
@@ -114,17 +105,10 @@ def parallel_load_samples_and_labels_from_all_csv_files(
             # Print the shapes of the arrays
             params.COMMON_LOGGER.debug(f'shape of samples: {samples.shape}, shape of labels: {labels.shape}')
 
-            nonlocal all_samples
-            nonlocal all_labels
-
             # Acquire the lock
             with concat_lock:
-                if all_samples is None and all_labels is None:
-                    all_samples = samples
-                    all_labels = labels
-                else:
-                    all_samples = np.concatenate((all_samples, samples))
-                    all_labels = np.concatenate((all_labels, labels))
+                all_samples_list.append(samples)
+                all_labels_list.append(labels)
             # The lock is released after the 'with' statement
 
     # multi-threaded loading and generation of samples and labels
@@ -140,7 +124,12 @@ def parallel_load_samples_and_labels_from_all_csv_files(
 
     params.COMMON_LOGGER.info(f'Number of empty files: {len(list_of_empty_files)}')
 
+    # Concatenate DataFrames and labels Series
+    all_samples = pd.concat(all_samples_list, ignore_index=True)
+    all_labels = pd.concat(all_labels_list, ignore_index=True)
+
     return all_samples, all_labels
+
 
 
 
@@ -159,7 +148,7 @@ def get_all_filepath_per_type(dirpath: str) -> Tuple[list[str], list[str], list[
     return training_files, validation_files, testing_files
 
 
-def log_positive_and_negative_labels(params: ProgramParams, labels: np.ndarray, message: str = "") -> None:
+def log_positive_and_negative_labels(params: ProgramParams, labels: pd.Series, message: str = "") -> None:
     nb_positive_labels, nb_negative_labels = count_positive_and_negative_labels(labels)
 
     if message != "":

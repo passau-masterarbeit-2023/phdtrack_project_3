@@ -19,12 +19,15 @@ These are the next steps for the project
 
 `python main.py -p univariate_fs -o testing`: launch the feature engineering program.
 
-* [ ] investigate Sklearn data batches
-* [ ] Code in rust a verification step to check generated samples and labels files.
+* [X] investigate Sklearn data batches
+* [X] ~~Code in rust a verification step to check generated samples and labels files.~~
 * [ ] Find and fix the `nan` value being computer for p-values of feature 5.
-* [ ] Complete feature importance sorting.
+* [X] Complete feature importance sorting.
+* [ ] finish to refactor all pipelines with from np.ndarray to pd.
+* [ ] refactor with data batches
+* [ ] refactor the check with parallel read-only checks
 
-
+##### Nan values in 5th column f-analysis
 
 Investigation: We have a problem with a `Nan` value for column 5, after feature scoring using `SelectKBest(f_classif, k=10)`...
 
@@ -78,6 +81,26 @@ Set of unique values (f_dtns_ancestor_1): [1]
 
 The range is null, so here it is. The 5th column is the first DTN ancestor wich is always 1 because every value node is in a DTN. We must eliminate every unvariant column (wich is meaningless)
 
+##### CSV empty files
+
+There are `179` empty CSV files due to them having a malformed JSON annotation file, specifically on the KEY_C_ADDRESS which is missing in many cases.
+
+```shell
+[2023-05-10T09:39:56 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [t: worker-0] [N°7826 / 15332 files] [fid: 7651-1644246934-heap.raw]    Missing JSON key: KEY_C_ADDR
+[2023-05-10T09:39:56 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [t: worker-15] [N°7851 / 15332 files] [fid: 7777-1644246934-heap.raw]    Missing JSON key: KEY_C_ADDR
+[2023-05-10T09:39:56 UTC][INFO mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/basic/V_6_1_P1/16/9228-1644246934-heap.raw"
+[2023-05-10T09:39:56 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [t: worker-18] [N°7876 / 15332 files] [fid: 10060-1644246934-heap.raw]    Missing JSON key: KEY_C_ADDR
+[2023-05-10T09:39:56 UTC][INFO mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/basic/V_6_1_P1/16/10111-1644246934-heap.raw"
+[2023-05-10T09:39:56 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [t: worker-11] [N°7801 / 15332 files] [fid: 7191-1644246934-heap.raw]    Missing JSON key: KEY_C_ADDR
+[2023-05-10T09:39:56 UTC][INFO mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/basic/V_6_1_P1/16/9390-1644246934-heap.raw"
+[2023-05-10T09:39:56 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [t: worker-12] [N°7804 / 15332 files] [fid: 10415-1644246934-heap.raw]    Missing JSON key: KEY_C_ADDR
+[2023-05-10T09:39:56 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [t: worker-8] [N°7819 / 15332 files] [fid: 7994-1644246934-heap.raw]    Missing JSON key: KEY_C_ADDR
+[2023-05-10T09:39:56 UTC][INFO mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/basic/V_6_1_P1/16/7963-1644246934-heap.raw"
+
+```
+
+* [ ] Possible upgrade: just skip the key instead of the full file, if a key is broken or missing.
+
 ### Mon 8 Mai 2023
 
 * [X] Create a pipeline for data loading and checking
@@ -105,7 +128,7 @@ We have a problem with a `Nan` value for column 5, after feature scoring using `
 
 ### Sat 6 Mai 2023
 
-Launched the Rust program overnight. Took `1919.22s` (~30min) to parse `15332` files for `Validation`).
+Launched the Rust program overnight (`cargo run -- -d /home/onyr/code/phdtrack/phdtrack_data/Training/ -d /home/onyr/code/phdtrack/phdtrack_data/Validation/ -d /home/onyr/code/phdtrack/phdtrack_data/Performance_Test/ `). Took  `1919.22s `(~30min) to parse `15332 `files for `Validation`).
 
 Why so few files ? Response: Since we have 3 directories as input, we have the compute time of only the current considered dir. But all documents were processed before. (`10727s`, around 3h for `Training`).
 
