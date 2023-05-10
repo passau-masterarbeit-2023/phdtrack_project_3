@@ -15,6 +15,69 @@ These are the next steps for the project
 
 ## Work
 
+### Wed 10 Mai 2023
+
+`python main.py -p univariate_fs -o testing`: launch the feature engineering program.
+
+* [ ] investigate Sklearn data batches
+* [ ] Code in rust a verification step to check generated samples and labels files.
+* [ ] Find and fix the `nan` value being computer for p-values of feature 5.
+* [ ] Complete feature importance sorting.
+
+
+
+Investigation: We have a problem with a `Nan` value for column 5, after feature scoring using `SelectKBest(f_classif, k=10)`...
+
+```shell
+(array([ 2.13664457e+03,  3.05970593e+03,  2.35275725e+02,  2.89164262e+03,
+       -6.27668700e+06,  2.71689523e+03,  2.23123122e+04,  1.61600075e+04,
+        1.71411695e+04,  8.67881935e+01,  8.35089205e+01,  5.22530786e+04,
+        5.43860569e+04,  1.79539777e+03,  1.79875998e+03,  6.58822038e+01,
+        6.53073932e+01,  1.83736984e+04]), array([0.00000000e+00, 0.00000000e+00, 4.22489491e-53, 0.00000000e+00,
+                  nan, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 1.20825541e-20, 6.34471438e-20, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 4.78779757e-16,
+       6.40917066e-16, 0.00000000e+00]))
+```
+
+Trying to look at samples and labels data doen't reveal any NaN or Inf values...
+
+```python
+# detect NaN and infinite values  
+print(np.isnan(samples).any())  # Check if there are any NaN values in the samples
+print(np.isinf(samples).any())  # Check if there are any infinite values in the samples
+print(np.isnan(labels).any())  # Check if there are any NaN values in the labels
+print(np.isinf(labels).any())  # Check if there are any infinite values in the labels
+```
+
+```python
+False
+False
+False
+False
+```
+
+Trying to determine the range of the 5th column :
+
+```python
+ column_index = 4  # (fifth column of index 4) Replace this with the index of the column causing NaN values
+    print("Min Max (f_dtns_ancestor_1):", samples[:, column_index].min(), samples[:, column_index].max())  # Print min and max values of the specific column
+    print("Any NaN? (f_dtns_ancestor_1):", np.isnan(samples[:, column_index]).any())  # Check if there are any NaN values in the specific column
+    print("Any Inf? (f_dtns_ancestor_1):", np.isinf(samples[:, column_index]).any())  # Check if there are any infinite values in the specific column
+
+    # print the set of unique values in the fifth column
+    print("Set of unique values (f_dtns_ancestor_1):", np.unique(samples[:, column_index]))
+```
+
+```shell
+Min Max (f_dtns_ancestor_1): 1 1
+Any NaN? (f_dtns_ancestor_1): False
+Any Inf? (f_dtns_ancestor_1): False
+Set of unique values (f_dtns_ancestor_1): [1]
+```
+
+The range is null, so here it is. The 5th column is the first DTN ancestor wich is always 1 because every value node is in a DTN. We must eliminate every unvariant column (wich is meaningless)
+
 ### Mon 8 Mai 2023
 
 * [X] Create a pipeline for data loading and checking
@@ -22,12 +85,23 @@ These are the next steps for the project
 * [X] correct and optimize `check_samples_and_labels`
 * [X] correct error `ValueError: Found input variables with inconsistent numbers of samples: [5194279, 6059402]`
 
-We fixed the inconsistent `ValueError` by using a Lock on the arrays we concatenate on. 
+We fixed the inconsistent `ValueError` by using a Lock on the arrays we concatenate on.
 
 Now, we have started to work on the feature engineering code.
 
-* [ ] Find and fix the `nan` value being computer for p-values of feature 5.
-* [ ] Complete feature importance sorting.
+We have a problem with a `Nan` value for column 5, after feature scoring using `SelectKBest(f_classif, k=10)`...
+
+```shell
+(array([ 2.13664457e+03,  3.05970593e+03,  2.35275725e+02,  2.89164262e+03,
+       -6.27668700e+06,  2.71689523e+03,  2.23123122e+04,  1.61600075e+04,
+        1.71411695e+04,  8.67881935e+01,  8.35089205e+01,  5.22530786e+04,
+        5.43860569e+04,  1.79539777e+03,  1.79875998e+03,  6.58822038e+01,
+        6.53073932e+01,  1.83736984e+04]), array([0.00000000e+00, 0.00000000e+00, 4.22489491e-53, 0.00000000e+00,
+                  nan, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+       0.00000000e+00, 1.20825541e-20, 6.34471438e-20, 0.00000000e+00,
+       0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 4.78779757e-16,
+       6.40917066e-16, 0.00000000e+00]))
+```
 
 ### Sat 6 Mai 2023
 
