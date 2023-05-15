@@ -7,9 +7,6 @@ def clean(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> Tu
     Clean data.
     1. Remove columns that are composed off only one value
     """
-    print("🧹 Cleaning data...")
-    print("type(samples):", type(samples))
-
     # Find the indices of columns with only one unique value
     unique_value_columns = samples.nunique() == 1
 

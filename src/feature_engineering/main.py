@@ -4,6 +4,8 @@ from feature_engineering.utils.utils import time_measure
 from feature_engineering.pipelines.pipelines import PIPELINE_NAME_TO_FUNCTION, check_pipelines_params, print_all_possible_pipeline_names
 from feature_engineering.params.params import ProgramParams
 
+import pandas as pd
+
 # run: python src/feature_engineering/main.py
 def main():
     print("🚀 Running program...")
@@ -38,8 +40,8 @@ def main():
 
         for pipeline_name in params.PIPELINES:
             params.COMMON_LOGGER.info(f"Running pipeline: {pipeline_name}")
-            pipeline_function = PIPELINE_NAME_TO_FUNCTION[pipeline_name]
-            with time_measure(f'main pipeline launch: {pipeline_name}', params.RESULTS_LOGGER):
+            pipeline_function: function[ProgramParams, pd.DataFrame, pd.Series] = PIPELINE_NAME_TO_FUNCTION[pipeline_name]
+            with time_measure(f'pipeline ({pipeline_name})', params.RESULTS_LOGGER):
                 pipeline_function(params, samples, labels)
                 
         

@@ -16,8 +16,6 @@ def __check_samples_and_labels(params: ProgramParams, samples: pd.DataFrame, lab
     )
 
     # Check if arrays are of type integer
-    print("type(labels):", labels.dtypes)
-    print("type(samples):", samples.dtypes)
     assert pd.api.types.is_integer_dtype(labels), "labels is not a Series of integers."
     for column in samples.columns:
         assert pd.api.types.is_integer_dtype(samples[column]), f"Column '{column}' is not of type integer."
@@ -42,12 +40,11 @@ def __check_samples_and_labels(params: ProgramParams, samples: pd.DataFrame, lab
 
 
 
-def check(params: ProgramParams, samples: np.ndarray, labels: np.ndarray) -> None:
+def check(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
     """
     Pipeline for checking the samples and labels.
     """
 
     # check the samples and labels
-    with time_measure(f'check pipeline: ', params.RESULTS_LOGGER):
-        __check_samples_and_labels(params, samples, labels)
+    __check_samples_and_labels(params, samples, labels)
 

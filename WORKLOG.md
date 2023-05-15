@@ -15,6 +15,52 @@ These are the next steps for the project
 
 ## Work
 
+> NEXT: See WORKLOG.2.md
+
+### Thu 11 Mai 2023
+
+Storing labels with missing key creates error in the data since some real keys are unnanotated. This is a BIG problem, so we have 2 choices: either we throw up the complete file, or we try to get missing information by "hand".
+
+* [ ] Improvement: recover missing key addresses
+
+> NOTE: We have no clue if some more keys are missing
+
+We have some missing key annotations for many files, like the following:
+
+```shell
+[2023-05-10T09:39:56 UTC][INFO mem_to_graph::graph_data::heap_dump_data]  📋 heap dump raw file path: "/home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/basic/V_6_1_P1/16/9228-1644246934-heap.raw"
+[2023-05-10T09:39:56 UTC][WARN mem_to_graph::exe_pipeline]  🔴 [t: worker-18] [N°7876 / 15332 files] [fid: 10060-1644246934-heap.raw]    Missing JSON key: KEY_C_ADDR
+```
+
+Investigating on the issue, it is clear that some information are missing in annotation JSON:
+
+```shell
+(base) [onyr@kenzael ~]$ cat /home/onyr/code/phdtrack/phdtrack_data/Validation/Validation/basic/V_6_1_P1/16/9228-1644246934.json | json_pp
+{
+   "ENCRYPTION_KEY_LENGTH" : "16",
+   "ENCRYPTION_KEY_NAME" : "aes128-ctr",
+   "HEAP_START" : "55b14a596000",
+   "KEY_C" : "4a2de0248c6e6bf1936ded97ff2cf661",
+   "KEY_D" : "f7269b26f29011cbc67d87f123592e98"
+}
+```
+
+Indeed, since we have the value of keys, it is possible to get the address from finding the key directly in the heap dump. We did it manually in vim:
+
+```shell
+0000b140:4a2de0248c6e6bf1936ded97ff2cf661J-.$.nk..m...,.a
+```
+
+Using `:%!xxd`, `:%s/\s\+//g` and `:/4a2de0`...
+
+The problem is we don't really know if other keys are present. Hence, doing this could introduce unannotated (label = 0) samples for keys... and reduce the efficiency of classifiers.
+
+##### refactor from Numpy to Pandas
+
+We have started to refactor the whole Python program to use Pandas since we are working with a large tabular dataset (where Pandas is both better and better optimized). Only the `clean` function has been refactored so far.
+
+* [ ] Finish Pandas refactoring to all pipelines.
+
 ### Wed 10 Mai 2023
 
 `python main.py -p univariate_fs -o testing`: launch the feature engineering program.

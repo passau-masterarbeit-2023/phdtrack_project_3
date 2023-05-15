@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from feature_engineering.params.params import ProgramParams
 
 def __compute_distance_f_test_p_val(f_values: np.ndarray, p_values: np.ndarray) -> np.ndarray:
@@ -18,7 +19,7 @@ def __compute_distance_f_test_p_val(f_values: np.ndarray, p_values: np.ndarray) 
     return sorted_indices
 
 
-def univariate_feature_selection_pipeline(params: ProgramParams, samples: np.ndarray, labels: np.ndarray) -> None:
+def univariate_feature_selection_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
     """
     Pipeline for univariate feature selection.
     """
@@ -27,7 +28,7 @@ def univariate_feature_selection_pipeline(params: ProgramParams, samples: np.nda
     from sklearn.feature_selection import SelectKBest, f_classif
     selector = SelectKBest(f_classif, k=10)
     f_values, p_values = selector.score_func(samples, labels)
-    column_names = samples.dtype.names
+    column_names = samples.columns.tolist()
 
     for name, f_value, p_value in zip(column_names, f_values, p_values):
         params.COMMON_LOGGER.info(f'Column: {name}, F-value: {f_value}, P-value: {p_value}')
@@ -40,7 +41,7 @@ def univariate_feature_selection_pipeline(params: ProgramParams, samples: np.nda
     sorted_column_names = [column_names[i] for i in sorted_indices]
 
     # Print the sorted column names
-    params.RESULTS_LOGGER.info(format("Column names sorted by importance: [{}]", ", ".join(sorted_column_names)))
+    params.RESULTS_LOGGER.info(f"Column names sorted by importance: [{', '.join(sorted_column_names)}]")
 
     #selector.fit(training_samples, training_labels)
     #X_new = selector.transform(training_samples)
