@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
+
+from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType, is_datagenerator, is_datatuple
+from feature_engineering.data_loading.data_loading import consume_data_generator
 from feature_engineering.params.params import ProgramParams
+
 
 def __compute_distance_f_test_p_val(f_values: np.ndarray, p_values: np.ndarray) -> np.ndarray:
     """
@@ -19,7 +23,7 @@ def __compute_distance_f_test_p_val(f_values: np.ndarray, p_values: np.ndarray) 
     return sorted_indices
 
 
-def univariate_feature_selection_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
+def __univariate_feature_selection_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
     """
     Pipeline for univariate feature selection.
     """
@@ -47,3 +51,15 @@ def univariate_feature_selection_pipeline(params: ProgramParams, samples: pd.Dat
     #X_new = selector.transform(training_samples)
 
 
+def univariate_feature_selection_pipeline(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
+
+    if is_datatuple(samples_and_labels):
+        # check the samples and labels
+        samples, labels = samples_and_labels
+        __univariate_feature_selection_pipeline(params, samples, labels)
+    elif is_datagenerator(samples_and_labels):
+        # check the samples and labels
+        samples, labels = consume_data_generator(samples_and_labels)
+        __univariate_feature_selection_pipeline(params, samples, labels)
+    else:
+        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")

@@ -3,12 +3,13 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import precision_score, recall_score, f1_score
 from imblearn.under_sampling import RandomUnderSampler
 
-from feature_engineering.pipelines.univariate_feature_selection import __compute_distance_f_test_p_val
+from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType, is_datagenerator, is_datatuple
+from feature_engineering.data_loading.data_loading import consume_data_generator
 from feature_engineering.params.params import ProgramParams
 
 import pandas as pd
 
-def ml_random_forest_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
+def __ml_random_forest_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
     """
     Pipeline for RandomForest with undersampling.
     """
@@ -32,4 +33,18 @@ def ml_random_forest_pipeline(params: ProgramParams, samples: pd.DataFrame, labe
     f1 = f1_score(y_test, y_pred)
 
     # Log the results
-    params.COMMON_LOGGER.info(f'Precision: {precision}, Recall: {recall}, F1-score: {f1}')
+    params.RESULTS_LOGGER.info(f'Precision: {precision}, Recall: {recall}, F1-score: {f1}')
+
+
+def ml_random_forest_pipeline(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
+
+    if is_datatuple(samples_and_labels):
+        # check the samples and labels
+        samples, labels = samples_and_labels
+        __ml_random_forest_pipeline(params, samples, labels)
+    elif is_datagenerator(samples_and_labels):
+        # check the samples and labels
+        samples, labels = consume_data_generator(samples_and_labels)
+        __ml_random_forest_pipeline(params, samples, labels)
+    else:
+        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")

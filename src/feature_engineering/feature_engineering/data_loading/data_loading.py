@@ -4,14 +4,17 @@ from typing import Tuple, List
 import os
 from threading import Lock
 import pandas as pd
+from typing import Generator, Tuple
 
+from feature_engineering.data_loading.data_cleaning import clean
+from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType
 from feature_engineering.utils.data_utils import count_positive_and_negative_labels
 from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.utils.utils import time_measure
 from feature_engineering.params.params import ProgramParams
 
 
-def load_samples_and_labels_from_csv(csv_file_path: str) -> Tuple[pd.DataFrame, pd.Series] | None:
+def load_samples_and_labels_from_csv(csv_file_path: str) -> DataTuple | None:
     # Load the data from the CSV file
     data = pd.read_csv(csv_file_path, dtype='int32')
 
@@ -32,9 +35,63 @@ def load_samples_and_labels_from_csv(csv_file_path: str) -> Tuple[pd.DataFrame, 
     return samples, labels
 
 
+def load_samples_and_labels_from_all_csv_files_in_batches(
+        params: ProgramParams, 
+        csv_file_paths: list[str],
+) -> DataGenerator:
+    """
+    Generator function to yield batches of samples and labels from a CSV file.
+    One batch is one file.
+    """
+    # stats
+    list_of_empty_files = []
+
+    for i, csv_file_path in enumerate(csv_file_paths):
+
+        # log the current file with respect to the total number of files
+        params.COMMON_LOGGER.info(f'📋 [f: {i} / {len(csv_file_paths)}] Loading file {csv_file_path} ')
+
+        res = load_samples_and_labels_from_csv(csv_file_path)
+        if res is None:
+            list_of_empty_files.append(csv_file_path)
+        else:
+            samples, labels = res
+
+            # Print the shapes of the arrays
+            params.COMMON_LOGGER.debug(f'shape of samples: {samples.shape}, shape of labels: {labels.shape}')
+
+            samples, labels = clean(
+                params,
+                samples,
+                labels,
+            )
+
+            yield samples, labels
+
+    params.COMMON_LOGGER.info(f'Number of empty files: {len(list_of_empty_files)}')
+
+
+def consume_data_generator(data_generator: DataGenerator) -> DataTuple:
+    """
+    Consume a data generator.
+    """
+    all_samples_list: list[pd.DataFrame] = []
+    all_labels_list: list[pd.Series] = []
+
+    for samples, labels in data_generator:
+        all_samples_list.append(samples)
+        all_labels_list.append(labels)
+    
+    # Concatenate DataFrames and labels Series
+    all_samples = pd.concat(all_samples_list, ignore_index=True)
+    all_labels = pd.concat(all_labels_list, ignore_index=True)
+
+    return all_samples, all_labels
+        
+
 def load_samples_and_labels_from_all_csv_files(
         params: ProgramParams, csv_file_paths: list[str]
-) -> Tuple[pd.DataFrame, pd.Series]:
+) -> DataTuple:
     """
     Load the samples and labels from all .csv files.
     """
@@ -72,7 +129,7 @@ def load_samples_and_labels_from_all_csv_files(
 
 def parallel_load_samples_and_labels_from_all_csv_files(
         params: ProgramParams, csv_file_paths: List[str]
-) -> Tuple[pd.DataFrame, pd.Series]:
+) -> DataTuple:
     """
     Load the samples and labels from all .csv files.
     Load using multiple threads.
@@ -162,7 +219,7 @@ def load(
         params: ProgramParams, 
         data_dir_path: str, 
         data_origin: set[DataOriginEnum] | None = None
-):
+) -> SamplesAndLabelsType:
     """
     Load the samples and labels from all .csv files.
     Take into account the data origin: training, validation, testing.
@@ -187,14 +244,25 @@ def load(
                 raise ValueError(f"Unknown data origin: {origin}")
 
     # Load the training data
-    with time_measure(f'load_samples_and_labels_from_all_csv_files', params.RESULTS_LOGGER):
-        #training_samples, training_labels = load_samples_and_labels_from_all_csv_files(params, training_files)
-        samples, labels = parallel_load_samples_and_labels_from_all_csv_files(params, files_to_load)
+    if not params.BATCH:
+        with time_measure(f'load_samples_and_labels_from_all_csv_files', params.RESULTS_LOGGER):
+            #training_samples, training_labels = load_samples_and_labels_from_all_csv_files(params, training_files)
+            samples, labels = parallel_load_samples_and_labels_from_all_csv_files(params, files_to_load)
 
-    log_positive_and_negative_labels(
-        params, 
-        labels, 
-        "Loaded data ({})".format(", ".join(data_origin).replace(" ", ""))
-    )
+        samples, labels = clean(
+            params,
+            samples,
+            labels,
+        )
 
-    return samples, labels
+        log_positive_and_negative_labels(
+            params, 
+            labels, 
+            "Loaded data ({})".format(", ".join(data_origin).replace(" ", ""))
+        )
+
+        return samples, labels
+    else:
+        return load_samples_and_labels_from_all_csv_files_in_batches(params, files_to_load)
+
+    

@@ -27,22 +27,17 @@ def main():
         check_pipelines_params(params)
 
         # load & clean data
-        _samples, _labels = load(
+        samples_and_labels = load(
             params, 
             params.CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH,
             params.DATA_ORIGINS
         )
-        samples, labels = clean(
-            params,
-            _samples,
-            _labels,
-        )
-
+        
         for pipeline_name in params.PIPELINES:
             params.COMMON_LOGGER.info(f"Running pipeline: {pipeline_name}")
             pipeline_function: function[ProgramParams, pd.DataFrame, pd.Series] = PIPELINE_NAME_TO_FUNCTION[pipeline_name]
             with time_measure(f'pipeline ({pipeline_name})', params.RESULTS_LOGGER):
-                pipeline_function(params, samples, labels)
+                pipeline_function(params, samples_and_labels)
                 
         
 

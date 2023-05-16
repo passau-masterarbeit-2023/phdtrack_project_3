@@ -26,6 +26,7 @@ class CLIArguments:
             -d debug
             -p pipelines
             -o origins
+            -b use data batch
             -h help
         
         usage example:
@@ -61,6 +62,12 @@ class CLIArguments:
             nargs='*',
             default=None,
             help="Data origin (training, validation, testing)"
+        )
+        parser.add_argument(
+            '-b',
+            '--batch',
+            action='store_true',
+            help="Use data batch for lazy data loading"
         )
 
         # save parsed arguments

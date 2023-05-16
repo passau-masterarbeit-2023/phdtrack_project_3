@@ -1,7 +1,9 @@
 import numpy as np
+import pandas as pd
+
+from feature_engineering.data_loading.data_types import DataTuple, SamplesAndLabelsType, DataGenerator, is_datagenerator, is_datatuple
 from feature_engineering.utils.utils import time_measure
 from feature_engineering.params.params import ProgramParams
-import pandas as pd
 
 def __check_samples_and_labels(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series):
     """
@@ -40,11 +42,20 @@ def __check_samples_and_labels(params: ProgramParams, samples: pd.DataFrame, lab
 
 
 
-def check(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
+def check(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
     """
     Pipeline for checking the samples and labels.
     """
 
-    # check the samples and labels
-    __check_samples_and_labels(params, samples, labels)
+    if is_datatuple(samples_and_labels):
+        # check the samples and labels
+        samples, labels = samples_and_labels
+        __check_samples_and_labels(params, samples, labels)
+    elif is_datagenerator(samples_and_labels):
+        # check the samples and labels
+        for samples, labels in samples_and_labels:
+            __check_samples_and_labels(params, samples, labels)
+    else:
+        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")
+
 

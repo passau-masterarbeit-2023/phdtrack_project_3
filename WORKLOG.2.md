@@ -1,9 +1,37 @@
 # Worklog 2
 
+### Tue 16 Mai 2023
+
+* [X] refactor with data batches
+* [X] refactor the check with parallel read-only checks
+* [ ] Create new pipelines for `SGDClassifier` and `MLPClassifier`.
+
+We have refactored the code to work with data batches. However, not all the classifiers support partial fitting. Classifiers that don't support it still require to load all the data at once. We do it by consumming the generator.
+
+The following classifiers on classification problems are:
+
+```shell
+MultinomialNB
+BernoulliNB
+Perceptron
+SGDClassifier
+PassiveAggressiveClassifier
+MLPClassifier
+...
+```
+
+For our problem, since we try to maximize the recall (we want to detect all possible keys), here are the interesting classifiers to try:
+
+1. `SGDClassifier`: Stochastic Gradient Descent (SGD) is a linear classifier optimized by stochastic gradient descent. It can handle large-scale data and allows you to control the trade-off between precision and recall using the `loss` parameter. For instance, setting `loss="log"` gives a logistic regression, which can provide good performance on binary classification problems.
+2. `PassiveAggressiveClassifier`: This classifier is a margin-based online learning algorithm for binary classification. It might be helpful if your data stream has a lot of noise or your positive and negative classes are not linearly separable.
+3. `Perceptron`: This is a simple algorithm suitable for large scale learning. It's fast and could be a good starting point for binary classification problems. However, it may not perform as well as other, more complex models if your data is not linearly separable.
+4. `BernoulliNB`, `MultinomialNB`, `GaussianNB`: These are Naive Bayes classifiers. Naive Bayes classifiers are a family of simple "probabilistic classifiers" based on applying Bayes' theorem with strong independence assumptions between the features. They can be a good choice if your features are conditionally independent given the class. BernoulliNB and MultinomialNB are often used for text data, while GaussianNB is used for numerical data.
+5. `MLPClassifier`: This is a multi-layer perceptron classifier, which is a type of neural network. It can model more complex relationships between the features and the target variable, and might be suitable if your data is not linearly separable. However, it can require more computational resources and might be slower to train than some other classifiers.
+
 
 ### Mon 15 Mai 2023
 
-* [ ] Finish Pandas refactoring to all pipelines.
+* [X] Finish Pandas refactoring to all pipelines.
 * [ ] refactor with data batches
 * [ ] refactor the check with parallel read-only checks
 

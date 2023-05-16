@@ -22,6 +22,7 @@ class ProgramParams:
     MAX_ML_WORKERS = 10
     PIPELINES: list[str] | None = None
     DATA_ORIGINS: set[DataOriginEnum] | None = None
+    BATCH: bool = False
 
     # base directories
     REPO_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_project_3/"
@@ -121,6 +122,10 @@ class ProgramParams:
         if self.cli_args.args.origins is not None:
             self.DATA_ORIGINS = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins))
             assert isinstance(self.DATA_ORIGINS, set)
+        
+        # No if here, batch is either True or False
+        self.BATCH = self.cli_args.args.batch
+        assert isinstance(self.BATCH, bool)
 
     def __construct_log(self):
         """

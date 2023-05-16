@@ -3,12 +3,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, precision_score, recall_score
 
+from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType, is_datagenerator, is_datatuple
+from feature_engineering.data_loading.data_loading import consume_data_generator
 from feature_engineering.pipelines.univariate_feature_selection import __compute_distance_f_test_p_val
 from feature_engineering.params.params import ProgramParams
 
 import pandas as pd
 
-def ml_logistic_regression_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
+def __ml_logistic_regression_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
     # Split data into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
 
@@ -48,3 +50,22 @@ def ml_logistic_regression_pipeline(params: ProgramParams, samples: pd.DataFrame
     sorted_indices = __compute_distance_f_test_p_val(f_values, p_values)
     sorted_column_names = [column_names[i] for i in sorted_indices]
     params.RESULTS_LOGGER.info(f"Column names sorted by importance: [{', '.join(sorted_column_names)}]")
+
+
+def ml_logistic_regression_pipeline(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
+    """
+    Pipeline for checking the samples and labels.
+    """
+
+    if is_datatuple(samples_and_labels):
+        # check the samples and labels
+        samples, labels = samples_and_labels
+        __ml_logistic_regression_pipeline(params, samples, labels)
+    elif is_datagenerator(samples_and_labels, DataGenerator):
+        # check the samples and labels
+        samples, labels = consume_data_generator(samples_and_labels)
+        __ml_logistic_regression_pipeline(params, samples, labels)
+    else:
+        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")
+
+
