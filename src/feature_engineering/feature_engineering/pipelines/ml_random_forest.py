@@ -21,7 +21,7 @@ def __ml_random_forest_pipeline(params: ProgramParams, samples: pd.DataFrame, la
     X_res, y_res = rus.fit_resample(X_train, y_train)
 
     # Train a RandomForestClassifier
-    clf = RandomForestClassifier(n_estimators=100, random_state=42)
+    clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs = params.MAX_ML_WORKERS)
     clf.fit(X_res, y_res)
 
     # Make predictions on the test set

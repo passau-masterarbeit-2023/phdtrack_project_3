@@ -1,3 +1,4 @@
+from feature_engineering.pipelines.ml_sgd import ml_sgd_pipeline
 from feature_engineering.params.params import ProgramParams
 from feature_engineering.pipelines.univariate_feature_selection import univariate_feature_selection_pipeline
 from feature_engineering.pipelines.ml_logistic_regression import ml_logistic_regression_pipeline
@@ -9,6 +10,7 @@ PIPELINE_NAME_TO_FUNCTION = {
     "univariate_fs": univariate_feature_selection_pipeline,
     "ml_logistic_reg": ml_logistic_regression_pipeline,
     "ml_random_forest": ml_random_forest_pipeline,
+    "ml_sgd": ml_sgd_pipeline,
 }
 
 def print_all_possible_pipeline_names(params: ProgramParams) -> None:
@@ -22,4 +24,6 @@ def check_pipelines_params(params: ProgramParams) -> None:
             # pipeline does not exist
             params.COMMON_LOGGER.error(f"Pipeline {pipeline_name} does not exist.")
             print_all_possible_pipeline_names(params)
-            raise ValueError(f"Pipeline {pipeline_name} does not exist.")
+            # log error and exit
+            params.COMMON_LOGGER.error(f"Pipeline {pipeline_name} does not exist.")
+            exit(1)

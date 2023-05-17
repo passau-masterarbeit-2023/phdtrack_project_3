@@ -1,5 +1,77 @@
 # Worklog 2
 
+### Wed 17 Mai 2023
+
+* [ ] Create new pipelines for `SGDClassifier` and `MLPClassifier`.
+* [ ] Add a CLI for different sampling strategies.
+* [ ] Create a pipeline with a RandomForest on chuncks and a classifier on the result of RandomForest for improving precision.
+* [ ] Do a grid search on `RandomForest`
+* [ ] Add a mecanism to keep results inside a CSV and transform that into a table in latex.
+
+##### pipeline for `SGDClassifier`
+
+We have added our first pipeline with both partial and total fitting for a `SGDClassifier`.
+
+Here are results for **partial fitting** on `validation`:
+
+```shell
+(phdtrack-311) [onyr@kenzael feature_engineering]$ python main.py -p ml_sgd -o validation -b
+🚀 Running program...
+Passed program params:
+param[0]: main.py
+param[1]: -p
+param[2]: ml_sgd
+param[3]: -o
+param[4]: validation
+param[5]: -b
+Program paths are OK.
+2023-05-17 09:19:00,387 - results_logger - INFO - Program params:   [see below]
+2023-05-17 09:19:00,387 - results_logger - INFO -       debug: False
+2023-05-17 09:19:00,387 - results_logger - INFO -       max_ml_workers: 10
+2023-05-17 09:19:00,395 - common_logger - INFO - Running pipeline: ml_sgd
+2023-05-17 09:19:00,395 - results_logger - INFO - timer for pipeline (ml_sgd) started
+[...]
+2023-05-17 09:19:46,386 - common_logger - INFO - 📋 [f: 153 / 154] Loading file /home/onyr/code/phdtrack/phdtrack_project_3/src/mem_to_graph/data/samples_and_labels/Validation__chunck_idx-118_samples.csv 
+2023-05-17 09:19:46,446 - results_logger - INFO - Removing 1 columns with only one unique value: ['f_dtns_ancestor_1']
+2023-05-17 09:19:46,613 - common_logger - INFO - Number of empty files: 24
+2023-05-17 09:19:50,467 - results_logger - INFO - Precision: 0.0033172557660275164, Recall: 0.6098213583064452, F1-score: 0.006598616921718383
+2023-05-17 09:19:50,471 - results_logger - INFO - Time elapsed since the begining of pipeline (ml_sgd): 50.0751838684082 s
+```
+
+The precision is really low: 0.003, the recall is better: 0.61.
+
+Here is another run with **one time fitting** on `validation`:
+
+```shell
+(phdtrack-311) [onyr@kenzael feature_engineering]$ python main.py -p ml_sgd -o validation
+🚀 Running program...
+Passed program params:
+param[0]: main.py
+param[1]: -p
+param[2]: ml_sgd
+param[3]: -o
+param[4]: validation
+Program paths are OK.
+2023-05-17 09:20:27,259 - results_logger - INFO - Program params:   [see below]
+2023-05-17 09:20:27,259 - results_logger - INFO -       debug: False
+2023-05-17 09:20:27,259 - results_logger - INFO -       max_ml_workers: 10
+2023-05-17 09:20:27,261 - results_logger - INFO - timer for load_samples_and_labels_from_all_csv_files started
+[...]
+2023-05-17 09:20:30,499 - results_logger - INFO - 📋 [153/154] Loading samples and labels from /home/onyr/code/phdtrack/phdtrack_project_3/src/mem_to_graph/data/samples_and_labels/Validation__chunck_idx-118_samples.csv
+2023-05-17 09:20:30,711 - common_logger - INFO - Number of empty files: 24
+2023-05-17 09:20:31,050 - results_logger - INFO - Time elapsed since the begining of load_samples_and_labels_from_all_csv_files: 3.789315700531006 s
+2023-05-17 09:20:31,869 - results_logger - INFO - Removing 1 columns with only one unique value: ['f_dtns_ancestor_1']
+2023-05-17 09:20:32,189 - results_logger - INFO - Loaded data (validation)
+2023-05-17 09:20:32,189 - results_logger - INFO - Number of positive labels: 63743
+2023-05-17 09:20:32,189 - results_logger - INFO - Number of negative labels: 24432867
+2023-05-17 09:20:32,189 - common_logger - INFO - Running pipeline: ml_sgd
+2023-05-17 09:20:32,190 - results_logger - INFO - timer for pipeline (ml_sgd) started
+2023-05-17 09:20:44,956 - results_logger - INFO - Precision: 0.0044399446805125226, Recall: 0.642080378250591, F1-score: 0.008818907182841878
+2023-05-17 09:20:44,961 - results_logger - INFO - Time elapsed since the begining of pipeline (ml_sgd): 12.7716383934021 s
+```
+
+With one time fitting, the results are slightly better, with a precision of: 0.004, and a recall: 0.64.
+
 ### Tue 16 Mai 2023
 
 * [X] refactor with data batches
@@ -27,7 +99,6 @@ For our problem, since we try to maximize the recall (we want to detect all poss
 3. `Perceptron`: This is a simple algorithm suitable for large scale learning. It's fast and could be a good starting point for binary classification problems. However, it may not perform as well as other, more complex models if your data is not linearly separable.
 4. `BernoulliNB`, `MultinomialNB`, `GaussianNB`: These are Naive Bayes classifiers. Naive Bayes classifiers are a family of simple "probabilistic classifiers" based on applying Bayes' theorem with strong independence assumptions between the features. They can be a good choice if your features are conditionally independent given the class. BernoulliNB and MultinomialNB are often used for text data, while GaussianNB is used for numerical data.
 5. `MLPClassifier`: This is a multi-layer perceptron classifier, which is a type of neural network. It can model more complex relationships between the features and the target variable, and might be suitable if your data is not linearly separable. However, it can require more computational resources and might be slower to train than some other classifiers.
-
 
 ### Mon 15 Mai 2023
 

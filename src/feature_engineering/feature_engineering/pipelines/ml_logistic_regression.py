@@ -27,7 +27,7 @@ def __ml_logistic_regression_pipeline(params: ProgramParams, samples: pd.DataFra
 
 
     # Train classifier
-    clf = LogisticRegression()
+    clf = LogisticRegression(n_jobs = params.MAX_ML_WORKERS)
     clf.fit(X_train_transformed, y_train)
 
     # Apply feature selection to test set
