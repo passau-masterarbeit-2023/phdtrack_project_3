@@ -1,21 +1,33 @@
+from typing import Optional
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import precision_score, recall_score, f1_score
 from imblearn.under_sampling import RandomUnderSampler
 
-from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType, is_datagenerator, is_datatuple
+from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion, is_datagenerator, is_datatuple
 from feature_engineering.data_loading.data_loading import consume_data_generator
+from feature_engineering.params.data_origin import DataOriginEnum
+from feature_engineering.pipelines.pipeline_utils import handle_data_origin_consume_generator
 from feature_engineering.params.params import ProgramParams
 
-import pandas as pd
 
-def __ml_random_forest_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
+def __ml_random_forest_pipeline(
+        params: ProgramParams, 
+        samples_and_labels_train: SamplesAndLabels,
+        samples_and_labels_test: Optional[SamplesAndLabels],
+    ) -> None:
     """
-    Pipeline for RandomForest with undersampling.
+    A pipeline for training a RandomForestClassifier.
     """
-    # Split into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
 
+    if samples_and_labels_test is None:
+        # Split data into training and test sets
+        samples, labels = samples_and_labels_train
+        X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
+    else:
+        X_train, y_train = samples_and_labels_train
+        X_test, y_test = samples_and_labels_test
+    
     # Perform undersampling on the majority class
     rus = RandomUnderSampler(random_state=42)
     X_res, y_res = rus.fit_resample(X_train, y_train)
@@ -36,15 +48,26 @@ def __ml_random_forest_pipeline(params: ProgramParams, samples: pd.DataFrame, la
     params.RESULTS_LOGGER.info(f'Precision: {precision}, Recall: {recall}, F1-score: {f1}')
 
 
-def ml_random_forest_pipeline(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
+def ml_random_forest_pipeline(
+        params: ProgramParams, 
+        origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion]
+    ) -> None:
+    """
+    Pipeline for training a RandomForestClassifier.
+    """
 
-    if is_datatuple(samples_and_labels):
-        # check the samples and labels
-        samples, labels = samples_and_labels
-        __ml_random_forest_pipeline(params, samples, labels)
-    elif is_datagenerator(samples_and_labels):
-        # check the samples and labels
-        samples, labels = consume_data_generator(samples_and_labels)
-        __ml_random_forest_pipeline(params, samples, labels)
-    else:
-        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")
+    samples_and_labels_train: SamplesAndLabels 
+    samples_and_labels_test: Optional[SamplesAndLabels] = None
+
+    samples_and_labels_train = handle_data_origin_consume_generator(
+        params.DATA_ORIGINS_TRAINING,
+        origin_to_samples_and_labels
+    )
+    if params.DATA_ORIGINS_TESTING is not None:
+        samples_and_labels_test = handle_data_origin_consume_generator(
+            params.DATA_ORIGINS_TESTING,
+            origin_to_samples_and_labels
+        )
+    
+    # launch the pipeline
+    __ml_random_forest_pipeline(params, samples_and_labels_train, samples_and_labels_test)

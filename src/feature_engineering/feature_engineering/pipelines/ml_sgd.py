@@ -1,3 +1,4 @@
+from typing import Optional
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -5,16 +6,27 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from imblearn.under_sampling import RandomUnderSampler
 import pandas as pd
 
-from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType, is_datagenerator, is_datatuple
+from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion, is_datagenerator, is_datatuple
 from feature_engineering.data_loading.data_loading import consume_data_generator
+from feature_engineering.params.data_origin import DataOriginEnum
+from feature_engineering.pipelines.pipeline_utils import handle_data_origin_respecting_generator
 from feature_engineering.params.params import ProgramParams
 
-def __ml_sgd_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
+def __ml_sgd_pipeline(
+        params: ProgramParams, 
+        samples_and_labels_train: SamplesAndLabels,
+        samples_and_labels_test: Optional[SamplesAndLabels],
+    ) -> None:
     """
     Pipeline for SGDClassifier with undersampling.
     """
-    # Split into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
+    if samples_and_labels_test is None:
+        # Split data into training and test sets
+        samples, labels = samples_and_labels_train
+        X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
+    else:
+        X_train, y_train = samples_and_labels_train
+        X_test, y_test = samples_and_labels_test
 
     # Perform undersampling on the majority class
     #rus = RandomUnderSampler(random_state=42)
@@ -41,17 +53,29 @@ def __ml_sgd_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.S
     params.RESULTS_LOGGER.info(f'Precision: {precision}, Recall: {recall}, F1-score: {f1}')
 
 
-def __ml_sgd_pipeline_partial_fit(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
+def __ml_sgd_pipeline_partial_fit(
+        params: ProgramParams, 
+        samples_and_labels_train: SamplesAndLabelsGenerator,
+        samples_and_labels_test: Optional[SamplesAndLabelsGenerator],
+    ) -> None:
+    """
+    Note that we need to consume the data generator for the testing part.
+    """
+
     # Train a SGDClassifier
     clf = SGDClassifier(random_state=42)
     X_test_all = pd.DataFrame()
     y_test_all = pd.Series()
     
-    for samples, labels in samples_and_labels:
-        # Split into train and test sets
-        X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
-        X_test_all = pd.concat([X_test_all, X_test])
-        y_test_all = pd.concat([y_test_all, y_test])
+    for samples_train, labels_train in samples_and_labels_train:
+
+        if samples_and_labels_test is None:
+            # Split into train and test sets
+            X_train, X_test, y_train, y_test = train_test_split(samples_train, labels_train, test_size=0.2, random_state=42)
+            X_test_all = pd.concat([X_test_all, X_test])
+            y_test_all = pd.concat([y_test_all, y_test])
+        else:
+            X_train, y_train = samples_train, labels_train
 
         # Perform undersampling on the majority class
         rus = RandomUnderSampler(random_state=42)
@@ -59,6 +83,11 @@ def __ml_sgd_pipeline_partial_fit(params: ProgramParams, samples_and_labels: Sam
 
         # Here classes=[0, 1] as we are assuming binary classification
         clf.partial_fit(X_res, y_res, classes=[0, 1])
+
+    if samples_and_labels_test is not None:
+        print("samples_and_labels_test type: ", type(samples_and_labels_test))
+        print("samples_and_labels_test tuple: ", tuple(samples_and_labels_test))
+        X_test_all, y_test_all = consume_data_generator(samples_and_labels_test)
 
     # Make predictions on the test set
     y_pred = clf.predict(X_test_all)
@@ -73,13 +102,27 @@ def __ml_sgd_pipeline_partial_fit(params: ProgramParams, samples_and_labels: Sam
 
 
 
-def ml_sgd_pipeline(params: ProgramParams, samples_and_labels: SamplesAndLabelsType, partial_fit: bool = False) -> None:
+def ml_sgd_pipeline(
+        params: ProgramParams, 
+        origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion]
+) -> None:
+    print("deudhdedhededhedheud")
+    samples_and_labels_train = handle_data_origin_respecting_generator(
+        params.DATA_ORIGINS_TRAINING,
+        origin_to_samples_and_labels
+    )
 
-    if is_datatuple(samples_and_labels):
-        # check the samples and labels
-        samples, labels = samples_and_labels
-        __ml_sgd_pipeline(params, samples, labels)
-    elif is_datagenerator(samples_and_labels):
-        __ml_sgd_pipeline_partial_fit(params, samples_and_labels)
+    samples_and_labels_test = None
+    if params.DATA_ORIGINS_TESTING is not None:
+        samples_and_labels_test = handle_data_origin_respecting_generator(
+            params.DATA_ORIGINS_TESTING,
+            origin_to_samples_and_labels
+        )
+
+    if params.BATCH:
+        __ml_sgd_pipeline_partial_fit(params, samples_and_labels_train, samples_and_labels_test)
     else:
-        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")
+        print("samples_and_labels_train type: ", type(samples_and_labels_train))
+        print("samples_and_labels_train tuple: ", len(samples_and_labels_train))
+        __ml_sgd_pipeline(params, samples_and_labels_train, samples_and_labels_test)
+

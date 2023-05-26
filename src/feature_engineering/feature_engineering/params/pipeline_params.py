@@ -1,4 +1,7 @@
-class PipelineNames(str):
+from enum import Enum
+
+
+class PipelineNames(Enum):
     """
     Pipeline names.
     """
@@ -32,4 +35,4 @@ def convert_str_arg_to_pipeline_name(arg: str) -> PipelineNames:
         return PipelineNames.ML_SGD
     else:
         print_pipeline_names()
-        raise ValueError(f"Unknown pipeline name: {arg}. Possible values: {print_pipeline_names()}")
+        raise ValueError(f"Unknown pipeline name: {arg}.")

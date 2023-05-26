@@ -14,8 +14,10 @@
 ### Fri 26 Mai 2023
 
 * [X] Finish to read Christopher's code
-* [ ] Need to test that pipeline creating and result keeping is working
+* [X] Need to test the refactoring with new params
+* [ ] complete the integration of result keeping, and test/debug
 * [ ] Complete result keeping integration, for now, only start time and pipeline names are provided.
+* [ ] create a meta-script that launch and test the program with all possible combination of program command lines
 
 ### Wed 24 Mai 2023
 

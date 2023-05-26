@@ -1,30 +1,39 @@
+from typing import Optional
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, precision_score, recall_score
 
-from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType, is_datagenerator, is_datatuple
-from feature_engineering.data_loading.data_loading import consume_data_generator
+from feature_engineering.data_loading.data_types import SamplesAndLabels, SamplesAndLabelsUnion
+from feature_engineering.pipelines.pipeline_utils import handle_data_origin_consume_generator
+from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.pipelines.univariate_feature_selection import __compute_distance_f_test_p_val
 from feature_engineering.params.params import ProgramParams
 
-import pandas as pd
+def __ml_logistic_regression_pipeline(
+        params: ProgramParams, 
+        samples_and_labels_train: SamplesAndLabels,
+        samples_and_labels_test: Optional[SamplesAndLabels],
+    ) -> None:
 
-def __ml_logistic_regression_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
-    # Split data into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
+    if samples_and_labels_test is None:
+        # Split data into training and test sets
+        samples, labels = samples_and_labels_train
+        X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
+    else:
+        X_train, y_train = samples_and_labels_train
+        X_test, y_test = samples_and_labels_test
 
     # Feature selection
     selector = SelectKBest(f_classif, k=10)
     X_train_transformed = selector.fit_transform(X_train, y_train)
-    column_names = samples.columns[selector.get_support()].tolist()
-    print("column_names:", column_names, "type:", type(column_names))
+
+    # log selected features
+    column_names_after_selection = samples.columns[selector.get_support()].tolist()
+    params.RESULTS_LOGGER.info(f'Selected features: {column_names_after_selection}')
 
     f_values, p_values = selector.score_func(samples, labels)
-    column_names2 = samples.columns.tolist()
-
-    print("column_names2:", column_names2, "type:", type(column_names2))
-
+    column_names = samples.columns.tolist()
 
     # Train classifier
     clf = LogisticRegression(n_jobs = params.MAX_ML_WORKERS)
@@ -52,20 +61,26 @@ def __ml_logistic_regression_pipeline(params: ProgramParams, samples: pd.DataFra
     params.RESULTS_LOGGER.info(f"Column names sorted by importance: [{', '.join(sorted_column_names)}]")
 
 
-def ml_logistic_regression_pipeline(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
+def ml_logistic_regression_pipeline(
+        params: ProgramParams, 
+        origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion]
+    ) -> None:
     """
-    Pipeline for checking the samples and labels.
+    Pipeline for training a logistic regression model.
     """
 
-    if is_datatuple(samples_and_labels):
-        # check the samples and labels
-        samples, labels = samples_and_labels
-        __ml_logistic_regression_pipeline(params, samples, labels)
-    elif is_datagenerator(samples_and_labels, DataGenerator):
-        # check the samples and labels
-        samples, labels = consume_data_generator(samples_and_labels)
-        __ml_logistic_regression_pipeline(params, samples, labels)
-    else:
-        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")
+    samples_and_labels_train: SamplesAndLabels 
+    samples_and_labels_test: Optional[SamplesAndLabels] = None
 
-
+    samples_and_labels_train = handle_data_origin_consume_generator(
+        params.DATA_ORIGINS_TRAINING,
+        origin_to_samples_and_labels
+    )
+    if params.DATA_ORIGINS_TESTING is not None:
+        samples_and_labels_test = handle_data_origin_consume_generator(
+            params.DATA_ORIGINS_TESTING,
+            origin_to_samples_and_labels
+        )
+    
+    # launch the pipeline
+    __ml_logistic_regression_pipeline(params, samples_and_labels_train, samples_and_labels_test)

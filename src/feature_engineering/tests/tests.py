@@ -2,7 +2,7 @@
 File used for internal testing variables and functions.
 """
 
-from feature_engineering.feature_engineering.params.params import ProgramParams
+from feature_engineering.params.params import ProgramParams
 
 class TestParams(ProgramParams):
 

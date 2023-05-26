@@ -1,4 +1,7 @@
-class DataOriginEnum(str):
+from enum import Enum
+
+
+class DataOriginEnum(Enum):
     Training = "training"
     Validation = "validation"
     Testing = "performance_test"
@@ -20,4 +23,5 @@ def convert_str_arg_to_data_origin(arg: str) -> DataOriginEnum:
     elif arg == DataOriginEnum.Testing or arg == "testing":
         return DataOriginEnum.Testing
     else:
-        raise ValueError(f"Unknown data origin: {arg}. Possible values: {print_data_origin_enum()}")
+        print_data_origin_enum()
+        raise ValueError(f"Unknown data origin: {arg}.")

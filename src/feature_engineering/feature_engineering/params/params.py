@@ -1,8 +1,8 @@
-from .data_origin import DataOriginEnum, convert_str_arg_to_data_origin
+from feature_engineering.results.results_manager import ResultsManager
+from .data_origin import DataOriginEnum, convert_str_arg_to_data_origin, print_data_origin_enum
 from ..cli import CLIArguments
-from ..utils.utils import DATETIME_FORMAT, datetime2str, str2bool, str2enum
-from feature_engineering.results.results import ClassificationResultsWriter
-from feature_engineering.params.pipeline_params import PipelineNames, convert_str_arg_to_pipeline_name
+from ..utils.utils import DATETIME_FORMAT, datetime2str
+from feature_engineering.params.pipeline_params import PipelineNames, convert_str_arg_to_pipeline_name, print_pipeline_names
 
 from dataclasses import dataclass
 import os
@@ -18,13 +18,14 @@ class ProgramParams:
     Wrapper class for program parameters.
     """
     cli_args: CLIArguments
-    classification_result_writer_dict: dict[PipelineNames, ClassificationResultsWriter]
+    results_manager: ResultsManager
 
     # default values
     DEBUG: bool = False
     MAX_ML_WORKERS = 10
     PIPELINES: list[PipelineNames] | None = None
-    DATA_ORIGINS: set[DataOriginEnum] | None = None
+    DATA_ORIGINS_TRAINING: set[DataOriginEnum] | None = None
+    DATA_ORIGINS_TESTING: set[DataOriginEnum] | None = None
     BATCH: bool = False
 
     # base directories
@@ -65,19 +66,19 @@ class ProgramParams:
         self.__construct_log()
         self.__log_program_params()
 
-        # result keepers
-        self.__create_results_keepers()
-    
-    def __create_results_keepers(self):
-        """
-        Create results keepers.
-        """
-        self.classification_result_writer_dict = {}
-        for pipeline_name in self.PIPELINES:
-            self.classification_result_writer_dict[pipeline_name] = ClassificationResultsWriter(
-                self.CSV_CLASSIFICATION_RESULTS_PATH,
-                pipeline_name.value,
-            )
+        # keep results
+        self.results_manager = ResultsManager(
+            self.CSV_CLASSIFICATION_RESULTS_PATH
+        )
+        # self.results_manager.set_result_forall(
+        #     "balancing_type", ...
+        # )  
+        # self.results_manager.set_result_forall(
+        #     "training_dataset_origin", ...
+        # )
+        # self.results_manager.set_result_forall(
+        #     "testing_dataset_origin", ...
+        # )
 
     def __is_running_under_pytest(self):
         """
@@ -135,14 +136,30 @@ class ProgramParams:
             self.MAX_ML_WORKERS = int(self.cli_args.args.max_ml_workers)
             assert isinstance(self.MAX_ML_WORKERS, int)
 
-        if self.cli_args.args.origins is not None:
-            self.DATA_ORIGINS = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins))
-            assert isinstance(self.DATA_ORIGINS, set)
+        if self.cli_args.args.origins_training is not None:
+            try:
+                self.DATA_ORIGINS_TRAINING = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins_training))
+                assert isinstance(self.DATA_ORIGINS_TRAINING, set)
+            except ValueError:
+                print(f"ERROR: Invalid data origin training: {self.cli_args.args.origins_training}")
+                exit(1)
+        
+        if self.cli_args.args.origins_testing is not None:
+            try:
+                self.DATA_ORIGINS_TESTING = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins_testing))
+                assert isinstance(self.DATA_ORIGINS_TESTING, set)
+            except ValueError:
+                print(f"ERROR: Invalid data origin testing: {self.cli_args.args.origins_testing}")
+                exit(1)
+            # NOTE: please, let DATA_ORIGINS_TESTING to none, such that we can split the data in the pipeline if needed.
         
         if self.cli_args.args.pipelines is not None:
-            self.PIPELINES = set(map(convert_str_arg_to_pipeline_name, self.cli_args.args.pipelines))
-            assert isinstance(self.PIPELINES, set)
-        
+            try:
+                self.PIPELINES = set(map(convert_str_arg_to_pipeline_name, self.cli_args.args.pipelines))
+                assert isinstance(self.PIPELINES, set)
+            except ValueError:
+                    print(f"ERROR: Invalid pipeline name: {self.cli_args.args.pipelines}")
+                    exit(1)
         # No if here, batch is either True or False
         self.BATCH = self.cli_args.args.batch
         assert isinstance(self.BATCH, bool)
@@ -154,7 +171,7 @@ class ProgramParams:
         # common formater
         common_formatter = logging.Formatter(
             '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            datefmt=DATETIME_FORMAT
+            datefmt=DATETIME_FORMAT.replace("_%f", "")
         )
 
         # ----------------- common logger -----------------

@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from feature_engineering.data_loading.data_types import DataTuple, SamplesAndLabelsType, DataGenerator, is_datagenerator, is_datatuple
-from feature_engineering.utils.utils import time_measure
+from feature_engineering.data_loading.data_types import SamplesAndLabels, SamplesAndLabelsUnion, SamplesAndLabelsGenerator, is_datagenerator, is_datatuple
+from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.params.params import ProgramParams
 
 def __check_samples_and_labels(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series):
@@ -42,20 +42,22 @@ def __check_samples_and_labels(params: ProgramParams, samples: pd.DataFrame, lab
 
 
 
-def check(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
+def check(params: ProgramParams, origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion]) -> None:
     """
     Pipeline for checking the samples and labels.
     """
+    for data_origin, samples_and_labels in origin_to_samples_and_labels.items():
+        params.COMMON_LOGGER.info(f"Checking samples and labels for data origin: {data_origin}")
 
-    if is_datatuple(samples_and_labels):
-        # check the samples and labels
-        samples, labels = samples_and_labels
-        __check_samples_and_labels(params, samples, labels)
-    elif is_datagenerator(samples_and_labels):
-        # check the samples and labels
-        for samples, labels in samples_and_labels:
+        if is_datatuple(samples_and_labels):
+            # check the samples and labels
+            samples, labels = samples_and_labels
             __check_samples_and_labels(params, samples, labels)
-    else:
-        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")
+        elif is_datagenerator(samples_and_labels):
+            # check the samples and labels
+            for samples, labels in samples_and_labels:
+                __check_samples_and_labels(params, samples, labels)
+        else:
+            raise TypeError(f"Invalid type for samples_and_labels [origin: {data_origin}]: {type(samples_and_labels)}")
 
 

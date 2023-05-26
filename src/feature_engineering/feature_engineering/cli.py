@@ -25,7 +25,8 @@ class CLIArguments:
             -w max ml workers (threads for ML threads pool, -1 for illimited)
             -d debug
             -p pipelines
-            -o origins
+            -otr origins training
+            -ots origins testing
             -b use data batch
             -h help
         
@@ -56,12 +57,20 @@ class CLIArguments:
             help="List of pipelines to run"
         )
         parser.add_argument(
-            '-o',
-            '--origins',
+            '-otr',
+            '--origins_training',
             type=str,
             nargs='*',
             default=None,
-            help="Data origin (training, validation, testing)"
+            help="Data origin (training, validation, testing) for training"
+        )
+        parser.add_argument(
+            '-ots',
+            '--origins_testing',
+            type=str,
+            nargs='*',
+            default=None,
+            help="Data origin (training, validation, testing) for testing"
         )
         parser.add_argument(
             '-b',

@@ -1,8 +1,11 @@
+from typing import Optional
 import numpy as np
-import pandas as pd
+from sklearn.feature_selection import SelectKBest, f_classif
 
-from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType, is_datagenerator, is_datatuple
+from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion, is_datagenerator, is_datatuple
 from feature_engineering.data_loading.data_loading import consume_data_generator
+from feature_engineering.params.data_origin import DataOriginEnum
+from feature_engineering.pipelines.pipeline_utils import handle_data_origin_consume_generator
 from feature_engineering.params.params import ProgramParams
 
 
@@ -23,13 +26,19 @@ def __compute_distance_f_test_p_val(f_values: np.ndarray, p_values: np.ndarray) 
     return sorted_indices
 
 
-def __univariate_feature_selection_pipeline(params: ProgramParams, samples: pd.DataFrame, labels: pd.Series) -> None:
+def __univariate_feature_selection_pipeline(
+        params: ProgramParams, 
+        samples_and_labels_train: SamplesAndLabels,
+        samples_and_labels_test: Optional[SamplesAndLabels],
+    ) -> None:
     """
     Pipeline for univariate feature selection.
     """
 
+    # Feature selection on training set (only)
+    samples, labels = samples_and_labels_train
+
     # feature selection
-    from sklearn.feature_selection import SelectKBest, f_classif
     selector = SelectKBest(f_classif, k=10)
     f_values, p_values = selector.score_func(samples, labels)
     column_names = samples.columns.tolist()
@@ -47,19 +56,32 @@ def __univariate_feature_selection_pipeline(params: ProgramParams, samples: pd.D
     # Print the sorted column names
     params.RESULTS_LOGGER.info(f"Column names sorted by importance: [{', '.join(sorted_column_names)}]")
 
+    # TODO: evaluate the performance of the classifier with the selected features
     #selector.fit(training_samples, training_labels)
     #X_new = selector.transform(training_samples)
 
 
-def univariate_feature_selection_pipeline(params: ProgramParams, samples_and_labels: SamplesAndLabelsType) -> None:
+def univariate_feature_selection_pipeline(
+        params: ProgramParams, 
+        origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion]
+    ) -> None:
+    """
+    Pipeline for feature selection.
+    """
 
-    if is_datatuple(samples_and_labels):
-        # check the samples and labels
-        samples, labels = samples_and_labels
-        __univariate_feature_selection_pipeline(params, samples, labels)
-    elif is_datagenerator(samples_and_labels):
-        # check the samples and labels
-        samples, labels = consume_data_generator(samples_and_labels)
-        __univariate_feature_selection_pipeline(params, samples, labels)
-    else:
-        raise TypeError(f"Invalid type for samples_and_labels: {type(samples_and_labels)}")
+    samples_and_labels_train: SamplesAndLabels 
+    samples_and_labels_test: Optional[SamplesAndLabels] = None
+
+    samples_and_labels_train = handle_data_origin_consume_generator(
+        params.DATA_ORIGINS_TRAINING,
+        origin_to_samples_and_labels
+    )
+    if params.DATA_ORIGINS_TESTING is not None:
+        samples_and_labels_test = handle_data_origin_consume_generator(
+            params.DATA_ORIGINS_TESTING,
+            origin_to_samples_and_labels
+        )
+    
+    # launch the pipeline
+    __univariate_feature_selection_pipeline(params, samples_and_labels_train, samples_and_labels_test)
+

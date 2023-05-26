@@ -7,14 +7,14 @@ import pandas as pd
 from typing import Generator, Tuple
 
 from feature_engineering.data_loading.data_cleaning import clean
-from feature_engineering.data_loading.data_types import DataGenerator, DataTuple, SamplesAndLabelsType
+from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion
 from feature_engineering.utils.data_utils import count_positive_and_negative_labels
 from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.utils.utils import time_measure
 from feature_engineering.params.params import ProgramParams
 
 
-def load_samples_and_labels_from_csv(csv_file_path: str) -> DataTuple | None:
+def load_samples_and_labels_from_csv(csv_file_path: str) -> SamplesAndLabels | None:
     # Load the data from the CSV file
     data = pd.read_csv(csv_file_path, dtype='int32')
 
@@ -38,7 +38,7 @@ def load_samples_and_labels_from_csv(csv_file_path: str) -> DataTuple | None:
 def load_samples_and_labels_from_all_csv_files_in_batches(
         params: ProgramParams, 
         csv_file_paths: list[str],
-) -> DataGenerator:
+) -> SamplesAndLabelsGenerator:
     """
     Generator function to yield batches of samples and labels from a CSV file.
     One batch is one file.
@@ -71,7 +71,7 @@ def load_samples_and_labels_from_all_csv_files_in_batches(
     params.COMMON_LOGGER.info(f'Number of empty files: {len(list_of_empty_files)}')
 
 
-def consume_data_generator(data_generator: DataGenerator) -> DataTuple:
+def consume_data_generator(data_generator: SamplesAndLabelsGenerator) -> SamplesAndLabels:
     """
     Consume a data generator.
     """
@@ -91,7 +91,7 @@ def consume_data_generator(data_generator: DataGenerator) -> DataTuple:
 
 def load_samples_and_labels_from_all_csv_files(
         params: ProgramParams, csv_file_paths: list[str]
-) -> DataTuple:
+) -> SamplesAndLabels:
     """
     Load the samples and labels from all .csv files.
     """
@@ -129,7 +129,7 @@ def load_samples_and_labels_from_all_csv_files(
 
 def parallel_load_samples_and_labels_from_all_csv_files(
         params: ProgramParams, csv_file_paths: List[str]
-) -> DataTuple:
+) -> SamplesAndLabels:
     """
     Load the samples and labels from all .csv files.
     Load using multiple threads.
@@ -198,9 +198,9 @@ def get_all_filepath_per_type(dirpath: str) -> Tuple[list[str], list[str], list[
     extension = "csv"
     all_files = glob.glob(os.path.join(dirpath, "**", f"*.{extension}"), recursive=True)
 
-    training_files = [file for file in all_files if DataOriginEnum.Training in file.lower()]
-    validation_files = [file for file in all_files if DataOriginEnum.Validation in file.lower()]
-    testing_files = [file for file in all_files if DataOriginEnum.Testing in file.lower()]
+    training_files = [file for file in all_files if DataOriginEnum.Training.value in file.lower()]
+    validation_files = [file for file in all_files if DataOriginEnum.Validation.value in file.lower()]
+    testing_files = [file for file in all_files if DataOriginEnum.Testing.value in file.lower()]
         
     return training_files, validation_files, testing_files
 
@@ -219,7 +219,7 @@ def load(
         params: ProgramParams, 
         data_dir_path: str, 
         data_origin: set[DataOriginEnum] | None = None
-) -> SamplesAndLabelsType:
+) -> SamplesAndLabelsUnion:
     """
     Load the samples and labels from all .csv files.
     Take into account the data origin: training, validation, testing.
@@ -258,7 +258,7 @@ def load(
         log_positive_and_negative_labels(
             params, 
             labels, 
-            "Loaded data ({})".format(", ".join(data_origin).replace(" ", ""))
+            "Loaded data: ({})".format(", ".join([origin.value for origin in data_origin])) if data_origin is not None else "No data"
         )
 
         return samples, labels
