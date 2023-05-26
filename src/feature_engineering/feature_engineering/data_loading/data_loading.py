@@ -57,7 +57,7 @@ def load_samples_and_labels_from_all_csv_files_in_batches(
         else:
             samples, labels = res
 
-            # Print the shapes of the arrays
+            # log the shapes of the arrays
             params.COMMON_LOGGER.debug(f'shape of samples: {samples.shape}, shape of labels: {labels.shape}')
 
             samples, labels = clean(
@@ -112,7 +112,7 @@ def load_samples_and_labels_from_all_csv_files(
         else:
             samples, labels = res
 
-            # Print the shapes of the arrays
+            # log the shapes of the arrays
             params.COMMON_LOGGER.debug(f'shape of samples: {samples.shape}, shape of labels: {labels.shape}')
 
             all_samples_list.append(samples)

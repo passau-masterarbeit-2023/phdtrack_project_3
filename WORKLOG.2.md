@@ -15,9 +15,12 @@
 
 * [X] Finish to read Christopher's code
 * [X] Need to test the refactoring with new params
+* [ ] Add new param "DATA_BALANCING" and modify the pipelines (priority)
 * [ ] complete the integration of result keeping, and test/debug
 * [ ] Complete result keeping integration, for now, only start time and pipeline names are provided.
 * [ ] create a meta-script that launch and test the program with all possible combination of program command lines
+
+Heavy refactoring. We reworked the project to be able to handle different training and testing datasets. We also did some corrections and tested the program with a wide range of parameters.
 
 ### Wed 24 Mai 2023
 
@@ -26,13 +29,12 @@ Started to read Christopher python code for graph extraction. We then realized t
 ### Wed 17 Mai 2023
 
 * [ ] Create new pipelines for `SGDClassifier` and `MLPClassifier`.
-* [ ] Add a CLI for different sampling strategies.
 * [ ] Create a pipeline with a RandomForest on chuncks and a classifier on the result of RandomForest for improving precision.
 * [ ] Do a grid search on `RandomForest`
 * [ ] Add a mecanism to keep results inside a CSV
 * [ ] Transform that (CSV table of results) into a table in latex.
 * [ ] Improve result logs, include results, data origin, classifier name...
-* [ ] Split training and testing (update CLI params)
+* [X] Split training and testing (update CLI params)
 * [ ] Add logging for feature engineering through CSV
 
 ##### pipeline for `SGDClassifier`

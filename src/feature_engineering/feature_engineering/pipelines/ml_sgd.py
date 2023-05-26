@@ -85,8 +85,6 @@ def __ml_sgd_pipeline_partial_fit(
         clf.partial_fit(X_res, y_res, classes=[0, 1])
 
     if samples_and_labels_test is not None:
-        print("samples_and_labels_test type: ", type(samples_and_labels_test))
-        print("samples_and_labels_test tuple: ", tuple(samples_and_labels_test))
         X_test_all, y_test_all = consume_data_generator(samples_and_labels_test)
 
     # Make predictions on the test set
@@ -106,12 +104,10 @@ def ml_sgd_pipeline(
         params: ProgramParams, 
         origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion]
 ) -> None:
-    print("deudhdedhededhedheud")
     samples_and_labels_train = handle_data_origin_respecting_generator(
         params.DATA_ORIGINS_TRAINING,
         origin_to_samples_and_labels
     )
-
     samples_and_labels_test = None
     if params.DATA_ORIGINS_TESTING is not None:
         samples_and_labels_test = handle_data_origin_respecting_generator(
@@ -122,7 +118,5 @@ def ml_sgd_pipeline(
     if params.BATCH:
         __ml_sgd_pipeline_partial_fit(params, samples_and_labels_train, samples_and_labels_test)
     else:
-        print("samples_and_labels_train type: ", type(samples_and_labels_train))
-        print("samples_and_labels_train tuple: ", len(samples_and_labels_train))
         __ml_sgd_pipeline(params, samples_and_labels_train, samples_and_labels_test)
 

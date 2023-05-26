@@ -18,8 +18,8 @@ def __ml_logistic_regression_pipeline(
 
     if samples_and_labels_test is None:
         # Split data into training and test sets
-        samples, labels = samples_and_labels_train
-        X_train, X_test, y_train, y_test = train_test_split(samples, labels, test_size=0.2, random_state=42)
+        __samples, __labels = samples_and_labels_train
+        X_train, X_test, y_train, y_test = train_test_split(__samples, __labels, test_size=0.2, random_state=42)
     else:
         X_train, y_train = samples_and_labels_train
         X_test, y_test = samples_and_labels_test
@@ -29,11 +29,11 @@ def __ml_logistic_regression_pipeline(
     X_train_transformed = selector.fit_transform(X_train, y_train)
 
     # log selected features
-    column_names_after_selection = samples.columns[selector.get_support()].tolist()
+    column_names_after_selection = X_train.columns[selector.get_support()].tolist()
     params.RESULTS_LOGGER.info(f'Selected features: {column_names_after_selection}')
 
-    f_values, p_values = selector.score_func(samples, labels)
-    column_names = samples.columns.tolist()
+    f_values, p_values = selector.score_func(X_train, y_train)
+    column_names = X_train.columns.tolist()
 
     # Train classifier
     clf = LogisticRegression(n_jobs = params.MAX_ML_WORKERS)

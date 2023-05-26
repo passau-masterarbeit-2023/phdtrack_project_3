@@ -39,20 +39,24 @@ def handle_data_origin_respecting_generator(
     """
     Helper function for handling data origins, for classifiers that potentially use data generators.
     """
-    print("28237373737")
-    first_samples_and_labels = next(iter(origin_to_samples_and_labels.values())) # get first value, without iterating
-    if is_datagenerator(first_samples_and_labels):
-        print("is_datagenerator")
+
+    # beware interperter on "yield from". Need to take it to its own function to avoid skipping control flow
+    def concat_generators(
+            data_origins: set[DataOriginEnum],
+        origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion]
+    ):
         for data_origin in data_origins:
             # NOTE: yield from allows to yield from a generator from within a generator
             # ameno: http://simeonvisser.com/posts/python-3-using-yield-from-in-generators-part-1.html
-            yield from origin_to_samples_and_labels[data_origin] 
+            yield from origin_to_samples_and_labels[data_origin]
+
+
+    first_samples_and_labels = next(iter(origin_to_samples_and_labels.values())) # get first value, without iterating
+    if is_datagenerator(first_samples_and_labels):
+        return concat_generators(data_origins, origin_to_samples_and_labels)
     elif is_datatuple(first_samples_and_labels):
         vals = handle_data_origin_consume_generator(data_origins, origin_to_samples_and_labels)
-        print("vals", vals)
-        print("vals type", type(vals))
         return vals
     else:
         raise TypeError(f"Invalid type for samples_and_labels: {type(first_samples_and_labels)}")
             
-
