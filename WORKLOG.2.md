@@ -13,7 +13,7 @@
 
 ### Fri 26 Mai 2023
 
-* [ ] Finish to read Christopher's code
+* [X] Finish to read Christopher's code
 
 ### Wed 24 Mai 2023
 

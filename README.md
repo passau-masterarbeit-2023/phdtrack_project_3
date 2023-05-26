@@ -96,6 +96,10 @@ Using vim regex, run `:%!xxd`, then `:%s/\s\+//g`, then search for pointers with
 
 > 8 bytes means 16 chars!
 
+> NB: pointer that points to a data structure should be 16 bytes align (malloc in 64bit is 16 bytes allign) (More info in [GNU doc](https://www.gnu.org/software/libc/manual/html_node/Aligned-Memory-Blocks.html)). A simple check like `(potential_ptr_int % 16 == 0)` works.
+>
+> However, this is ONLY useful for checking pointers that points to DTS !
+
 Example of potential pointers from `.1010-1644391327-heap.raw`:
 
 ```shell
@@ -124,6 +128,10 @@ Search for memalloc headers `:/[0-9a-f]\{4}0\{12}`.
 ![search for data structure](./img/vim/discovering_data_structure.png)
 
 Here you can see a 4x16 char blocks which represents a data structure of 32 bytes ((4x16)x4)/8. The value `2100000000000000` is the malloc header in little endian format which represents 33. It is probably the number of bytes to leap through to avoid this data strucure.
+
+> WARN: The endianness is only on BYTES and NOT on the BITS inside the BYTES! So only the order of bytes is to take into consideration. The malloc header BYTES are in little-endian, and the least-significant bit (8th bit) of the least significant bytes (the first byte of the header), is a flag stating if the block memory is allocated or not (free). (0 for free, 1 for allocated).
+
+So in the previous example, we are dealing with a small allocated memblock of size 32 BYTES, whose first 8 BYTES constitute the malloc header.
 
 ##### example of potential datastructure
 
