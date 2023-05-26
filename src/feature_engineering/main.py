@@ -1,5 +1,6 @@
 from feature_engineering.data_loading.data_loading import load
 from feature_engineering.data_loading.data_cleaning import clean
+from feature_engineering.params.pipeline_params import print_pipeline_names
 from feature_engineering.utils.utils import time_measure
 from feature_engineering.pipelines.pipelines import PIPELINE_NAME_TO_FUNCTION, check_pipelines_params, print_all_possible_pipeline_names
 from feature_engineering.params.params import ProgramParams
@@ -16,15 +17,14 @@ def main():
     if params.PIPELINES is None:
         # no pipelines to run
         params.COMMON_LOGGER.warning(f"Pipelines is None (params.PIPELINES: {params.PIPELINES})")
-        print_all_possible_pipeline_names(params)
+        print_pipeline_names()
+        exit(1)
     else:
         # check params.PIPELINES
         if len(params.PIPELINES) == 0:
             params.COMMON_LOGGER.warning(f"No pipelines to run (params.PIPELINES: {params.PIPELINES})")
-            print_all_possible_pipeline_names(params)
-
-        # check pipeline params
-        check_pipelines_params(params)
+            print_pipeline_names()
+            exit(1)
 
         # load & clean data
         samples_and_labels = load(

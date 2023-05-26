@@ -14,6 +14,8 @@
 ### Fri 26 Mai 2023
 
 * [X] Finish to read Christopher's code
+* [ ] Need to test that pipeline creating and result keeping is working
+* [ ] Complete result keeping integration, for now, only start time and pipeline names are provided.
 
 ### Wed 24 Mai 2023
 
@@ -25,7 +27,11 @@ Started to read Christopher python code for graph extraction. We then realized t
 * [ ] Add a CLI for different sampling strategies.
 * [ ] Create a pipeline with a RandomForest on chuncks and a classifier on the result of RandomForest for improving precision.
 * [ ] Do a grid search on `RandomForest`
-* [ ] Add a mecanism to keep results inside a CSV and transform that into a table in latex.
+* [ ] Add a mecanism to keep results inside a CSV
+* [ ] Transform that (CSV table of results) into a table in latex.
+* [ ] Improve result logs, include results, data origin, classifier name...
+* [ ] Split training and testing (update CLI params)
+* [ ] Add logging for feature engineering through CSV
 
 ##### pipeline for `SGDClassifier`
 

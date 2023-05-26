@@ -1,6 +1,8 @@
 from .data_origin import DataOriginEnum, convert_str_arg_to_data_origin
 from ..cli import CLIArguments
-from ..utils.utils import str2bool, str2enum
+from ..utils.utils import DATETIME_FORMAT, datetime2str, str2bool, str2enum
+from feature_engineering.results.results import ClassificationResultsWriter
+from feature_engineering.params.pipeline_params import PipelineNames, convert_str_arg_to_pipeline_name
 
 from dataclasses import dataclass
 import os
@@ -16,11 +18,12 @@ class ProgramParams:
     Wrapper class for program parameters.
     """
     cli_args: CLIArguments
+    classification_result_writer_dict: dict[PipelineNames, ClassificationResultsWriter]
 
     # default values
     DEBUG: bool = False
     MAX_ML_WORKERS = 10
-    PIPELINES: list[str] | None = None
+    PIPELINES: list[PipelineNames] | None = None
     DATA_ORIGINS: set[DataOriginEnum] | None = None
     BATCH: bool = False
 
@@ -30,6 +33,9 @@ class ProgramParams:
 
     # data
     CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH = REPO_BASE_DIR + "src/mem_to_graph/data/samples_and_labels/"
+
+    # results
+    CSV_CLASSIFICATION_RESULTS_PATH = REPO_BASE_DIR + "results/classification_results.csv"
 
     # logger
     COMMON_LOGGER_DIR_PATH = REPO_BASE_DIR + "data/logs/common_log/"
@@ -58,6 +64,20 @@ class ProgramParams:
 
         self.__construct_log()
         self.__log_program_params()
+
+        # result keepers
+        self.__create_results_keepers()
+    
+    def __create_results_keepers(self):
+        """
+        Create results keepers.
+        """
+        self.classification_result_writer_dict = {}
+        for pipeline_name in self.PIPELINES:
+            self.classification_result_writer_dict[pipeline_name] = ClassificationResultsWriter(
+                self.CSV_CLASSIFICATION_RESULTS_PATH,
+                pipeline_name.value,
+            )
 
     def __is_running_under_pytest(self):
         """
@@ -115,13 +135,13 @@ class ProgramParams:
             self.MAX_ML_WORKERS = int(self.cli_args.args.max_ml_workers)
             assert isinstance(self.MAX_ML_WORKERS, int)
 
-        if self.cli_args.args.pipelines is not None:
-            self.PIPELINES = self.cli_args.args.pipelines
-            assert isinstance(self.PIPELINES, list | str)
-
         if self.cli_args.args.origins is not None:
             self.DATA_ORIGINS = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins))
             assert isinstance(self.DATA_ORIGINS, set)
+        
+        if self.cli_args.args.pipelines is not None:
+            self.PIPELINES = set(map(convert_str_arg_to_pipeline_name, self.cli_args.args.pipelines))
+            assert isinstance(self.PIPELINES, set)
         
         # No if here, batch is either True or False
         self.BATCH = self.cli_args.args.batch
@@ -132,7 +152,10 @@ class ProgramParams:
         construct logger. Must be call after __load_program_argv()
         """
         # common formater
-        common_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        common_formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            datefmt=DATETIME_FORMAT
+        )
 
         # ----------------- common logger -----------------
         # create common logger
@@ -160,7 +183,7 @@ class ProgramParams:
 
         # Result logger using file handler
         if self.USE_IMPORTANT_LOG_FILE:
-            results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + "/" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_results.log"
+            results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + "/" + datetime2str(datetime.now()) + "_results.log"
         else:
             results_log_file_path = common_log_file_path
         results_log_file_handler = logging.FileHandler(results_log_file_path)

@@ -1,7 +1,11 @@
+from datetime import datetime
 import json
 import contextlib
 import time
 import logging
+
+# utils constants
+DATETIME_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
 
 
 def str2bool(string: str) -> bool:
@@ -29,3 +33,13 @@ def time_measure(ident, logger : logging.Logger = None):
         logger.info(message)
     else:
         print(message)
+
+def datetime2str(datetime: datetime):
+    """
+    Return a string representation of the given datetime.
+    NB: The %f is the microseconds.
+    """
+    return datetime.strftime(DATETIME_FORMAT)
+
+
+
