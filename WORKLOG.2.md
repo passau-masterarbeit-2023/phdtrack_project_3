@@ -1,5 +1,24 @@
 # Worklog 2
 
+## Meetings
+
+### Meeting 1st June
+
+* [ ] What is the 9th byte after the malloc header ? We could not really see it.
+* [ ] Separation of work
+* [ ] research paper
+* [ ] access to computing machines
+
+## Work
+
+### Fri 26 Mai 2023
+
+* [ ] Finish to read Christopher's code
+
+### Wed 24 Mai 2023
+
+Started to read Christopher python code for graph extraction. We then realized that we were not handling correcly the memalloc flag, and made some correction into the rust code.
+
 ### Wed 17 Mai 2023
 
 * [ ] Create new pipelines for `SGDClassifier` and `MLPClassifier`.
