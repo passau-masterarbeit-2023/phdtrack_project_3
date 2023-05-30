@@ -2,7 +2,7 @@
 
 ## Meetings
 
-### Meeting 1st June
+### Meeting 30th Mai 2023
 
 * [X] What is the 9th byte after the malloc header ? We could not really see it.
 
@@ -32,12 +32,14 @@ Submission: end of August
 
 Final: end of September
 
-
-
-
-
-
 ## Work
+
+
+### Tue 30 Mai 2023
+
+Meeting with Christopher. We need to continue the work on ML part for KeyNode detection, and create a new embedding focused on data structures.
+
+Made refactoring and cleaning on `.env` params in the Rust.
 
 ### Fri 26 Mai 2023
 
