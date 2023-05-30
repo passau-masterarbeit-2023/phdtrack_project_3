@@ -4,10 +4,38 @@
 
 ### Meeting 1st June
 
-* [ ] What is the 9th byte after the malloc header ? We could not really see it.
-* [ ] Separation of work
-* [ ] research paper
-* [ ] access to computing machines
+* [X] What is the 9th byte after the malloc header ? We could not really see it.
+
+Christopher: We don't care so much about understanding and programming a specific code for managing malloc header, since the malloc header is heavily dependant on the architecture and implementation. You should just drop the flags and recover only an upper bound of the size of the data structure.
+
+* [X] Separation of work
+
+Two tasks: one is ML for KeyNode detection, the second one if the development of a new embedding focused on datastructure embedding.
+
+> Each of us must write in his own style, we cannot copy any text from one another.
+
+* [X] research paper
+
+Yes, potentially 2 papers on this
+
+* [X] access to computing machines
+
+Incoming
+
+##### notes about meeting of 1st of June
+
+Planning: end of experiment part, end of July.
+
+Writing: August
+
+Submission: end of August
+
+Final: end of September
+
+
+
+
+
 
 ## Work
 
