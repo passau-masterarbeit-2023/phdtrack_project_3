@@ -26,6 +26,8 @@ A repo following the advancement of PhDTrack Project.
 
 `conda env export --no-builds > ../environment.yml` : export conda env to yml file.
 
+## Submission & 
+
 ## Program usage
 
 #### Calling the program
@@ -100,7 +102,7 @@ Using vim regex, run `:%!xxd`, then `:%s/\s\+//g`, then search for pointers with
 >
 > However, this is ONLY useful for checking pointers that points to DTS !
 
-Example of potential pointers from `.1010-1644391327-heap.raw`:
+Example of potential pointers from `Training/Training/scp/V_7_8_P1/16/1010-1644391327-heap.raw `  `1010-1644391327-heap.raw`:
 
 ```shell
 00000300:20947e968b55000040947e968b550000.~..U..@.~..U..
@@ -110,6 +112,8 @@ Example of potential pointers from `.1010-1644391327-heap.raw`:
 00000340:40957e968b55000070957e968b550000@.~..U..p.~..U..
 00000350:90957e968b550000b0957e968b550000..~..U....~..U..
 ```
+
+
 
 Those are pointers in range.
 
@@ -181,6 +185,7 @@ This means that our corrected representation represent pointers that points to t
 #### ML model engineering
 
 We want to optimize the **recall** first. More info [here](https://inside-machinelearning.com/en/recall-precision-f1-score-simple-metric-explanation-machine-learning/). We want our model to detect every occurence of possible keys, without missing any potential key. This means we want an ideal **False Negative** value of 0, i.e. we want that our model detects all the keys.
+
 
 ## Questions
 
