@@ -19,3 +19,5 @@ Below are our stating ideas for semantic data structure embedding:
 Add pipeline for semantics embedding of dtns
 
 update cli arg to match the new pipeline and output folder
+
+add some commentary on code
