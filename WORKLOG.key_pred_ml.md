@@ -32,8 +32,22 @@ Submission: end of August
 
 Final: end of September
 
-## Work
+### Meeting 1st June 2023
 
+Seperation of work: 
+
+* Clément: need to write on embedding, specifically about data structure embedding
+* Florian: need to write on ML, specifically on Key Node prediction
+* Both of us will need to write about the modeling (rust code)
+
+Improvement of ML precision: 
+
+Christopher and Michael have bette results on the precision, because they provide the classifier with less information, more focused about the related Data Structure of the node. A good assumption is to say that we can uniquely identify Data Structures by their number of pointers. 
+
+* [ ] Try to learn classifiers on a subset of the samples, with only DTN information after the initial Key Prediction with high recall classifier, so as to increate the general performance.
+
+
+## Work
 
 ### Tue 30 Mai 2023
 
