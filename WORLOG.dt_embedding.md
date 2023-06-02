@@ -44,10 +44,12 @@ Create pipeline to generate data to vectorize data structure : csv with each lin
 * size
 * nb_pointer
 * for each block of 8 bytes inside the dts :
-  * if it is a pointer, left empty
+  * if it is a pointer, left empty (or no, if parameter no-pointer set)
   * else the block (hexa)
 
 WARN : to determinate the pointer, use the range of the heap block ? yes : avoid over interpretate the data (ML)
+
+NOTE : for 16, 32 and 64 bytes keys the number of dtn is 1038 or 1039 per files
 
 ### 01/06
 
