@@ -5,6 +5,7 @@ from ..utils.utils import DATETIME_FORMAT, datetime2str
 from feature_engineering.params.pipeline_params import PipelineNames, convert_str_arg_to_pipeline_name, print_pipeline_names
 
 from dataclasses import dataclass
+import dotenv
 import os
 import sys
 import logging
@@ -31,6 +32,7 @@ class ProgramParams:
     # base directories
     REPO_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_project_3/"
     DATA_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_data/"
+    PROJECT_BASE_DIR = REPO_BASE_DIR + "src/features_engineering/"
 
     # data
     CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH = REPO_BASE_DIR + "src/mem_to_graph/data/samples_and_labels/"
@@ -61,6 +63,8 @@ class ProgramParams:
         else:
             self.DEBUG = debug
             self.USE_IMPORTANT_LOG_FILE = generate_important_log_file
+
+        self.__load_env()
         self.__check_all_paths()
 
         self.__construct_log()
@@ -79,6 +83,32 @@ class ProgramParams:
         # self.results_manager.set_result_forall(
         #     "testing_dataset_origin", ...
         # )
+    
+    @classmethod
+    def __load_env(self):
+        """
+        Load environment variables from .env file.
+        Overwrite default values with values from .env file if they are defined there.
+        """
+        dotenv.load_dotenv(dotenv_path=self.PROJECT_BASE_DIR + ".env")
+
+        # Overwrite default values with values from .env file if they are defined there
+        # NOTE: cls.__annotations__ is a dictionary where the keys are the names of 
+        #   the class variables and the values are their types
+        for variable in self.__annotations__.keys():
+            env_value = os.getenv(variable)
+            if env_value is not None:
+                # Convert to the appropriate type
+                if self.__annotations__[variable] == bool:
+                    env_value = env_value.lower() == 'true'
+                elif self.__annotations__[variable] == int:
+                    env_value = int(env_value)
+                elif self.__annotations__[variable] == list:
+                    env_value = env_value.split(',')
+                setattr(self, variable, env_value)
+
+
+
 
     def __is_running_under_pytest(self):
         """
