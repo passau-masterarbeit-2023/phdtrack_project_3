@@ -1,8 +1,5 @@
-import csv
 from datetime import datetime
-import os
-from typing import Optional
-from feature_engineering.common import BaseResultWriter
+from common.BaseResultWriter import BaseResultWriter
 
 from feature_engineering.utils.utils import datetime2str
 
