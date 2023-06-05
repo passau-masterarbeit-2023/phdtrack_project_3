@@ -24,9 +24,9 @@ A repo following the advancement of PhDTrack Project.
 
 ## Env
 
-`conda env export --no-builds > ../environment.yml` : export conda env to yml file.
+`conda env export --no-builds > environment.yml` : export conda env to yml file.
 
-## Submission & 
+## Submission &
 
 ## Program usage
 
@@ -113,8 +113,6 @@ Example of potential pointers from `Training/Training/scp/V_7_8_P1/16/1010-16443
 00000350:90957e968b550000b0957e968b550000..~..U....~..U..
 ```
 
-
-
 Those are pointers in range.
 
 ##### determine pointer range
@@ -185,7 +183,6 @@ This means that our corrected representation represent pointers that points to t
 #### ML model engineering
 
 We want to optimize the **recall** first. More info [here](https://inside-machinelearning.com/en/recall-precision-f1-score-simple-metric-explanation-machine-learning/). We want our model to detect every occurence of possible keys, without missing any potential key. This means we want an ideal **False Negative** value of 0, i.e. we want that our model detects all the keys.
-
 
 ## Questions
 
