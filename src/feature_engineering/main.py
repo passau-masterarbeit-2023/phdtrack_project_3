@@ -15,33 +15,33 @@ def main():
     params = ProgramParams()
 
     # consume program argv pipelines and run them
-    if params.PIPELINES is None:
+    if params.pipelines is None:
         # no pipelines to run
-        params.COMMON_LOGGER.warning(f"Pipelines is None (params.PIPELINES: {params.PIPELINES})")
+        params.COMMON_LOGGER.warning(f"Pipelines is None (params.PIPELINES: {params.pipelines})")
         print_pipeline_names()
         exit(1)
 
-    if len(params.PIPELINES) == 0:
-        params.COMMON_LOGGER.warning(f"No pipelines to run (params.PIPELINES: {params.PIPELINES})")
+    if len(params.pipelines) == 0:
+        params.COMMON_LOGGER.warning(f"No pipelines to run (params.PIPELINES: {params.pipelines})")
         print_pipeline_names()
         exit(1)
 
-    if params.DATA_ORIGINS_TRAINING is None or len(params.DATA_ORIGINS_TRAINING) == 0:
-        params.COMMON_LOGGER.warning(f"No training data origins (params.DATA_ORIGINS_TRAINING: {params.DATA_ORIGINS_TRAINING})")
+    if params.data_origins_training is None or len(params.data_origins_training) == 0:
+        params.COMMON_LOGGER.warning(f"No training data origins (params.DATA_ORIGINS_TRAINING: {params.data_origins_training})")
         exit(1)
     
     # check that params.DATA_ORIGINS_TRAINING and params.DATA_ORIGINS_TESTING are disjoint
-    if params.DATA_ORIGINS_TESTING is not None and len(params.DATA_ORIGINS_TESTING) > 0:
-        if len(params.DATA_ORIGINS_TRAINING.intersection(params.DATA_ORIGINS_TESTING)) > 0:
-            params.COMMON_LOGGER.warning(f"Training and testing data origins are not disjoint (params.DATA_ORIGINS_TRAINING: {params.DATA_ORIGINS_TRAINING}, params.DATA_ORIGINS_TESTING: {params.DATA_ORIGINS_TESTING})")
+    if params.data_origins_testing is not None and len(params.data_origins_testing) > 0:
+        if len(params.data_origins_training.intersection(params.data_origins_testing)) > 0:
+            params.COMMON_LOGGER.warning(f"Training and testing data origins are not disjoint (params.DATA_ORIGINS_TRAINING: {params.data_origins_training}, params.DATA_ORIGINS_TESTING: {params.data_origins_testing})")
             exit(1)
 
     # load & clean data
     origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion] = {}
     
-    all_origins = params.DATA_ORIGINS_TRAINING
-    if params.DATA_ORIGINS_TESTING is not None:
-        all_origins = all_origins.union(params.DATA_ORIGINS_TESTING)
+    all_origins = params.data_origins_training
+    if params.data_origins_testing is not None:
+        all_origins = all_origins.union(params.data_origins_testing)
 
     for data_origin in all_origins:
         print(f"Loading data from {data_origin}")
@@ -51,7 +51,7 @@ def main():
             {data_origin},
         )
     
-    for pipeline_name in params.PIPELINES:
+    for pipeline_name in params.pipelines:
         params.COMMON_LOGGER.info(f"Running pipeline: {pipeline_name}")
         pipeline_function: function[ProgramParams, pd.DataFrame, pd.Series] = PIPELINE_NAME_TO_FUNCTION[pipeline_name]
         with time_measure(f'pipeline ({pipeline_name})', params.RESULTS_LOGGER):

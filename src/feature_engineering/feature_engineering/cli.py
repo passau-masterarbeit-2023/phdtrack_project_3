@@ -2,6 +2,8 @@
 import sys
 import argparse
 
+from feature_engineering.params.pipeline_params import PipelineNames
+
 # wrapped program flags
 class CLIArguments:
     args: argparse.Namespace
@@ -54,7 +56,7 @@ class CLIArguments:
             type=str,
             nargs='*',
             default=None,
-            help="List of pipelines to run"
+            help="List of pipelines to run: " + str(list(map(lambda x: x.name.lower(), PipelineNames)))
         )
         parser.add_argument(
             '-otr',

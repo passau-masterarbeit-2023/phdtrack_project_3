@@ -13,56 +13,71 @@ from logging.handlers import RotatingFileHandler
 from datetime import datetime
 
 
-@dataclass
 class ProgramParams:
     """
     Wrapper class for program parameters.
     """
     cli_args: CLIArguments
     results_manager: ResultsManager
+    __paths_vars_to_check: list[str] = []
 
+    ### cli args
+    pipelines: list[PipelineNames] | None = None
+    data_origins_training: set[DataOriginEnum] | None = None
+    data_origins_testing: set[DataOriginEnum] | None = None
+    use_batch: bool = False
+    
+    ### env vars
+    # NOTE: all None values NEED to be overwritten by the .env file
+    
     # default values
-    DEBUG: bool = False
-    MAX_ML_WORKERS = 10
-    PIPELINES: list[PipelineNames] | None = None
-    DATA_ORIGINS_TRAINING: set[DataOriginEnum] | None = None
-    DATA_ORIGINS_TESTING: set[DataOriginEnum] | None = None
-    BATCH: bool = False
-
-    # base directories
-    REPO_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_project_3/"
-    DATA_BASE_DIR = os.environ['HOME'] + "/code/phdtrack/phdtrack_data/"
-    PROJECT_BASE_DIR = REPO_BASE_DIR + "src/features_engineering/"
+    MAX_ML_WORKERS: int = None
+    DEBUG: bool = None
 
     # data
-    CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH = REPO_BASE_DIR + "src/mem_to_graph/data/samples_and_labels/"
+    CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH: str | None = None
+    __paths_vars_to_check.append("CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH")
 
     # results
-    CSV_CLASSIFICATION_RESULTS_PATH = REPO_BASE_DIR + "results/classification_results.csv"
+    CSV_CLASSIFICATION_RESULTS_PATH: str = None
+    __paths_vars_to_check.append("CSV_CLASSIFICATION_RESULTS_PATH")
 
     # logger
-    COMMON_LOGGER_DIR_PATH = REPO_BASE_DIR + "data/logs/common_log/"
-    RESULTS_LOGGER_DIR_PATH = REPO_BASE_DIR + "data/logs/results_log/"
+    COMMON_LOGGER_DIR_PATH: str = None
+    __paths_vars_to_check.append("COMMON_LOGGER_DIR_PATH")
+
+    RESULTS_LOGGER_DIR_PATH: str = None
+    __paths_vars_to_check.append("RESULTS_LOGGER_DIR_PATH")
+
     COMMON_LOGGER = logging.getLogger("common_logger")
     RESULTS_LOGGER = logging.getLogger("results_logger")
 
 
-    USE_IMPORTANT_LOG_FILE = True
+    SAVE_RESULT_LOGS: bool = True
 
-    def __init__(self, load_program_argv : bool = True, debug : bool = False, generate_important_log_file = True, **kwargs):
+    def __init__(
+            self, 
+            load_program_argv : bool = True, 
+            debug : bool = False,
+            **kwargs
+    ):
         """
-        Program parameters. If load_program_argv is True, the program parameters are loaded from the command line arguments.
+        Program parameters. 
+        If load_program_argv is True, the program parameters are loaded 
+        from the command line arguments.
         Otherwise, the program parameters are loaded from the default values.
-        if generate_important_log_file is True, the program will generate an important log file with the current date and time.
+        if generate_important_log_file is True, the program will generate 
+        an important log file with the current date and time.
         otherwise, the program will use the default log file.
 
-        debug and generate_important_log_file parameter is used only if load_program_argv is True.
+        debug and generate_important_log_file parameter is used 
+        only if load_program_argv is True.
         """
         if load_program_argv:
             self.__parse_program_argv()
         else:
             self.DEBUG = debug
-            self.USE_IMPORTANT_LOG_FILE = generate_important_log_file
+            self.SAVE_RESULT_LOGS = False
 
         self.__load_env()
         self.__check_all_paths()
@@ -74,15 +89,6 @@ class ProgramParams:
         self.results_manager = ResultsManager(
             self.CSV_CLASSIFICATION_RESULTS_PATH
         )
-        # self.results_manager.set_result_forall(
-        #     "balancing_type", ...
-        # )  
-        # self.results_manager.set_result_forall(
-        #     "training_dataset_origin", ...
-        # )
-        # self.results_manager.set_result_forall(
-        #     "testing_dataset_origin", ...
-        # )
     
     @classmethod
     def __load_env(self):
@@ -90,6 +96,18 @@ class ProgramParams:
         Load environment variables from .env file.
         Overwrite default values with values from .env file if they are defined there.
         """
+        # determine project .env file, using the current python file location
+        # and check recursively in parent directories for the first encountered .env file
+        tmp_folder = os.path.dirname(os.path.abspath(__file__))
+        while not os.path.exists(tmp_folder + "/.env"):
+            tmp_folder = os.path.dirname(tmp_folder)
+            if tmp_folder == "/":
+                print("ERROR: .env file not found")
+                exit(1)
+        self.PROJECT_BASE_DIR = tmp_folder + "/"
+
+
+        # Load environment variables from .env file
         dotenv.load_dotenv(dotenv_path=self.PROJECT_BASE_DIR + ".env")
 
         # Overwrite default values with values from .env file if they are defined there
@@ -120,24 +138,15 @@ class ProgramParams:
         """
         Check if all paths are valid.
         """
-        if (
-            self.__check_path_exists(self.COMMON_LOGGER_DIR_PATH) and
-            self.__check_path_exists(self.RESULTS_LOGGER_DIR_PATH) 
-        ):
-            print("Program paths are OK.")
-        else:
-            print("Program paths are NOT OK.")
-            exit(1)
-    
-    
-    def __check_path_exists(self, path: str):
-        """
-        Check if the path exists. Return True if it exists, False otherwise.
-        """
-        if not os.path.exists(path):
-            print('WARNING: Path does not exist: %s' % path)
-            return False
-        return True
+        for path_var_name in self.__paths_vars_to_check:
+            path = getattr(self, path_var_name)
+            if not os.path.exists(path):
+                print("Program paths are NOT OK. Error in var: %s" % path_var_name)
+                print("%s: %s" % (path_var_name, path))
+                exit(1)
+        
+        print("✅ Program paths are OK.")
+            
     
     def __parse_program_argv(self):
         """
@@ -168,16 +177,16 @@ class ProgramParams:
 
         if self.cli_args.args.origins_training is not None:
             try:
-                self.DATA_ORIGINS_TRAINING = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins_training))
-                assert isinstance(self.DATA_ORIGINS_TRAINING, set)
+                self.data_origins_training = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins_training))
+                assert isinstance(self.data_origins_training, set)
             except ValueError:
                 print(f"ERROR: Invalid data origin training: {self.cli_args.args.origins_training}")
                 exit(1)
         
         if self.cli_args.args.origins_testing is not None:
             try:
-                self.DATA_ORIGINS_TESTING = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins_testing))
-                assert isinstance(self.DATA_ORIGINS_TESTING, set)
+                self.data_origins_testing = set(map(convert_str_arg_to_data_origin, self.cli_args.args.origins_testing))
+                assert isinstance(self.data_origins_testing, set)
             except ValueError:
                 print(f"ERROR: Invalid data origin testing: {self.cli_args.args.origins_testing}")
                 exit(1)
@@ -185,14 +194,14 @@ class ProgramParams:
         
         if self.cli_args.args.pipelines is not None:
             try:
-                self.PIPELINES = set(map(convert_str_arg_to_pipeline_name, self.cli_args.args.pipelines))
-                assert isinstance(self.PIPELINES, set)
+                self.pipelines = set(map(convert_str_arg_to_pipeline_name, self.cli_args.args.pipelines))
+                assert isinstance(self.pipelines, set)
             except ValueError:
                     print(f"ERROR: Invalid pipeline name: {self.cli_args.args.pipelines}")
                     exit(1)
         # No if here, batch is either True or False
-        self.BATCH = self.cli_args.args.batch
-        assert isinstance(self.BATCH, bool)
+        self.use_batch = self.cli_args.args.batch
+        assert isinstance(self.use_batch, bool)
 
     def __construct_log(self):
         """
@@ -229,7 +238,7 @@ class ProgramParams:
         self.RESULTS_LOGGER.setLevel(logging.DEBUG)
 
         # Result logger using file handler
-        if self.USE_IMPORTANT_LOG_FILE:
+        if self.SAVE_RESULT_LOGS:
             results_log_file_path = self.RESULTS_LOGGER_DIR_PATH + "/" + datetime2str(datetime.now()) + "_results.log"
         else:
             results_log_file_path = common_log_file_path

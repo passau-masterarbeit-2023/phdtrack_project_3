@@ -244,7 +244,7 @@ def load(
                 raise ValueError(f"Unknown data origin: {origin}")
 
     # Load the training data
-    if not params.BATCH:
+    if not params.use_batch:
         with time_measure(f'load_samples_and_labels_from_all_csv_files', params.RESULTS_LOGGER):
             #training_samples, training_labels = load_samples_and_labels_from_all_csv_files(params, training_files)
             samples, labels = parallel_load_samples_and_labels_from_all_csv_files(params, files_to_load)

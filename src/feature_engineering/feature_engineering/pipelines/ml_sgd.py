@@ -105,17 +105,17 @@ def ml_sgd_pipeline(
         origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion]
 ) -> None:
     samples_and_labels_train = handle_data_origin_respecting_generator(
-        params.DATA_ORIGINS_TRAINING,
+        params.data_origins_training,
         origin_to_samples_and_labels
     )
     samples_and_labels_test = None
-    if params.DATA_ORIGINS_TESTING is not None:
+    if params.data_origins_testing is not None:
         samples_and_labels_test = handle_data_origin_respecting_generator(
-            params.DATA_ORIGINS_TESTING,
+            params.data_origins_testing,
             origin_to_samples_and_labels
         )
 
-    if params.BATCH:
+    if params.use_batch:
         __ml_sgd_pipeline_partial_fit(params, samples_and_labels_train, samples_and_labels_test)
     else:
         __ml_sgd_pipeline(params, samples_and_labels_train, samples_and_labels_test)

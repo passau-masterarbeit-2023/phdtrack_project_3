@@ -73,12 +73,12 @@ def ml_logistic_regression_pipeline(
     samples_and_labels_test: Optional[SamplesAndLabels] = None
 
     samples_and_labels_train = handle_data_origin_consume_generator(
-        params.DATA_ORIGINS_TRAINING,
+        params.data_origins_training,
         origin_to_samples_and_labels
     )
-    if params.DATA_ORIGINS_TESTING is not None:
+    if params.data_origins_testing is not None:
         samples_and_labels_test = handle_data_origin_consume_generator(
-            params.DATA_ORIGINS_TESTING,
+            params.data_origins_testing,
             origin_to_samples_and_labels
         )
     
