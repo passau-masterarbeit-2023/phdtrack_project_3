@@ -1,8 +1,10 @@
+from datetime import datetime
+import time
+from common.utils.utils import time_measure, DATETIME_FORMAT
 from feature_engineering.data_loading.data_loading import load
 from feature_engineering.data_loading.data_types import SamplesAndLabelsUnion
 from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.params.pipeline_params import print_pipeline_names
-from feature_engineering.utils.utils import time_measure
 from feature_engineering.pipelines.pipelines import PIPELINE_NAME_TO_FUNCTION
 from feature_engineering.params.params import ProgramParams
 
@@ -53,9 +55,37 @@ def main():
     
     for pipeline_name in params.pipelines:
         params.COMMON_LOGGER.info(f"Running pipeline: {pipeline_name}")
+
+        # get current time using datetime
+        start_time = datetime.now()
+        params.results_manager.set_result_for(
+            pipeline_name, "start_time", 
+            start_time.strftime(DATETIME_FORMAT)
+        )
+
         pipeline_function: function[ProgramParams, pd.DataFrame, pd.Series] = PIPELINE_NAME_TO_FUNCTION[pipeline_name]
         with time_measure(f'pipeline ({pipeline_name})', params.RESULTS_LOGGER):
             pipeline_function(params, origin_to_samples_and_labels)
+        
+        # get current time using time 
+        end_time = datetime.now()
+        params.results_manager.set_result_for(
+            pipeline_name, 
+            "end_time", 
+            end_time.strftime(DATETIME_FORMAT)
+        )
+
+        # compute duration
+        duration = end_time - start_time
+        duration_str = f"{duration.seconds}.{duration.microseconds}" # duration str in microseconds
+        params.results_manager.set_result_for(
+            pipeline_name,
+            "duration",
+            duration_str,
+        )
+    
+        # write results
+        params.results_manager.write_results_for(pipeline_name)
                 
         
 

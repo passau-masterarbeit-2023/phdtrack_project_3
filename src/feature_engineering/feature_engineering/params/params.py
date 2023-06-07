@@ -1,7 +1,9 @@
-from feature_engineering.results.results_manager import ResultsManager
+from common.results.base_result_manager import BaseResultsManager
+from feature_engineering.results.result_writer import ClassificationResultsWriter
+from feature_engineering.results.result_writer import ClassificationResultsWriter
 from .data_origin import DataOriginEnum, convert_str_arg_to_data_origin, print_data_origin_enum
 from ..cli import CLIArguments
-from ..utils.utils import DATETIME_FORMAT, datetime2str
+from common.utils.utils import DATETIME_FORMAT, datetime2str
 from feature_engineering.params.pipeline_params import PipelineNames, convert_str_arg_to_pipeline_name, print_pipeline_names
 
 from dataclasses import dataclass
@@ -18,7 +20,7 @@ class ProgramParams:
     Wrapper class for program parameters.
     """
     cli_args: CLIArguments
-    results_manager: ResultsManager
+    results_manager: BaseResultsManager[PipelineNames, ClassificationResultsWriter]
     __paths_vars_to_check: list[str] = []
 
     ### cli args
@@ -86,8 +88,8 @@ class ProgramParams:
         self.__log_program_params()
 
         # keep results
-        self.results_manager = ResultsManager(
-            self.CSV_CLASSIFICATION_RESULTS_PATH
+        self.results_manager = BaseResultsManager[PipelineNames, ClassificationResultsWriter](
+            self.CSV_CLASSIFICATION_RESULTS_PATH, ClassificationResultsWriter
         )
     
     @classmethod

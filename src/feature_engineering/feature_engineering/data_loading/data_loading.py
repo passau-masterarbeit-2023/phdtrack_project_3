@@ -8,9 +8,9 @@ from typing import Generator, Tuple
 
 from feature_engineering.data_loading.data_cleaning import clean
 from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion
-from feature_engineering.utils.data_utils import count_positive_and_negative_labels
+from common.utils.data_utils import count_positive_and_negative_labels
 from feature_engineering.params.data_origin import DataOriginEnum
-from feature_engineering.utils.utils import time_measure
+from common.utils.utils import time_measure
 from feature_engineering.params.params import ProgramParams
 
 

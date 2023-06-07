@@ -36,7 +36,8 @@ class BaseResultWriter(object):
         file_exists = os.path.isfile(self.csv_file_path)
         with open(self.csv_file_path, 'a', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=self.headers)
-            if not file_exists:
+            # write header only if file is empty or does not exist
+            if not file_exists or os.stat(self.csv_file_path).st_size == 0:
                 writer.writeheader()
             writer.writerow(self.results)
     

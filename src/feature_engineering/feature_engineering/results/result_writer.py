@@ -1,7 +1,7 @@
 from datetime import datetime
-from common.BaseResultWriter import BaseResultWriter
+from common.results.base_result_writer import BaseResultWriter
 
-from feature_engineering.utils.utils import datetime2str
+from common.utils.utils import datetime2str
 
 class ClassificationResultsWriter(BaseResultWriter):
     """
