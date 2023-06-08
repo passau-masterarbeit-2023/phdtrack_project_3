@@ -8,6 +8,7 @@ import pandas as pd
 
 from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion, is_datagenerator, is_datatuple
 from feature_engineering.data_loading.data_loading import consume_data_generator
+from feature_engineering.params.pipeline_params import PipelineNames
 from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.pipelines.pipeline_utils import handle_data_origin_respecting_generator
 from feature_engineering.params.params import ProgramParams
@@ -37,6 +38,9 @@ def __ml_sgd_pipeline(
     # Train a SGDClassifier
     print(params.MAX_ML_WORKERS)
     clf = SGDClassifier(random_state=42, n_jobs = params.MAX_ML_WORKERS)
+    params.results_manager.set_result_for(
+        PipelineNames.ML_SGD ,"model_name", "sgd"
+    )
 
     # Train classifier
     clf.fit(X_res, y_res)
@@ -52,6 +56,8 @@ def __ml_sgd_pipeline(
     # Log the results
     params.RESULTS_LOGGER.info(f'Precision: {precision}, Recall: {recall}, F1-score: {f1}')
 
+    
+
 
 def __ml_sgd_pipeline_partial_fit(
         params: ProgramParams, 
@@ -64,6 +70,9 @@ def __ml_sgd_pipeline_partial_fit(
 
     # Train a SGDClassifier
     clf = SGDClassifier(random_state=42)
+    params.results_manager.set_result_for(
+        PipelineNames.ML_SGD ,"model_name", "sgd"
+    )
     X_test_all = pd.DataFrame()
     y_test_all = pd.Series()
     

@@ -48,6 +48,12 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ## Work
 
+### Thu 7 Jun 2023
+
+Working on the result keeping classes and integration.
+
+* [ ] Need for a dedicated ResultWriter specialized for feature engineering.
+
 ### Wed 6 Jun 2023
 
 Finally reworked the params of the Python program.

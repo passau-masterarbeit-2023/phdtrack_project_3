@@ -4,6 +4,9 @@ import contextlib
 import time
 import logging
 
+from common.results.base_result_manager import BaseResultsManager
+from common.results.base_result_writer import BaseResultWriter
+
 # utils constants
 DATETIME_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
 
@@ -17,22 +20,41 @@ def str2enum(string: str, enum_type: type):
 
 
 @contextlib.contextmanager
-def time_measure(ident, logger : logging.Logger = None):
+def time_measure_result(
+    message: str, 
+    logger : logging.Logger = None,
+    result_saver: BaseResultWriter | BaseResultsManager = None, 
+    result_column: str = None, 
+):
     """
     Measure the time elapsed since the begining of the context.
     """
     if logger is not None:
-        logger.info("timer for " + ident + " started")
+        logger.info("timer for " + message + " started")
     else:
-        print("timer for " + ident + " started")
-    tstart = time.time()
+        print("timer for " + message + " started")
+
+    start = datetime.now()
     yield
-    elapsed = time.time() - tstart
-    message = "Time elapsed since the begining of {0}: {1} s".format(ident, elapsed)
+    elapsed = datetime.now() - start
+    # duration in seconds with 6 decimals
+    duration_str = f"{elapsed.total_seconds():.9f}"
+
+    message = "Time elapsed since the begining of {0}: {1} s".format(message, duration_str)
+    
     if logger is not None:
         logger.info(message)
     else:
         print(message)
+    
+    if result_saver is not None and result_column is not None:
+        if type(result_saver) == BaseResultsManager:
+            result_saver.set_result_forall(result_column, duration_str)
+        elif type(result_saver) == BaseResultWriter:
+            result_saver.set_result(result_column, duration_str)
+        else:
+            raise ValueError(f"Unknown result saver type: {type(result_saver)}")
+    
 
 def datetime2str(datetime: datetime):
     """

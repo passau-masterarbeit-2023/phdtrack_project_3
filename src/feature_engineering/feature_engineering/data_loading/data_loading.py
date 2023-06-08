@@ -10,7 +10,7 @@ from feature_engineering.data_loading.data_cleaning import clean
 from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion
 from common.utils.data_utils import count_positive_and_negative_labels
 from feature_engineering.params.data_origin import DataOriginEnum
-from common.utils.utils import time_measure
+from common.utils.utils import time_measure_result
 from feature_engineering.params.params import ProgramParams
 
 
@@ -245,9 +245,8 @@ def load(
 
     # Load the training data
     if not params.use_batch:
-        with time_measure(f'load_samples_and_labels_from_all_csv_files', params.RESULTS_LOGGER):
-            #training_samples, training_labels = load_samples_and_labels_from_all_csv_files(params, training_files)
-            samples, labels = parallel_load_samples_and_labels_from_all_csv_files(params, files_to_load)
+        #training_samples, training_labels = load_samples_and_labels_from_all_csv_files(params, training_files)
+        samples, labels = parallel_load_samples_and_labels_from_all_csv_files(params, files_to_load)
 
         samples, labels = clean(
             params,

@@ -1,6 +1,6 @@
 from datetime import datetime
 import time
-from common.utils.utils import time_measure, DATETIME_FORMAT
+from common.utils.utils import DATETIME_FORMAT, time_measure_result
 from feature_engineering.data_loading.data_loading import load
 from feature_engineering.data_loading.data_types import SamplesAndLabelsUnion
 from feature_engineering.params.data_origin import DataOriginEnum
@@ -13,7 +13,6 @@ import pandas as pd
 # run: python src/feature_engineering/main.py
 def main():
     print("🚀 Running program...")
-
     params = ProgramParams()
 
     # consume program argv pipelines and run them
@@ -41,20 +40,43 @@ def main():
     # load & clean data
     origin_to_samples_and_labels: dict[DataOriginEnum, SamplesAndLabelsUnion] = {}
     
+    # save data origins
+    params.results_manager.set_result_forall(
+        "training_dataset_origin",
+        "-".join([origin.value for origin in params.data_origins_training])
+    )
+    if params.data_origins_testing is not None:
+        params.results_manager.set_result_forall(
+            "testing_dataset_origin", 
+            "-".join([origin.value for origin in params.data_origins_testing])
+        )
+
     all_origins = params.data_origins_training
     if params.data_origins_testing is not None:
         all_origins = all_origins.union(params.data_origins_testing)
 
-    for data_origin in all_origins:
-        print(f"Loading data from {data_origin}")
-        origin_to_samples_and_labels[data_origin] = load(
-            params, 
-            params.CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH,
-            {data_origin},
-        )
+    with time_measure_result(
+            f'load_samples_and_labels_from_all_csv_files', 
+            params.RESULTS_LOGGER, 
+            params.results_manager, 
+            "data_loading_duration"
+        ):
+        for data_origin in all_origins:
+            print(f"Loading data from {data_origin}")
+            origin_to_samples_and_labels[data_origin] = load(
+                params, 
+                params.CSV_DATA_SAMPLES_AND_LABELS_DIR_PATH,
+                {data_origin},
+            )
     
     for pipeline_name in params.pipelines:
+        # information about the current pipeline
         params.COMMON_LOGGER.info(f"Running pipeline: {pipeline_name}")
+        params.results_manager.set_result_for(
+            pipeline_name,
+            "pipeline_name",
+            pipeline_name.value,
+        )
 
         # get current time using datetime
         start_time = datetime.now()
@@ -63,8 +85,9 @@ def main():
             start_time.strftime(DATETIME_FORMAT)
         )
 
+        # run pipeline
         pipeline_function: function[ProgramParams, pd.DataFrame, pd.Series] = PIPELINE_NAME_TO_FUNCTION[pipeline_name]
-        with time_measure(f'pipeline ({pipeline_name})', params.RESULTS_LOGGER):
+        with time_measure_result(f'pipeline ({pipeline_name})', params.RESULTS_LOGGER):
             pipeline_function(params, origin_to_samples_and_labels)
         
         # get current time using time 
@@ -77,7 +100,7 @@ def main():
 
         # compute duration
         duration = end_time - start_time
-        duration_str = f"{duration.seconds}.{duration.microseconds}" # duration str in microseconds
+        duration_str = f"{duration.total_seconds():.9f}"
         params.results_manager.set_result_for(
             pipeline_name,
             "duration",

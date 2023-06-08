@@ -11,17 +11,18 @@ class ClassificationResultsWriter(BaseResultWriter):
     """
     more_headers: list[str] = [
         "data_loading_duration", 
-        "data_processing_duration", 
-        "model_type",
-        "balancing_type", 
+        "data_balancing_duration", # TODO: implement balancing
+        "balancing_type", # TODO: implement balancing
+        "model_name",
         "training_dataset_origin", 
         "testing_dataset_origin",
-        "nb_training_samples_before_balancing",
+        "nb_training_samples_before_balancing", # TODO: implement balancing
         "nb_positive_training_samples_before_balancing",
         "nb_training_samples_after_balancing",
         "nb_positive_training_samples_after_balancing", 
         "precision",
         "recall", 
+        "accuracy",
         "f1_score", 
         "support", 
         "true_positives", 

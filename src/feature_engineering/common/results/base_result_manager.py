@@ -61,3 +61,9 @@ class BaseResultsManager(Generic[PipelineNamesEnum, ResultWriter]):
         Write results for a specific result keeper.
         """
         self.classification_result_writer_dict[pipeline_name].write_results()
+    
+    def get_result_writer_for(self, pipeline_name: PipelineNamesEnum) -> ResultWriter:
+        """
+        Get a specific result keeper.
+        """
+        return self.classification_result_writer_dict[pipeline_name]

@@ -4,8 +4,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import precision_score, recall_score, f1_score
 from imblearn.under_sampling import RandomUnderSampler
 
-from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion, is_datagenerator, is_datatuple
-from feature_engineering.data_loading.data_loading import consume_data_generator
+from feature_engineering.data_loading.data_types import SamplesAndLabels, SamplesAndLabelsUnion
+from feature_engineering.params.pipeline_params import PipelineNames
 from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.pipelines.pipeline_utils import handle_data_origin_consume_generator
 from feature_engineering.params.params import ProgramParams
@@ -35,6 +35,9 @@ def __ml_random_forest_pipeline(
     # Train a RandomForestClassifier
     clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs = params.MAX_ML_WORKERS)
     clf.fit(X_res, y_res)
+    params.results_manager.set_result_for(
+        PipelineNames.ML_RANDOM_FOREST ,"model_name", "RandomForest"
+    )
 
     # Make predictions on the test set
     y_pred = clf.predict(X_test)

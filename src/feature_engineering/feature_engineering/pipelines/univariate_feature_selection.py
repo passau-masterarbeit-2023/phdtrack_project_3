@@ -4,6 +4,7 @@ from sklearn.feature_selection import SelectKBest, f_classif
 
 from feature_engineering.data_loading.data_types import SamplesAndLabelsGenerator, SamplesAndLabels, SamplesAndLabelsUnion, is_datagenerator, is_datatuple
 from feature_engineering.data_loading.data_loading import consume_data_generator
+from feature_engineering.params.pipeline_params import PipelineNames
 from feature_engineering.params.data_origin import DataOriginEnum
 from feature_engineering.pipelines.pipeline_utils import handle_data_origin_consume_generator
 from feature_engineering.params.params import ProgramParams
@@ -34,6 +35,10 @@ def __univariate_feature_selection_pipeline(
     """
     Pipeline for univariate feature selection.
     """
+
+    params.results_manager.set_result_for(
+        PipelineNames.UNIVARIATE_FS ,"model_name", "univariate_feature_selection"
+    )
 
     # Feature selection on training set (only)
     samples, labels = samples_and_labels_train

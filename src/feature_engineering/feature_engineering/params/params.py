@@ -1,3 +1,4 @@
+import contextlib
 from common.results.base_result_manager import BaseResultsManager
 from feature_engineering.results.result_writer import ClassificationResultsWriter
 from feature_engineering.results.result_writer import ClassificationResultsWriter
@@ -126,8 +127,6 @@ class ProgramParams:
                 elif self.__annotations__[variable] == list:
                     env_value = env_value.split(',')
                 setattr(self, variable, env_value)
-
-
 
 
     def __is_running_under_pytest(self):
