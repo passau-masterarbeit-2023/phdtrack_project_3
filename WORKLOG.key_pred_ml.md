@@ -48,6 +48,13 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ## Work
 
+### Fri 8 Jun 2023
+
+Worked on heavy refactoring so as to prepare ourselves for the last part of the Masterarbeit on data analysis.
+
+* [X] refactor the name of the Python program.
+* [X] make common the base of the params (logging) and the base of the result manager (some base info like time)
+
 ### Thu 7 Jun 2023
 
 Working on the result keeping classes and integration.
@@ -61,12 +68,11 @@ Finally reworked the params of the Python program.
 * [X] rewrite and improve params
 * [X] complete result manager
 * [ ] complete the integration of result keeping, and test/debug
-* [ ] refactor the name of the Python program.
 * [ ] rewrite and symplify the batch system that is super bloatware right now.
 
 ### Fri 2 Jun 2023
 
-* [ ] make common the base of the params (logging) and the base of the result manager (some base info like time)
+Working to cleaning the Python project code.
 
 ### Tue 30 Mai 2023
 
