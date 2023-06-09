@@ -52,11 +52,12 @@ Christopher and Michael have bette results on the precision, because they provid
 
 Worked on heavy refactoring so as to prepare ourselves for the last part of the Masterarbeit on data analysis.
 
-Started to do the work on balancing strategies.
+Started and finished to do the work on balancing strategies.
 
 * [X] refactor the name of the Python program.
 * [X] make common the base of the params (logging) and the base of the result manager (some base info like time)
-* [ ] Finish the balancing strategy integration.
+* [X] Finish the balancing strategy integration.
+* [ ] Idea: Add automatic model saving for later reuse (only for interestin model)
 
 ### Thu 7 Jun 2023
 
