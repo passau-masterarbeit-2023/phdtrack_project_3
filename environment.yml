@@ -24,20 +24,28 @@ dependencies:
   - xz=5.4.2
   - zlib=1.2.13
   - pip:
+      - contourpy==1.0.7
+      - cycler==0.11.0
+      - fonttools==4.40.0
       - imbalanced-learn==0.10.1
       - iniconfig==2.0.0
       - joblib==1.2.0
+      - kiwisolver==1.4.4
+      - matplotlib==3.7.1
       - numpy==1.24.3
       - packaging==23.1
       - pandas==2.0.1
+      - pillow==9.5.0
       - pluggy==1.0.0
       - psutil==5.9.5
+      - pyparsing==3.0.9
       - pytest==7.3.1
       - python-dateutil==2.8.2
       - python-dotenv==1.0.0
       - pytz==2023.3
       - scikit-learn==1.2.2
       - scipy==1.10.1
+      - seaborn==0.12.2
       - six==1.16.0
       - threadpoolctl==3.1.0
       - tzdata==2023.3

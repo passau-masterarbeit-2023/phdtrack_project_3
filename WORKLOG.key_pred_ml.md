@@ -48,6 +48,11 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ## Work
 
+### Mon 12 Jun 2023
+
+* [ ] complete the integration of result keeping, and test/debug
+* [ ] Need for a dedicated ResultWriter specialized for feature engineering.
+
 ### Fri 8 Jun 2023
 
 Worked on heavy refactoring so as to prepare ourselves for the last part of the Masterarbeit on data analysis.
@@ -56,6 +61,8 @@ Started and finished to do the work on balancing strategies.
 
 * [X] refactor the name of the Python program.
 * [X] make common the base of the params (logging) and the base of the result manager (some base info like time)
+* [X] rewrite and symplify the batch system that is super bloatware right now.
+* [X] Add new param "DATA_BALANCING" and modify the pipelines (priority)
 * [X] Finish the balancing strategy integration.
 * [ ] Idea: Add automatic model saving for later reuse (only for interestin model)
 * [ ] feature engineering: Finish feature selection, and correlation measurement, or even dimensionality reduction: **Feature Correlation:** If some features are correlated, they may introduce redundancy in the data representation and complicate the indexing process. Feature selection and dimensionality reduction techniques may be necessary to remove irrelevant or redundant features.
@@ -64,16 +71,12 @@ Started and finished to do the work on balancing strategies.
 
 Working on the result keeping classes and integration.
 
-* [ ] Need for a dedicated ResultWriter specialized for feature engineering.
-
 ### Wed 6 Jun 2023
 
 Finally reworked the params of the Python program.
 
 * [X] rewrite and improve params
 * [X] complete result manager
-* [ ] complete the integration of result keeping, and test/debug
-* [ ] rewrite and symplify the batch system that is super bloatware right now.
 
 ### Fri 2 Jun 2023
 
@@ -89,9 +92,6 @@ Made refactoring and cleaning on `.env` params in the Rust.
 
 * [X] Finish to read Christopher's code
 * [X] Need to test the refactoring with new params
-* [ ] Add new param "DATA_BALANCING" and modify the pipelines (priority)
-* [ ] complete the integration of result keeping, and test/debug
-* [ ] Complete result keeping integration, for now, only start time and pipeline names are provided.
 * [ ] create a meta-script that launch and test the program with all possible combination of program command lines
 
 Heavy refactoring. We reworked the project to be able to handle different training and testing datasets. We also did some corrections and tested the program with a wide range of parameters.
