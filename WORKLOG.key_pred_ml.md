@@ -50,8 +50,10 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ### Mon 12 Jun 2023
 
-* [ ] complete the integration of result keeping, and test/debug
-* [ ] Need for a dedicated ResultWriter specialized for feature engineering.
+* [X] complete the integration of result keeping, and test/debug
+* [X] Need for a dedicated ResultWriter specialized for feature engineering.
+* [ ] Finish to integrate result writer for `univariate_feature_selection`
+* [ ] Add new parameter that allow to specify the columns to select.
 
 ### Fri 8 Jun 2023
 
