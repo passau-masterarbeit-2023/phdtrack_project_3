@@ -58,6 +58,7 @@ Started and finished to do the work on balancing strategies.
 * [X] make common the base of the params (logging) and the base of the result manager (some base info like time)
 * [X] Finish the balancing strategy integration.
 * [ ] Idea: Add automatic model saving for later reuse (only for interestin model)
+* [ ] feature engineering: Finish feature selection, and correlation measurement, or even dimensionality reduction: **Feature Correlation:** If some features are correlated, they may introduce redundancy in the data representation and complicate the indexing process. Feature selection and dimensionality reduction techniques may be necessary to remove irrelevant or redundant features.
 
 ### Thu 7 Jun 2023
 
