@@ -50,11 +50,21 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ### Tue 13 Jun 2023
 
+When testing the pipeline for ML, we see some results are missing in the CSV. We also observe that the SGD classifier has very good results for a small number of features (good from Feature Selection results):
+
+```shell
+(phdtrack-311) [onyr@kenzael data_processing]$ python main_value_node.py -p ml_sgd -otr testing -c f_dtns_ancestor_5 f_ptrs_ancestor_4 f_dtns_ancestor_2 -b undersampling
+[...]
+2023_06_13_16_13_51 - results_logger - INFO - Precision: 0.005584741024030264, Recall: 0.9938574938574939, F1-score: 0.011107068571389343
+2023_06_13_16_13_51 - results_logger - INFO - Time elapsed since the begining of pipeline (PipelineNames.ML_SGD): 1.452405000 s
+```
+
 * [X] Finish to integrate result writer for `univariate_feature_selection`
 * [X] Add new parameter that allow to specify the columns to select.
-* [ ] Start new base project for DTS clustering
-* [ ] Change log locations to `log/`
+* [X] Change log locations to `log/`
+* [ ] Investigate and correct missing values for CSV results for ML pipelines.
 * [ ] Separate `.env` params
+* [ ] Start new base project for DTS clustering
 
 ### Mon 12 Jun 2023
 
