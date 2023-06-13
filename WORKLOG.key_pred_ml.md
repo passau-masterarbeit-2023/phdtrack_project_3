@@ -48,6 +48,14 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ## Work
 
+### Tue 13 Jun 2023
+
+* [X] Finish to integrate result writer for `univariate_feature_selection`
+* [X] Add new parameter that allow to specify the columns to select.
+* [ ] Start new base project for DTS clustering
+* [ ] Change log locations to `log/`
+* [ ] Separate `.env` params
+
 ### Mon 12 Jun 2023
 
 * [X] complete the integration of result keeping, and test/debug
