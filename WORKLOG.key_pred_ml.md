@@ -48,6 +48,15 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ## Work
 
+### Wed 14 Jun 2023
+
+* [X] ~~Investigate and correct missing values for CSV results for ML pipelines.~~ -> No problem, it's just that some values are only added when some data balancing is performed. And for the accuracy being always super good, it's just a consequence of the imbalanced datasets.
+* [ ] Separate `.env` params
+* [ ] Start new base project for DTS clustering.
+* [ ] Start by rewriting the load function, add an enum with the types of loadable data embeddings (for now, only `value_node_embedding` and `semantic_dtn_embedding`), and get the paths using this new enum, controled by a new CLI param.
+* [ ] Add a pipeline for clustering, this may need to make the labels as Optional for pipeline function (and btw you can clean the feature engineering pipelines that also don't need labels...)
+* [ ] Add warning when trying to call a classification pipeline with no labels...
+
 ### Tue 13 Jun 2023
 
 When testing the pipeline for ML, we see some results are missing in the CSV. We also observe that the SGD classifier has very good results for a small number of features (good from Feature Selection results):
