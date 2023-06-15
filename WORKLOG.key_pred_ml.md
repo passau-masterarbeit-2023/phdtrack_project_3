@@ -48,6 +48,14 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ## Work
 
+### Thu 15 Jun 2023
+
+Reworking the loading of data.
+
+* [ ] Fix: A value is trying to be set on a copy of a slice from a DataFrame.
+* [ ] Fix: investigate how it's even possible that ML pipelines are running with no labels... o_O
+* [ ] Fix: Display error message when trying to use ML pipelines with no samples !!!
+
 ### Wed 14 Jun 2023
 
 * [X] ~~Investigate and correct missing values for CSV results for ML pipelines.~~ -> No problem, it's just that some values are only added when some data balancing is performed. And for the accuracy being always super good, it's just a consequence of the imbalanced datasets.
