@@ -48,6 +48,19 @@ Christopher and Michael have bette results on the precision, because they provid
 
 ## Work
 
+### Mon 26 Jun 2023
+
+Started working on Data Structure clusterization. Created a new pipeline for that and fixed params for the new pipeline.
+
+* [ ] Continue the script. It seems that for now, the compute time is very heavy. And that there is only one cluster found... This is not expected behavior. We need to tune the clustering.
+* [ ] fix following warning:
+
+```shell
+/home/onyr/code/phdtrack/phdtrack_project_3/src/data_processing/value_node_ml/data_loading/data_loading.py:287: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+```
+
 ### Thu 15 Jun 2023
 
 Reworking the loading of data. Added a new Dataframe in the data loading returned tuple, with all the string data to it. This enables us to annotate the loaded data.
