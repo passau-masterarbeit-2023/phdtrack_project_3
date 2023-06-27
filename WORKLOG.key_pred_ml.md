@@ -62,8 +62,9 @@ We have made possible to run feature engineering on data structure dataset. Usin
 
 ![Pearson corr matrix for data structure dataset](./img/feature_engineering/correlation_matrix_pearson_2023_06_27_10_47_34_373383.png)
 
-As on can see, a data structure is well identified knowing its children, whereas knowing its ancestors is not super relevant. 
+As on can see, a data structure is well identified knowing its children, whereas knowing its ancestors is not super relevant.
 
+We have refactored the result CSV to be able to keep result for all predicted classes, not just class 1. 
 
 ### Mon 26 Jun 2023
 
