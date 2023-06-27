@@ -58,6 +58,13 @@ A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 ```
 
+We have made possible to run feature engineering on data structure dataset. Using Pearson:
+
+![Pearson corr matrix for data structure dataset](./img/feature_engineering/correlation_matrix_pearson_2023_06_27_10_47_34_373383.png)
+
+As on can see, a data structure is well identified knowing its children, whereas knowing its ancestors is not super relevant. 
+
+
 ### Mon 26 Jun 2023
 
 Started working on Data Structure clusterization. Created a new pipeline for that and fixed params for the new pipeline.
