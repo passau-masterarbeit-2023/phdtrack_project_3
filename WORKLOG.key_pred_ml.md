@@ -42,7 +42,7 @@ Seperation of work:
 
 Improvement of ML precision:
 
-Christopher and Michael have bette results on the precision, because they provide the classifier with less information, more focused about the related Data Structure of the node. A good assumption is to say that we can uniquely identify Data Structures by their number of pointers.
+Christopher and Michael have better results on the precision, because they provide the classifier with less information, more focused about the related Data Structure of the node. A good assumption is to say that we can uniquely identify Data Structures by their number of pointers.
 
 * [ ] Try to learn classifiers on a subset of the samples, with only DTN information after the initial Key Prediction with high recall classifier, so as to increate the general performance.
 
@@ -64,7 +64,7 @@ We have made possible to run feature engineering on data structure dataset. Usin
 
 As on can see, a data structure is well identified knowing its children, whereas knowing its ancestors is not super relevant.
 
-We have refactored the result CSV to be able to keep result for all predicted classes, not just class 1. 
+We have refactored the result CSV to be able to keep result for all predicted classes, not just class 1.
 
 ### Mon 26 Jun 2023
 
