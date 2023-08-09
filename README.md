@@ -26,6 +26,10 @@ A repo following the advancement of PhDTrack Project.
 
 `conda env export --no-builds > environment.yml` : export conda env to yml file.
 
+`conda env remove --name` to remove a conda env
+
+`conda env create -f environment.yml` to create a conda env from .yml file
+
 ## Submission &
 
 ## Program usage

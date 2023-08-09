@@ -48,6 +48,25 @@ Christopher and Michael have better results on the precision, because they provi
 
 ## Work
 
+### Wed 9 Aug 2023
+
+* I tried several times to install nvidia-driver and CUDA to my machine without success 💀.
+
+I switched to the remote server provided by the lab.
+
+> Use /root for data that should be persisted over system reboots. Go to /root using `cd ~`.
+
+* I deleted `conda 4.5.11` and reinstalled `conda` to latest version `conda 23.7.2`, using `wget https://repo.anaconda.com/archive/Anaconda3-2023.07-2-Linux-x86_64.sh`, `chmod +x Anaconda3-2023.07-2-Linux-x86_64.sh` and `./Anaconda3-2023.07-2-Linux-x86_64.sh`. Conda is installed inside `/opt`.
+* I added a SSH key to the server and cloned the repository.
+* I failed to create the conda venv due to error with `pygraphviz`.
+
+* [ ] launch a GUI session to the server
+* [ ] create conda venv
+
+
+
+
+
 ### Tue 27 Jun 2023
 
 * [X] fix following warning:
