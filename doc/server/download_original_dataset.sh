@@ -10,5 +10,6 @@ wget -O $PHDTRACK_DATA_DIR/Validation.zip https://zenodo.org/record/6537904/file
 
 # unzip original dataset
 unzip $PHDTRACK_DATA_DIR/Performance_Test.zip -d $PHDTRACK_DATA_DIR
+mv 'Performance Test'/ Performance_Test
 unzip $PHDTRACK_DATA_DIR/Training.zip -d $PHDTRACK_DATA_DIR
 unzip $PHDTRACK_DATA_DIR/Validation.zip -d $PHDTRACK_DATA_DIR
