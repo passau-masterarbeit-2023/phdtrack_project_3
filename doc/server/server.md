@@ -17,8 +17,8 @@ ossyNMMMNyMMhsssssssssssssshmmmhssssssso   Terminal: /dev/pts/0
 ossyNMMMNyMMhsssssssssssssshmmmhssssssso   CPU: AMD EPYC 7662 (256) @ 2.000GHz 
 +sssshhhyNMMNyssssssssssssyNMMMysssssss+   Memory: 61487MiB / 515845MiB 
 .ssssssssdMMMNhsssssssssshNMMMdssssssss.
- /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/                    
-  +sssssssssdmydMMMMMMMMddddyssssssss+                     
+ /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/                  
+  +sssssssssdmydMMMMMMMMddddyssssssss+                   
    /ssssssssssshdmNNNNmyNMMMMhssssss/
     .ossssssssssssssssssdMMMNysssso.
       -+sssssssssssssssssyyyssss+-
@@ -30,6 +30,8 @@ ossyNMMMNyMMhsssssssssssssshmmmhssssssso   CPU: AMD EPYC 7662 (256) @ 2.000GHz
 **GPU:** NVIDIA RTX A6000
 
 **CUDA:** NVIDIA-SMI 470.161.03   Driver Version: 470.161.03   CUDA Version: 11.4
+
+**RAM:** 503Gi
 
 ## Conda
 
