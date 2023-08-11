@@ -52,10 +52,21 @@ Christopher and Michael have better results on the precision, because they provi
 
 I'm still trying to figure out how I'm going to work with the remote server. I would like to have a graphical session to ease the process but I fear I might have to restart the server... and have no idea if its a good idea or not... So for now I will try to work as much as possible on my machine and pass everything to the remote server via git.
 
+* Installed Rust via Rustup
 * Wrote a script to automate the download of the original dataset.
 * Wrote a script to automate the generation of the graph dataset for GCN development.
+* Launched generation of graphs in the background.
 
-### Wed 9 Aug 2023
+The script `generate_graphs_for_gcn.sh` generated `56387` graph files, for a total of `102586363302` bytes (~= 102 Gigabyte).
+
+```shell
+(base) root@compute-container-rascoussie-65745f46f6-bvtsx:~/phdtrack/phdtrack_project_3/src/mem_to_graph/data/graphs_annotated# find . -maxdepth 1 -type f | wc -l
+56387
+(base) root@compute-container-rascoussie-65745f46f6-bvtsx:~/phdtrack/phdtrack_project_3/src/mem_to_graph/data/graphs_annotated# du -sb .
+102586363302	.
+```
+
+### Wed 9 Aug 2023 - Started work on server
 
 * I tried several times to install nvidia-driver and CUDA to my machine without success 💀.
 
