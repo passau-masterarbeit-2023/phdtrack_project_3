@@ -30,11 +30,9 @@ Notes for myself: Since I have a multi-partition system, I needed first to insta
 kernel-devel-6.4.8-100.fc37.x86_64
 ```
 
-
-
 ## Uninstall NVIDIA toolkit
 
-> Be sure that no important package is going to be remove. Check what packages are removed before applying changes.
+> **WARN:** Be sure that no important package is going to be remove. Check what packages are removed before applying changes.
 
 ```
 sudo dnf remove "cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" \
