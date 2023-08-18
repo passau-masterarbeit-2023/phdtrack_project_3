@@ -48,6 +48,28 @@ Christopher and Michael have better results on the precision, because they provi
 
 ## Work
 
+### Fri 18 Aug 2023
+Working on a script to run some torch GNN using torch_geometry. We have some code to load 32 annotated graphs and load them into usable ML data (from scipy sparse matrix representation).
+
+* [ ] Write a script to load all annotated graphs into .pickle version of their networkx equivalent. Because just loading graphs into a networkx graph takes around 1min.
+* [ ] Deal with multi-graph ml data, implement balancing strategy.
+
+Remark: converting a .dot file to a networkx pickle version is very similar in size:
+
+```
+(base) root@compute-container-rascoussie-65745f46f6-bvtsx:~/phdtrack/phdtrack_project_3/src/mem_to_graph/data/pickle_graphs_annotated# cd ../graphs_annotated/
+(base) root@compute-container-rascoussie-65745f46f6-bvtsx:~/phdtrack/phdtrack_project_3/src/mem_to_graph/data/graphs_annotated# ls -alt | grep 32340-1644391327
+-rw-r--r-- 1 root root 2466103 Aug 10 14:03 Training_32340-1644391327-heap.raw_dot.gv
+(base) root@compute-container-rascoussie-65745f46f6-bvtsx:~/phdtrack/phdtrack_project_3/src/mem_to_graph/data/graphs_annotated# cd ../pickle_graphs_annotated/
+(base) root@compute-container-rascoussie-65745f46f6-bvtsx:~/phdtrack/phdtrack_project_3/src/mem_to_graph/data/pickle_graphs_annotated# ls -alt | grep 32340-1644391327
+-rw-r--r-- 1 root root 2460456 Aug 18 14:27 Training_32340-1644391327-heap.raw_dot.gv.pickle
+```
+
+Here, both files are around 2Mb.
+
+### Thu 17 Aug 2023
+Started to work on GNN from the server directly, using VSCode remote extension via SSH.
+
 ### Tue 10 Aug 2023
 
 I'm still trying to figure out how I'm going to work with the remote server. I would like to have a graphical session to ease the process but I fear I might have to restart the server... and have no idea if its a good idea or not... So for now I will try to work as much as possible on my machine and pass everything to the remote server via git.
