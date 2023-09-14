@@ -10,3 +10,4 @@ __pycache__/
 
 # direnv
 .direnv
+doc/server/server.env

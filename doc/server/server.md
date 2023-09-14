@@ -17,8 +17,8 @@ ossyNMMMNyMMhsssssssssssssshmmmhssssssso   Terminal: /dev/pts/0
 ossyNMMMNyMMhsssssssssssssshmmmhssssssso   CPU: AMD EPYC 7662 (256) @ 2.000GHz 
 +sssshhhyNMMNyssssssssssssyNMMMysssssss+   Memory: 61487MiB / 515845MiB 
 .ssssssssdMMMNhsssssssssshNMMMdssssssss.
- /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/                  
-  +sssssssssdmydMMMMMMMMddddyssssssss+                   
+ /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/                
+  +sssssssssdmydMMMMMMMMddddyssssssss+                 
    /ssssssssssshdmNNNNmyNMMMMhssssss/
     .ossssssssssssssssssdMMMNysssso.
       -+sssssssssssssssssyyyssss+-
@@ -40,3 +40,7 @@ I had to update (here, remove and install) `conda` to latest version.
 Before creating the conda environment, need to install some packages using `apt-get`: `apt-get install graphviz graphviz-dev`
 
 Create conda env using: `conda env create -f environment.yml`
+
+## VSCode remote environment
+
+`Ctrl` + `Shift` + `P`, then `Remote-SSH: Connect to Host`. Follow what is asked by VSCode.

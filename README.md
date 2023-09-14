@@ -88,7 +88,7 @@ computation: addr in file = 55a6d236ba10 - 55a6d2356000 = **15A10**
 
 Searching for **15A10** in vim: `/15a10`: Open vim with `vim 302-1644391327-heap.raw`, parse the raw bytes with `xxd` usinf vim command `:%!xxd`, and the search for pattern with `/pattern`, here `/15a10`.
 
-> tips: to ease the search for patterns in vim, remove the whitespaces created by `xxd` with the vim command: `:%s/\s\+//g`
+> tips: to ease the search for patterns in vim, remove the whitespaces created by `xxd` with the vim:: command: `:%s/\s\+//g`
 
 > WARNING: `xxd` addresses are presented as addresses of the first byte of a given line ! So addresses are incremented from one line to another by leaps of 16. This is coherent with the storing of addresses in memory (json file addresses).
 
@@ -96,7 +96,35 @@ Searching for **15A10** in vim: `/15a10`: Open vim with `vim 302-1644391327-heap
 
 #### search for pointers
 
-Using vim regex, run `:%!xxd`, then `:%s/\s\+//g`, then search for pointers with: `:/[0-9a-f]\{12}0\{4}`.
+Using vim regex, run `:%!xxd -c 8`, then `:%s/\s\+//g`, then search for pointers with: `:/[0-9a-f]\{12}0\{4}`.
+
+> NOTE: If the search highlight is not activated, use `:set hlsearch` to toggle it on.
+
+After using `:%s/\s\+//g`, you can use `:%s/\v([0-9a-f]{8}:)/\1\ ` to add a space after the address part, and use `:%s/\v(([0-9a-f]{8}: )([0-9a-f]{16}))/\1\ ` to add a space after the bytes part.
+
+You can save the file under a new name with `:saveas <path>`
+
+This will give something like this:
+
+```shell
+00000000: 0000000000000000 ........
+00000008: 5102000000000000 Q.......
+00000010: 0607070707070303 ........
+00000018: 0200000604010206 ........
+00000020: 0200000101000107 ........
+00000028: 0604010000000203 ........
+00000030: 0103010100000000 ........
+00000038: 0000000000000002 ........
+00000040: 0001000000000000 ........
+00000048: 0000010000000001 ........
+00000050: 80221a3a34560000 .".:4V..
+00000058: 007f1a3a34560000 ...:4V..
+00000060: f0401a3a34560000 .@.:4V..
+00000068: 90321a3a34560000 .2.:4V..
+00000070: 608b1a3a34560000 `..:4V..
+```
+
+In this context, finding pointers can be done with: 
 
 > WARN: The pointers in the raw heap dump files are coded using LITTLE-ENDIANNESS. They are coded as 8 byte-aligned memory blocks.
 
