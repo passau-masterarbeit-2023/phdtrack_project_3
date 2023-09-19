@@ -48,7 +48,14 @@ Christopher and Michael have better results on the precision, because they provi
 
 ## Work
 
+### tue 19/09/23
+
+Their are 3 ways to annotates node (enum rust, hashmap addr to annotation, attribute in dtn struct) => need to homogenise that into hashmap.
+
+* [ ] split the repo
+
 ### Fri 18 Aug 2023
+
 Working on a script to run some torch GNN using torch_geometry. We have some code to load 32 annotated graphs and load them into usable ML data (from scipy sparse matrix representation).
 
 * [ ] Write a script to load all annotated graphs into .pickle version of their networkx equivalent. Because just loading graphs into a networkx graph takes around 1min.
@@ -68,6 +75,7 @@ Remark: converting a .dot file to a networkx pickle version is very similar in s
 Here, both files are around 2Mb.
 
 ### Thu 17 Aug 2023
+
 Started to work on GNN from the server directly, using VSCode remote extension via SSH.
 
 ### Tue 10 Aug 2023
