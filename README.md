@@ -30,6 +30,8 @@ A repo following the advancement of PhDTrack Project.
 
 `conda env create -f environment.yml` to create a conda env from .yml file
 
+[Splitting a subfolder out into a new repository](https://docs.github.com/en/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository)
+
 ## Submission &
 
 ## Program usage
@@ -124,7 +126,7 @@ This will give something like this:
 00000070: 608b1a3a34560000 `..:4V..
 ```
 
-In this context, finding pointers can be done with: 
+In this context, finding pointers can be done with:
 
 > WARN: The pointers in the raw heap dump files are coded using LITTLE-ENDIANNESS. They are coded as 8 byte-aligned memory blocks.
 
