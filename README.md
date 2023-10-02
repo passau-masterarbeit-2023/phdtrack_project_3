@@ -2,6 +2,8 @@
 
 A repo following the advancement of PhDTrack Project.
 
+> This repository is legacy. It has been split in several smaller units to account for the different projects being developped.
+
 ## Organisations
 
 [SmartVMI.org](http://www.smartvmi.org/)
@@ -30,7 +32,7 @@ A repo following the advancement of PhDTrack Project.
 
 `conda env create -f environment.yml` to create a conda env from .yml file
 
-[Splitting a subfolder out into a new repository](https://docs.github.com/en/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository)
+[Splitting a subfolder out into a new repository](https://docs.github.com/en/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository) : tutorial on how to split a big repo into smaller ones.
 
 ## Submission &
 
