@@ -32,7 +32,7 @@ A repo following the advancement of PhDTrack Project.
 
 `conda env create -f environment.yml` to create a conda env from .yml file
 
-[Splitting a subfolder out into a new repository](https://docs.github.com/en/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository) : tutorial on how to split a big repo into smaller ones.
+[Splitting a subfolder out into a new repository](https://docs.github.com/en/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository) : tutorial on how to split a big repo into smaller ones. On NixOs, you can temporarily install it using a command like `nix-shell -p python311Packages.git-filter-repo`, then do `git-filter-repo --path src/data_processing/graph_conv_net/` to keep only, in this example, the commits and code in the provided subfolder of the repository. Then, just follow steps provided in documentation.
 
 ## Submission &
 
